@@ -1,0 +1,125 @@
+/**
+ * Admin styles for CPT Table Engine.
+ *
+ * @package CPT_Table_Engine
+ */
+
+/* Toggle Switch Styles */
+.cpt-toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.cpt-toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.cpt-toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.3s;
+    border-radius: 24px;
+}
+
+.cpt-toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+}
+
+.cpt-toggle-checkbox:checked+.cpt-toggle-slider {
+    background-color: #2271b1;
+}
+
+.cpt-toggle-checkbox:focus+.cpt-toggle-slider {
+    box-shadow: 0 0 1px #2271b1;
+}
+
+.cpt-toggle-checkbox:checked+.cpt-toggle-slider:before {
+    transform: translateX(26px);
+}
+
+.cpt-toggle-checkbox:disabled+.cpt-toggle-slider {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Status Styles */
+.cpt-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.cpt-progress {
+    display: inline-flex;
+    align-items: center;
+    color: #2271b1;
+}
+
+.cpt-progress-text {
+    font-style: italic;
+}
+
+/* Info Section */
+.cpt-table-engine-info {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-left-width: 4px;
+    border-left-color: #2271b1;
+    padding: 20px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.cpt-table-engine-info h2 {
+    margin-top: 0;
+}
+
+.cpt-table-engine-info ul {
+    margin-left: 20px;
+}
+
+.cpt-table-engine-info li {
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+/* Table Styles */
+.wp-list-table code {
+    background: #f0f0f1;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 13px;
+}
+
+/* Responsive */
+@media screen and (max-width: 782px) {
+    .cpt-toggle-switch {
+        width: 40px;
+        height: 20px;
+    }
+
+    .cpt-toggle-slider:before {
+        height: 14px;
+        width: 14px;
+    }
+
+    .cpt-toggle-checkbox:checked+.cpt-toggle-slider:before {
+        transform: translateX(20px);
+    }
+}

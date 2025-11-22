@@ -1,0 +1,320 @@
+# Copyright (C) 2025 Sebastian Klaus
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: CPT Table Engine 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cpt-table-engine\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-11-22T14:49:30+01:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.8.1\n"
+"X-Domain: cpt-table-engine\n"
+
+#. Plugin Name of the plugin
+msgid "CPT Table Engine"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "https://github.com/caspahouzer/cpt-table-engine"
+msgstr ""
+
+#. Description of the plugin
+msgid "Optimizes database performance by storing Custom Post Types in dedicated custom tables instead of wp_posts and wp_postmeta."
+msgstr ""
+
+#. Author of the plugin
+msgid "Sebastian Klaus"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://slk-communications.de"
+msgstr ""
+
+#: includes/admin/class-ajax-handler.php:56
+#: includes/admin/class-ajax-handler.php:107
+msgid "You do not have permission to perform this action."
+msgstr ""
+
+#: includes/admin/class-ajax-handler.php:67
+#: includes/admin/class-ajax-handler.php:117
+#: includes/migrations/class-migration-manager.php:47
+msgid "Invalid post type."
+msgstr ""
+
+#: includes/admin/class-ajax-handler.php:89
+msgid "Custom table enabled successfully."
+msgstr ""
+
+#: includes/admin/class-ajax-handler.php:90
+msgid "Custom table disabled successfully."
+msgstr ""
+
+#: includes/admin/class-deactivation-guard.php:90
+msgid "CPT Table Engine cannot be deactivated!"
+msgstr ""
+
+#. translators: %s: URL to settings page
+#: includes/admin/class-deactivation-guard.php:96
+msgid "You must migrate all Custom Post Types back to wp_posts before deactivating this plugin. Please go to the %s and disable all CPTs first."
+msgstr ""
+
+#: includes/admin/class-deactivation-guard.php:97
+msgid "settings page"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:74
+msgid "Settings"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:120
+msgid "Are you sure you want to disable custom table storage for this post type? All data will be migrated back to wp_posts and wp_postmeta."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:121
+msgid "Migrating..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:122
+msgid "Migration completed successfully!"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:123
+msgid "Migration failed. Please check the error log."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:125
+msgid "Reticulating splines..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:126
+msgid "Gerbil feeding time..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:127
+msgid "Recalibrating flux capacitor..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:128
+msgid "Bending the space-time continuum..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:129
+msgid "Definitely not downloading a car..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:130
+msgid "Dividing by zero..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:131
+msgid "Twiddling thumbs..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:132
+msgid "Warming up the hamsters..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:133
+msgid "It's not you, it's me..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:134
+msgid "Constructing additional pylons..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:135
+msgid "Compiling the internet..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:136
+msgid "Debugging the coffee machine..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:137
+msgid "Converting caffeine to code..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:138
+msgid "Optimizing SQL queries nobody will read..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:139
+msgid "Teaching robots to love..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:140
+msgid "Untangling Ethernet cables..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:141
+msgid "Reversing the polarity..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:142
+msgid "Summoning the database gremlins..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:143
+msgid "Applying percussive maintenance..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:144
+msgid "Installing Adobe Reader..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:160
+msgid "You do not have sufficient permissions to access this page."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:172
+msgid "No custom post types found. Custom post types will appear here once registered."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:177
+msgid "Enable custom table storage for specific Custom Post Types to optimize database performance."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:193
+msgid "Important:"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:194
+msgid "Before deactivating this plugin, you must disable all CPTs. This ensures all data is safely migrated back to wp_posts."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:201
+msgid "How It Works"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:203
+msgid "When enabled, posts of the selected type are stored in dedicated custom tables instead of wp_posts."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:204
+msgid "This can significantly improve query performance for post types with large datasets."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:205
+msgid "All existing posts are automatically migrated when you enable custom table storage."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:206
+msgid "You can safely switch back to wp_posts at any time - all data will be migrated back."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:207
+msgid "WP_Query and all standard WordPress functions continue to work normally."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:216
+msgid "Post Type"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:217
+msgid "Label"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:218
+msgid "Posts"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:219
+msgid "Custom Table Storage"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:220
+msgid "Status"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:243
+msgid "Using custom table"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:246
+msgid "Using wp_posts"
+msgstr ""
+
+#: includes/controllers/class-cpt-controller.php:103
+msgid "Could not insert post into database."
+msgstr ""
+
+#: includes/controllers/class-cpt-controller.php:147
+#: includes/controllers/class-cpt-controller.php:206
+msgid "Invalid post ID."
+msgstr ""
+
+#: includes/controllers/class-cpt-controller.php:181
+msgid "Could not update post in database."
+msgstr ""
+
+#: includes/controllers/class-cpt-controller.php:229
+msgid "Could not delete post from database."
+msgstr ""
+
+#: includes/helpers/class-validator.php:30
+msgid "Post title is required."
+msgstr ""
+
+#: includes/helpers/class-validator.php:35
+msgid "Post type is required."
+msgstr ""
+
+#: includes/helpers/class-validator.php:40
+msgid "Invalid post status."
+msgstr ""
+
+#: includes/helpers/class-validator.php:45
+msgid "Invalid post author."
+msgstr ""
+
+#: includes/migrations/class-meta-migrator.php:100
+msgid "Failed to migrate post meta."
+msgstr ""
+
+#. translators: %1$d: Number of migrated entries, %2$d: Total number of entries.
+#: includes/migrations/class-meta-migrator.php:111
+msgid "Migrated %1$d of %2$d meta entries..."
+msgstr ""
+
+#: includes/migrations/class-meta-migrator.php:192
+msgid "Failed to migrate post meta back to wp_postmeta."
+msgstr ""
+
+#. translators: %1$d: Number of migrated entries, %2$d: Total number of entries.
+#: includes/migrations/class-meta-migrator.php:203
+msgid "Migrated %1$d of %2$d meta entries back to wp_postmeta..."
+msgstr ""
+
+#: includes/migrations/class-migration-manager.php:53
+msgid "Failed to create custom tables."
+msgstr ""
+
+#: includes/migrations/class-migration-manager.php:100
+msgid "Custom tables do not exist."
+msgstr ""
+
+#: includes/migrations/class-migration-manager.php:175
+msgid "Migration started..."
+msgstr ""
+
+#: includes/migrations/class-posts-migrator.php:128
+msgid "Failed to migrate posts."
+msgstr ""
+
+#. translators: %1$d: Number of migrated posts, %2$d: Total number of posts.
+#: includes/migrations/class-posts-migrator.php:139
+msgid "Migrated %1$d of %2$d posts..."
+msgstr ""
+
+#: includes/migrations/class-posts-migrator.php:250
+msgid "Failed to migrate posts back to wp_posts."
+msgstr ""
+
+#. translators: %1$d: Number of migrated posts, %2$d: Total number of posts.
+#: includes/migrations/class-posts-migrator.php:261
+msgid "Migrated %1$d of %2$d posts back to wp_posts..."
+msgstr ""

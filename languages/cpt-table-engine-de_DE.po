@@ -1,0 +1,315 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-11-22T09:00:19+01:00\n"
+"PO-Revision-Date: 2025-11-22T09:00:19+01:00\n"
+"Language: \n"
+
+#. Plugin Name of the plugin
+msgid "CPT Table Engine"
+msgstr "CPT Table Engine"
+
+#. Plugin URI of the plugin
+msgid "https://github.com/caspahouzer/cpt-table-engine"
+msgstr "https://github.com/caspahouzer/cpt-table-engine"
+
+#. Author of the plugin
+msgid "Sebastian Klaus"
+msgstr "Sebastian Klaus"
+
+#. Author URI of the plugin
+msgid "https://slk-communications.de"
+msgstr "https://slk-communications.de"
+
+#. Description of the plugin
+msgid "Optimizes database performance by storing Custom Post Types in dedicated custom tables instead of wp_posts and wp_postmeta."
+msgstr "Optimiert die Datenbankleistung, indem benutzerdefinierte Beitragstypen in dedizierten benutzerdefinierten Tabellen anstelle von wp_posts und wp_postmeta gespeichert werden."
+
+#: includes/admin/class-ajax-handler.php:56
+#: includes/admin/class-ajax-handler.php:107
+msgid "You do not have permission to perform this action."
+msgstr "Du hast keine Berechtigung, diese Aktion auszuführen."
+
+#: includes/admin/class-ajax-handler.php:67
+#: includes/admin/class-ajax-handler.php:117
+#: includes/migrations/class-migration-manager.php:47
+msgid "Invalid post type."
+msgstr "Ungültiger Beitragstyp."
+
+#: includes/admin/class-ajax-handler.php:89
+msgid "Custom table enabled successfully."
+msgstr "Benutzerdefinierte Tabelle erfolgreich aktiviert."
+
+#: includes/admin/class-ajax-handler.php:90
+msgid "Custom table disabled successfully."
+msgstr "Benutzerdefinierte Tabelle erfolgreich deaktiviert."
+
+#: includes/admin/class-settings-page.php:74
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: includes/admin/class-settings-page.php:120
+msgid "Are you sure you want to disable custom table storage for this post type? All data will be migrated back to wp_posts and wp_postmeta."
+msgstr "Bist du sicher, dass du die Speicherung in benutzerdefinierten Tabellen für diesen Beitragstyp deaktivieren möchtest? Alle Daten werden zurück zu wp_posts und wp_postmeta migriert."
+
+#: includes/admin/class-settings-page.php:121
+msgid "Migrating..."
+msgstr "Migriere..."
+
+#: includes/admin/class-settings-page.php:122
+msgid "Migration completed successfully!"
+msgstr "Migration erfolgreich abgeschlossen!"
+
+#: includes/admin/class-settings-page.php:123
+msgid "Migration failed. Please check the error log."
+msgstr "Migration fehlgeschlagen. Bitte überprüfe das Fehlerprotokoll."
+
+#: includes/admin/class-settings-page.php:138
+msgid "You do not have sufficient permissions to access this page."
+msgstr "Du hast keine ausreichenden Berechtigungen, um auf diese Seite zuzugreifen."
+
+#: includes/admin/class-settings-page.php:149
+msgid "Enable custom table storage for specific Custom Post Types to optimize database performance."
+msgstr "Aktiviere die Speicherung in benutzerdefinierten Tabellen für bestimmte benutzerdefinierte Beitragstypen, um die Datenbankleistung zu optimieren."
+
+#: includes/admin/class-settings-page.php:154
+msgid "No custom post types found. Custom post types will appear here once registered."
+msgstr "Keine benutzerdefinierten Beitragstypen gefunden. Benutzerdefinierte Beitragstypen werden hier angezeigt, sobald sie registriert sind."
+
+#: includes/admin/class-settings-page.php:160
+msgid "Post Type"
+msgstr "Beitragstyp"
+
+#: includes/admin/class-settings-page.php:161
+msgid "Label"
+msgstr "Bezeichnung"
+
+#: includes/admin/class-settings-page.php:162
+msgid "Custom Table Storage"
+msgstr "Custom Table Speicher"
+
+#: includes/admin/class-settings-page.php:163
+msgid "Status"
+msgstr "Status"
+
+#: includes/admin/class-settings-page.php:185
+msgid "Using custom table"
+msgstr "Verwendet benutzerdefinierte Tabelle"
+
+#: includes/admin/class-settings-page.php:188
+msgid "Using wp_posts"
+msgstr "Verwendet wp_posts"
+
+#: includes/admin/class-settings-page.php:203
+msgid "How It Works"
+msgstr "So funktioniert es"
+
+#: includes/admin/class-settings-page.php:205
+msgid "When enabled, posts of the selected type are stored in dedicated custom tables instead of wp_posts."
+msgstr "Wenn aktiviert, werden Beiträge des ausgewählten Typs in dedizierten benutzerdefinierten Tabellen anstelle von wp_posts gespeichert."
+
+#: includes/admin/class-settings-page.php:206
+msgid "This can significantly improve query performance for post types with large datasets."
+msgstr "Dies kann die Abfrageleistung für Beitragstypen mit großen Datenmengen erheblich verbessern."
+
+#: includes/admin/class-settings-page.php:207
+msgid "All existing posts are automatically migrated when you enable custom table storage."
+msgstr "Alle vorhandenen Beiträge werden automatisch migriert, wenn du die Speicherung in benutzerdefinierten Tabellen aktivierst."
+
+#: includes/admin/class-settings-page.php:208
+msgid "You can safely switch back to wp_posts at any time - all data will be migrated back."
+msgstr "Du kannst jederzeit sicher zu wp_posts zurückwechseln - alle Daten werden zurückmigriert."
+
+#: includes/admin/class-settings-page.php:209
+msgid "WP_Query and all standard WordPress functions continue to work normally."
+msgstr "WP_Query und alle Standard-WordPress-Funktionen funktionieren weiterhin normal."
+
+#: includes/controllers/class-cpt-controller.php:103
+msgid "Could not insert post into database."
+msgstr "Beitrag konnte nicht in die Datenbank eingefügt werden."
+
+#: includes/controllers/class-cpt-controller.php:147
+#: includes/controllers/class-cpt-controller.php:206
+msgid "Invalid post ID."
+msgstr "Ungültige Beitrags-ID."
+
+#: includes/controllers/class-cpt-controller.php:181
+msgid "Could not update post in database."
+msgstr "Beitrag konnte in der Datenbank nicht aktualisiert werden."
+
+#: includes/controllers/class-cpt-controller.php:229
+msgid "Could not delete post from database."
+msgstr "Beitrag konnte nicht aus der Datenbank gelöscht werden."
+
+#: includes/helpers/class-validator.php:30
+msgid "Post title is required."
+msgstr "Beitragstitel ist erforderlich."
+
+#: includes/helpers/class-validator.php:35
+msgid "Post type is required."
+msgstr "Beitragstyp ist erforderlich."
+
+#: includes/helpers/class-validator.php:40
+msgid "Invalid post status."
+msgstr "Ungültiger Beitragsstatus."
+
+#: includes/helpers/class-validator.php:45
+msgid "Invalid post author."
+msgstr "Ungültiger Beitragsautor."
+
+#: includes/migrations/class-meta-migrator.php:100
+msgid "Failed to migrate post meta."
+msgstr "Migration der Beitrags-Metadaten fehlgeschlagen."
+
+#. translators: %1$d: Number of migrated entries, %2$d: Total number of entries.
+#: includes/migrations/class-meta-migrator.php:111
+msgid "Migrated %1$d of %2$d meta entries..."
+msgstr "Migriere %1$d/%2$d Meta-Einträge..."
+
+#: includes/migrations/class-meta-migrator.php:192
+msgid "Failed to migrate post meta back to wp_postmeta."
+msgstr "Migration der Beitrags-Metadaten zurück zu wp_postmeta fehlgeschlagen."
+
+#. translators: %1$d: Number of migrated entries, %2$d: Total number of entries.
+#: includes/migrations/class-meta-migrator.php:203
+msgid "Migrated %1$d of %2$d meta entries back to wp_postmeta..."
+msgstr "Migriere %1$d/%2$d Meta-Einträge zurück..."
+
+#: includes/migrations/class-migration-manager.php:53
+msgid "Failed to create custom tables."
+msgstr "Benutzerdefinierte Tabellen konnten nicht erstellt werden."
+
+#: includes/migrations/class-migration-manager.php:100
+msgid "Custom tables do not exist."
+msgstr "Benutzerdefinierte Tabellen existieren nicht."
+
+#: includes/migrations/class-migration-manager.php:175
+msgid "Migration started..."
+msgstr "Migration gestartet..."
+
+#: includes/migrations/class-posts-migrator.php:128
+msgid "Failed to migrate posts."
+msgstr "Migration der Beiträge fehlgeschlagen."
+
+#. translators: %1$d: Number of migrated posts, %2$d: Total number of posts.
+#: includes/migrations/class-posts-migrator.php:139
+#, php-format
+msgid "Migrated %1$d of %2$d posts..."
+msgstr "Migriere %1$d/%2$d Beiträge…"
+
+#: includes/migrations/class-posts-migrator.php:250
+msgid "Failed to migrate posts back to wp_posts."
+msgstr "Migration der Beiträge zurück zu wp_posts fehlgeschlagen."
+
+#. translators: %1$d: Number of migrated posts, %2$d: Total number of posts.
+#: includes/migrations/class-posts-migrator.php:261
+#, php-format
+msgid "Migrated %1$d of %2$d posts back to wp_posts..."
+msgstr "Migriere %1$d/%2$d Beiträge zurück…"
+
+#: includes/admin/class-deactivation-guard.php:87
+msgid "CPT Table Engine cannot be deactivated!"
+msgstr "CPT Table Engine kann nicht deaktiviert werden!"
+
+#: includes/admin/class-deactivation-guard.php:91
+#, php-format
+msgid "You must migrate all Custom Post Types back to wp_posts before deactivating this plugin. Please go to the %s and disable all CPTs first."
+msgstr "Du musst alle benutzerdefinierten Beitragstypen zurück zu wp_posts migrieren, bevor du dieses Plugin deaktivieren kannst. Bitte gehe zur %s und deaktiviere zuerst alle CPTs."
+
+#: includes/admin/class-deactivation-guard.php:92
+msgid "settings page"
+msgstr "Einstellungsseite"
+
+#: includes/admin/class-settings-page.php:171
+msgid "Important:"
+msgstr "Wichtig:"
+
+#: includes/admin/class-settings-page.php:172
+msgid "Before deactivating this plugin, you must disable all CPTs. This ensures all data is safely migrated back to wp_posts."
+msgstr "Bevor du dieses Plugin deaktivierst, musst du alle CPTs deaktivieren. Dies stellt sicher, dass alle Daten sicher zurück zu wp_posts migriert werden."
+
+#: includes/admin/class-settings-page.php:125
+msgid "Reticulating splines..."
+msgstr "Kurven werden retikuliert..."
+
+#: includes/admin/class-settings-page.php:126
+msgid "Gerbil feeding time..."
+msgstr "Rennmaus-Fütterungszeit..."
+
+#: includes/admin/class-settings-page.php:127
+msgid "Recalibrating flux capacitor..."
+msgstr "Flusskompensator wird neu kalibriert..."
+
+#: includes/admin/class-settings-page.php:128
+msgid "Bending the space-time continuum..."
+msgstr "Raum-Zeit-Kontinuum wird gebogen..."
+
+#: includes/admin/class-settings-page.php:129
+msgid "Definitely not downloading a car..."
+msgstr "Definitiv kein Auto am Herunterladen..."
+
+#: includes/admin/class-settings-page.php:130
+msgid "Dividing by zero..."
+msgstr "Durch Null teilen..."
+
+#: includes/admin/class-settings-page.php:131
+msgid "Twiddling thumbs..."
+msgstr "Daumen drehen..."
+
+#: includes/admin/class-settings-page.php:132
+msgid "Warming up the hamsters..."
+msgstr "Hamster werden aufgewärmt..."
+
+#: includes/admin/class-settings-page.php:133
+msgid "It's not you, it's me..."
+msgstr "Es liegt nicht an dir, sondern an mir..."
+
+#: includes/admin/class-settings-page.php:134
+msgid "Constructing additional pylons..."
+msgstr "Zusätzliche Pylonen werden konstruiert..."
+
+#: includes/admin/class-settings-page.php:135
+msgid "Compiling the internet..."
+msgstr "Internet wird kompiliert..."
+
+#: includes/admin/class-settings-page.php:136
+msgid "Debugging the coffee machine..."
+msgstr "Kaffeemaschine wird debuggt..."
+
+#: includes/admin/class-settings-page.php:137
+msgid "Converting caffeine to code..."
+msgstr "Koffein wird in Code umgewandelt..."
+
+#: includes/admin/class-settings-page.php:138
+msgid "Optimizing SQL queries nobody will read..."
+msgstr "SQL-Abfragen optimieren, die niemand lesen wird..."
+
+#: includes/admin/class-settings-page.php:139
+msgid "Teaching robots to love..."
+msgstr "Robotern das Lieben beibringen..."
+
+#: includes/admin/class-settings-page.php:140
+msgid "Untangling Ethernet cables..."
+msgstr "Ethernet-Kabel entwirren..."
+
+#: includes/admin/class-settings-page.php:141
+msgid "Reversing the polarity..."
+msgstr "Polarität wird umgekehrt..."
+
+#: includes/admin/class-settings-page.php:142
+msgid "Summoning the database gremlins..."
+msgstr "Datenbank-Gremlins werden beschworen..."
+
+#: includes/admin/class-settings-page.php:143
+msgid "Applying percussive maintenance..."
+msgstr "Perkussive Wartung wird angewendet..."
+
+#: includes/admin/class-settings-page.php:144
+msgid "Installing Adobe Reader..."
+msgstr "Adobe Reader wird installiert..."
