@@ -162,6 +162,9 @@ final class Settings_Page
             wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'cpt-table-engine'));
         }
 
+        // Get current tab.
+        $current_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'cpt';
+
         // Get settings.
         $settings = Settings_Controller::get_settings_for_display();
 
@@ -169,95 +172,121 @@ final class Settings_Page
         <div class="wrap">
             <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
 
-            <?php if (empty($settings)) : ?>
-                <div class="notice notice-info">
-                    <p><?php esc_html_e('No custom post types found. Custom post types will appear here once registered.', 'cpt-table-engine'); ?></p>
-                </div>
-            <?php endif; ?>
+            <!-- Tab Navigation -->
+            <h2 class="nav-tab-wrapper">
+                <a href="?page=<?php echo esc_attr(self::PAGE_SLUG); ?>&tab=cpt" class="nav-tab <?php echo $current_tab === 'cpt' ? 'nav-tab-active' : ''; ?>">
+                    <?php esc_html_e('Custom Post Types', 'cpt-table-engine'); ?>
+                </a>
+                <a href="?page=<?php echo esc_attr(self::PAGE_SLUG); ?>&tab=license" class="nav-tab <?php echo $current_tab === 'license' ? 'nav-tab-active' : ''; ?>">
+                    <?php esc_html_e('License', 'cpt-table-engine'); ?>
+                </a>
+            </h2>
 
-            <p class="description">
-                <?php esc_html_e('Enable custom table storage for specific Custom Post Types to optimize database performance.', 'cpt-table-engine'); ?>
-            </p>
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <?php if ($current_tab === 'cpt') : ?>
+                    <!-- Custom Post Types Tab -->
+                    <p class="description">
+                        <?php esc_html_e('Enable custom table storage for specific Custom Post Types to optimize database performance.', 'cpt-table-engine'); ?>
+                    </p>
 
-            <div class="cpt-table-engine-info" style="margin-top: 30px;">
-                <h2><?php esc_html_e('How It Works', 'cpt-table-engine'); ?></h2>
-                <ul>
-                    <li><?php esc_html_e('When enabled, posts of the selected type are stored in dedicated custom tables instead of wp_posts.', 'cpt-table-engine'); ?></li>
-                    <li><?php esc_html_e('This can significantly improve query performance for post types with large datasets.', 'cpt-table-engine'); ?></li>
-                    <li><?php esc_html_e('All existing posts are automatically migrated when you enable custom table storage.', 'cpt-table-engine'); ?></li>
-                    <li><?php esc_html_e('You can safely switch back to wp_posts at any time - all data will be migrated back.', 'cpt-table-engine'); ?></li>
-                    <li><?php esc_html_e('WP_Query and all standard WordPress functions continue to work normally.', 'cpt-table-engine'); ?></li>
-                </ul>
-            </div>
-            <br />
+                    <?php if (empty($settings)) : ?>
+                        <div class="notice notice-info">
+                            <p><?php esc_html_e('No custom post types found. Custom post types will appear here once registered.', 'cpt-table-engine'); ?></p>
+                        </div>
+                    <?php endif; ?>
 
-            <?php if (!empty($settings)) : ?>
-                <?php
-                $has_enabled = false;
-                foreach ($settings as $setting) {
-                    if ($setting['enabled']) {
-                        $has_enabled = true;
-                        break;
-                    }
-                }
-                if ($has_enabled) :
-                ?>
-                    <div class="inline notice notice-warning">
-                        <p>
-                            <strong><?php esc_html_e('Important:', 'cpt-table-engine'); ?></strong>
-                            <?php esc_html_e('Before deactivating this plugin, you must disable all CPTs. This ensures all data is safely migrated back to wp_posts.', 'cpt-table-engine'); ?>
-                        </p>
+                    <div class="cpt-table-engine-info" style="margin-top: 30px;">
+                        <h2><?php esc_html_e('How It Works', 'cpt-table-engine'); ?></h2>
+                        <ul>
+                            <li><?php esc_html_e('When enabled, posts of the selected type are stored in dedicated custom tables instead of wp_posts.', 'cpt-table-engine'); ?></li>
+                            <li><?php esc_html_e('This can significantly improve query performance for post types with large datasets.', 'cpt-table-engine'); ?></li>
+                            <li><?php esc_html_e('All existing posts are automatically migrated when you enable custom table storage.', 'cpt-table-engine'); ?></li>
+                            <li><?php esc_html_e('You can safely switch back to wp_posts at any time - all data will be migrated back.', 'cpt-table-engine'); ?></li>
+                            <li><?php esc_html_e('WP_Query and all standard WordPress functions continue to work normally.', 'cpt-table-engine'); ?></li>
+                        </ul>
                     </div>
-                <?php endif; ?>
-            <?php endif; ?>
+                    <br />
 
-            <?php if (!empty($settings)) : ?>
-                <table class="fixed wp-list-table widefat striped">
-                    <thead>
-                        <tr>
-                            <th scope="col"><?php esc_html_e('Post Type', 'cpt-table-engine'); ?></th>
-                            <th scope="col"><?php esc_html_e('Label', 'cpt-table-engine'); ?></th>
-                            <th scope="col"><?php esc_html_e('Posts', 'cpt-table-engine'); ?></th>
-                            <th scope="col"><?php esc_html_e('Custom Table Storage', 'cpt-table-engine'); ?></th>
-                            <th scope="col"><?php esc_html_e('Status', 'cpt-table-engine'); ?></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($settings as $setting) : ?>
-                            <tr data-post-type="<?php echo esc_attr($setting['slug']); ?>">
-                                <td><code><?php echo esc_html($setting['slug']); ?></code></td>
-                                <td><?php echo esc_html($setting['label']); ?></td>
-                                <td><?php echo number_format_i18n($setting['count']); ?></td>
-                                <td>
-                                    <label class="cpt-toggle-switch">
-                                        <input
-                                            type="checkbox"
-                                            class="cpt-toggle-checkbox"
-                                            data-post-type="<?php echo esc_attr($setting['slug']); ?>"
-                                            <?php checked($setting['enabled']); ?>>
-                                        <span class="cpt-toggle-slider"></span>
-                                    </label>
-                                </td>
-                                <td>
-                                    <span class="cpt-status">
-                                        <?php if ($setting['enabled']) : ?>
-                                            <span class="dashicons dashicons-yes-alt" style="color: #46b450;"></span>
-                                            <?php esc_html_e('Using custom table', 'cpt-table-engine'); ?>
-                                        <?php else : ?>
-                                            <span class="dashicons dashicons-minus" style="color: #999;"></span>
-                                            <?php esc_html_e('Using wp_posts', 'cpt-table-engine'); ?>
-                                        <?php endif; ?>
-                                    </span>
-                                    <div class="cpt-progress" style="display: none;">
-                                        <span class="spinner is-active" style="float: none; margin: 0 5px 0 0;"></span>
-                                        <span class="cpt-progress-text"></span>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            <?php endif; ?>
+                    <?php if (!empty($settings)) : ?>
+                        <?php
+                        $has_enabled = false;
+                        foreach ($settings as $setting) {
+                            if ($setting['enabled']) {
+                                $has_enabled = true;
+                                break;
+                            }
+                        }
+                        if ($has_enabled) :
+                        ?>
+                            <div class="inline notice notice-warning">
+                                <p>
+                                    <strong><?php esc_html_e('Important:', 'cpt-table-engine'); ?></strong>
+                                    <?php esc_html_e('Before deactivating this plugin, you must disable all CPTs. This ensures all data is safely migrated back to wp_posts.', 'cpt-table-engine'); ?>
+                                </p>
+                            </div>
+                        <?php endif; ?>
+                    <?php endif; ?>
+
+                    <?php if (!empty($settings)) : ?>
+                        <table class="fixed wp-list-table widefat striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col"><?php esc_html_e('Post Type', 'cpt-table-engine'); ?></th>
+                                    <th scope="col"><?php esc_html_e('Label', 'cpt-table-engine'); ?></th>
+                                    <th scope="col"><?php esc_html_e('Posts', 'cpt-table-engine'); ?></th>
+                                    <th scope="col"><?php esc_html_e('Custom Table Storage', 'cpt-table-engine'); ?></th>
+                                    <th scope="col"><?php esc_html_e('Status', 'cpt-table-engine'); ?></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($settings as $setting) : ?>
+                                    <tr data-post-type="<?php echo esc_attr($setting['slug']); ?>">
+                                        <td><code><?php echo esc_html($setting['slug']); ?></code></td>
+                                        <td><?php echo esc_html($setting['label']); ?></td>
+                                        <td><?php echo number_format_i18n($setting['count']); ?></td>
+                                        <td>
+                                            <label class="cpt-toggle-switch">
+                                                <input
+                                                    type="checkbox"
+                                                    class="cpt-toggle-checkbox"
+                                                    data-post-type="<?php echo esc_attr($setting['slug']); ?>"
+                                                    <?php checked($setting['enabled']); ?>>
+                                                <span class="cpt-toggle-slider"></span>
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <span class="cpt-status">
+                                                <?php if ($setting['enabled']) : ?>
+                                                    <span class="dashicons dashicons-yes-alt" style="color: #46b450;"></span>
+                                                    <?php esc_html_e('Using custom table', 'cpt-table-engine'); ?>
+                                                <?php else : ?>
+                                                    <span class="dashicons dashicons-minus" style="color: #999;"></span>
+                                                    <?php esc_html_e('Using wp_posts', 'cpt-table-engine'); ?>
+                                                <?php endif; ?>
+                                            </span>
+                                            <div class="cpt-progress" style="display: none;">
+                                                <span class="spinner is-active" style="float: none; margin: 0 5px 0 0;"></span>
+                                                <span class="cpt-progress-text"></span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php endif; ?>
+
+                <?php elseif ($current_tab === 'license') : ?>
+                    <!-- License Tab -->
+                    <div id="cpt-license-container" style="margin-top: 20px;">
+                        <?php
+                        // Render the license form
+                        \SLK\License_Manager\License_Manager::instance()->render_license_form();
+                        ?>
+                    </div>
+
+                <?php endif; ?>
+            </div>
         </div>
 <?php
     }

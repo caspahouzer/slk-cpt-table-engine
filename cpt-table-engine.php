@@ -26,6 +26,9 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
+define('SLK_PLUGIN_NAME', 'CPT Table Engine');
+define('SLK_DEBUG', true); // Set to false in production
+
 // Define plugin constants.
 define('CPT_TABLE_ENGINE_VERSION', '1.0.0');
 define('CPT_TABLE_ENGINE_FILE', __FILE__);
@@ -36,34 +39,56 @@ define('CPT_TABLE_ENGINE_TEXT_DOMAIN', 'cpt-table-engine');
 
 /**
  * PSR-4 Autoloader for the plugin.
+ * 
+ * Supports multiple namespace prefixes:
+ * - CPT_Table_Engine -> /includes/
+ * - SLK -> /modules/
  *
  * @param string $class The fully-qualified class name.
  * @return void
  */
 spl_autoload_register(function (string $class): void {
-    $prefix = 'CPT_Table_Engine\\';
-    $base_dir = CPT_TABLE_ENGINE_PATH . 'includes/';
+    // Define namespace to directory mappings.
+    $namespace_mappings = [
+        'CPT_Table_Engine\\' => CPT_TABLE_ENGINE_PATH . 'includes/',
+        'SLK\\'              => CPT_TABLE_ENGINE_PATH . 'modules/',
+    ];
 
-    $len = strlen($prefix);
-    if (strncmp($prefix, $class, $len) !== 0) {
-        return;
-    }
+    // Try each namespace prefix.
+    foreach ($namespace_mappings as $prefix => $base_dir) {
+        $len = strlen($prefix);
 
-    $relative_class = substr($class, $len);
+        // Check if class uses this namespace prefix.
+        if (strncmp($prefix, $class, $len) !== 0) {
+            continue;
+        }
 
-    // Split namespace and class name.
-    $parts = explode('\\', $relative_class);
-    $class_name = array_pop($parts);
+        // Get the relative class name.
+        $relative_class = substr($class, $len);
 
-    // Convert class name to file name (Settings_Page -> class-settings-page).
-    $file_name = 'class-' . strtolower(str_replace('_', '-', $class_name)) . '.php';
+        // Split namespace and class name.
+        $parts = explode('\\', $relative_class);
+        $class_name = array_pop($parts);
 
-    // Build the full path.
-    $namespace_path = !empty($parts) ? implode('/', array_map('strtolower', $parts)) . '/' : '';
-    $file = $base_dir . $namespace_path . $file_name;
+        // Convert class name to file name (License_Manager -> class-license-manager).
+        $file_name = 'class-' . strtolower(str_replace('_', '-', $class_name)) . '.php';
 
-    if (file_exists($file)) {
-        require $file;
+        // Build the namespace path (License_Manager -> license-manager/).
+        $namespace_path = '';
+        if (!empty($parts)) {
+            $converted_parts = array_map(function ($part) {
+                return strtolower(str_replace('_', '-', $part));
+            }, $parts);
+            $namespace_path = implode('/', $converted_parts) . '/';
+        }
+
+        $file = $base_dir . $namespace_path . $file_name;
+
+        // If file exists, require it and return.
+        if (file_exists($file)) {
+            require $file;
+            return;
+        }
     }
 });
 
