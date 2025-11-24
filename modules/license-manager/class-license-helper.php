@@ -195,28 +195,43 @@ final class License_Helper
     /**
      * Deactivate a license.
      *
+     * @param string $license_key      The license key.
      * @param string $activation_token The activation token.
      * @return array Response array.
      */
-    public static function deactivate_license(string $activation_token): array
+    public static function deactivate_license(string $license_key, string $activation_token): array
     {
-        self::log('Deactivate license called', ['token_length' => strlen($activation_token)]);
+        self::log('Deactivate license called', [
+            'license_key_length' => strlen($license_key),
+            'token_length'       => strlen($activation_token)
+        ]);
 
         // Sanitize input.
+        $license_key = sanitize_text_field($license_key);
         $activation_token = sanitize_text_field($activation_token);
 
-        if (empty($activation_token)) {
-            self::log('Deactivation failed: empty activation token');
+        if (empty($license_key) || empty($activation_token)) {
+            self::log('Deactivation failed: empty license key or token');
             return [
                 'success' => false,
                 'data'    => null,
-                'message' => __('Activation token is required.', 'cpt-table-engine'),
+                'message' => __('License key and activation token are required.', 'cpt-table-engine'),
             ];
         }
 
         // Make API request.
-        $endpoint = 'wp-json/lmfwc/v2/licenses/deactivate/' . urlencode($activation_token);
-        $result = self::make_request($endpoint);
+        // Endpoint: /licenses/deactivate/{license_key}?token={token}
+        $endpoint = 'wp-json/lmfwc/v2/licenses/deactivate/' . urlencode($license_key);
+        $params = ['token' => $activation_token];
+
+        // We need to append the query string manually or use add_query_arg in make_request if supported.
+        // make_request supports params as query args for GET requests, but this might be a GET request?
+        // The documentation implies a GET request for deactivation usually, or POST.
+        // Let's assume make_request handles params correctly.
+        // Based on make_request implementation:
+        // if (!empty($params)) { $url = add_query_arg($params, $url); }
+
+        $result = self::make_request($endpoint, $params);
 
         self::log('Deactivate license result', $result);
         return $result;

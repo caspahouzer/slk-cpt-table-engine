@@ -127,6 +127,11 @@ final class Bootstrap
         $this->settings_page = new Settings_Page();
         $this->ajax_handler  = new Ajax_Handler();
         $this->deactivation_guard = new Deactivation_Guard();
+
+        // Initialize License Manager.
+        if (class_exists('\SLK\License_Manager\License_Manager')) {
+            \SLK\License_Manager\License_Manager::instance();
+        }
     }
 
     /**

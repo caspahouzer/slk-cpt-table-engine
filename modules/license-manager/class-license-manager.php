@@ -37,6 +37,7 @@ final class License_Manager
     private const OPTION_LICENSE_KEY = 'cpt_table_engine_license_key';
     private const OPTION_ACTIVATION_TOKEN = 'cpt_table_engine_activation_token';
     private const OPTION_LICENSE_STATUS = 'cpt_table_engine_license_status';
+    private const OPTION_LICENSE_COUNTS = 'cpt_table_engine_license_counts';
     private const TRANSIENT_LICENSE_VALIDATION = 'cpt_table_engine_license_validation';
     private const VALIDATION_INTERVAL = 12 * HOUR_IN_SECONDS; // 12 hours
 
@@ -47,6 +48,12 @@ final class License_Manager
     {
         // Hook into admin_init to check license validation.
         add_action('admin_init', [$this, 'maybe_validate_license']);
+
+        // Register AJAX actions.
+        add_action('wp_ajax_slk_manage_license', [$this, 'handle_ajax_request']);
+
+        // Enqueue scripts.
+        add_action('admin_enqueue_scripts', [$this, 'enqueue_scripts']);
     }
 
     /**
@@ -65,7 +72,7 @@ final class License_Manager
         $log_message = '[SLK License Manager] ' . $message;
 
         if ($data !== null) {
-            $log_message .= ' | Data: ' . print_r($data, true);
+            $log_message .= ' | Data: ' . json_encode($data);
         }
 
         error_log($log_message);
@@ -173,15 +180,23 @@ final class License_Manager
             self::log('No token in activation response, fetching license details');
             $details = License_Helper::get_license_details($license_key);
 
-            if ($details['success'] && isset($details['data']['activationData'])) {
-                $activations = $details['data']['activationData'];
+            if ($details['success']) {
+                // Check for nested data structure.
+                $activations = null;
+                if (isset($details['data']['data']['activationData'])) {
+                    $activations = $details['data']['data']['activationData'];
+                } elseif (isset($details['data']['activationData'])) {
+                    $activations = $details['data']['activationData'];
+                }
 
-                // Get the most recent activation (last item in array or first non-deactivated).
-                foreach ($activations as $activation) {
-                    if (isset($activation['token']) && empty($activation['deactivated_at'])) {
-                        $token = $activation['token'];
-                        self::log('Found active token in license details', ['token_length' => strlen($token)]);
-                        break;
+                if ($activations) {
+                    // Get the most recent activation (last item in array or first non-deactivated).
+                    foreach ($activations as $activation) {
+                        if (isset($activation['token']) && empty($activation['deactivated_at'])) {
+                            $token = $activation['token'];
+                            self::log('Found active token in license details', ['token_length' => strlen($token)]);
+                            break;
+                        }
                     }
                 }
             }
@@ -194,34 +209,106 @@ final class License_Manager
             self::log('Warning: No activation token found in API response or license details', $response['data']);
         }
 
-        // Set transient for automatic validation (12 hours).
-        set_transient(self::TRANSIENT_LICENSE_VALIDATION, time(), self::VALIDATION_INTERVAL);
-        self::log('Validation transient set for 12 hours');
+        // Update license counts.
+        // If we already fetched details for the token, use that.
+        if (isset($details) && $details['success'] && isset($details['data'])) {
+            $this->update_license_counts($details['data']);
+        } else {
+            // Otherwise, fetch details now to get the counts.
+            $details = License_Helper::get_license_details($license_key);
+            if ($details['success'] && isset($details['data'])) {
+                $this->update_license_counts($details['data']);
+            }
+        }
 
-        return $response;
+        // Set up automatic validation.
+        $this->schedule_validation();
+
+        return [
+            'success' => true,
+            'message' => __('License activated successfully.', 'cpt-table-engine'),
+        ];
+    }
+
+    /**
+     * Get license counts.
+     *
+     * @return array|null Array with 'activated' and 'limit' keys, or null if not set.
+     */
+    public function get_license_counts(): ?array
+    {
+        return get_option(self::OPTION_LICENSE_COUNTS, null);
+    }
+
+    /**
+     * Update license counts from API data.
+     *
+     * @param array $data API response data.
+     * @return void
+     */
+    private function update_license_counts(array $data): void
+    {
+        // Handle nested data structure (data.data).
+        if (isset($data['data']) && is_array($data['data'])) {
+            $data = $data['data'];
+        }
+
+        if (isset($data['timesActivated']) && isset($data['timesActivatedMax'])) {
+            $counts = [
+                'activated' => (int) $data['timesActivated'],
+                'limit'     => (int) $data['timesActivatedMax'],
+            ];
+            update_option(self::OPTION_LICENSE_COUNTS, $counts);
+            self::log('License counts updated', $counts);
+        }
     }
 
     /**
      * Deactivate a license.
      *
+     * @param string $license_key      The license key.
      * @param string $activation_token The activation token.
      * @return array Response array with success status and message.
      */
-    public function deactivate_license(string $activation_token): array
+    public function deactivate_license(string $license_key, string $activation_token): array
     {
-        self::log('Deactivating license', ['token_length' => strlen($activation_token)]);
+        self::log('Deactivating license', [
+            'license_key_length' => strlen($license_key),
+            'token_length'       => strlen($activation_token)
+        ]);
 
         // Call API.
-        $response = License_Helper::deactivate_license($activation_token);
+        $response = License_Helper::deactivate_license($license_key, $activation_token);
 
         self::log('Deactivation API response', $response);
 
         if ($response['success']) {
-            // Update status but keep license key.
-            update_option(self::OPTION_LICENSE_STATUS, 'inactive');
-            delete_option(self::OPTION_ACTIVATION_TOKEN);
+            // Check for API errors in nested data (LMFWC format).
+            // API might return success:true but contain errors in data.
+            if (isset($response['data']['data']['errors']) && !empty($response['data']['data']['errors'])) {
+                $errors = $response['data']['data']['errors'];
+                $error_msg = __('Deactivation failed.', 'cpt-table-engine');
 
-            // Delete validation transient.
+                foreach ($errors as $error_key => $error_messages) {
+                    if (is_array($error_messages) && !empty($error_messages)) {
+                        $error_msg = is_array($error_messages[0]) ? json_encode($error_messages[0]) : $error_messages[0];
+                        break;
+                    }
+                }
+
+                self::log('Deactivation failed: Errors found in response', ['errors' => $errors, 'message' => $error_msg]);
+                return [
+                    'success' => false,
+                    'data'    => $response['data'],
+                    'message' => $error_msg,
+                ];
+            }
+
+            // Clear license data.
+            delete_option(self::OPTION_LICENSE_KEY);
+            delete_option(self::OPTION_ACTIVATION_TOKEN);
+            delete_option(self::OPTION_LICENSE_STATUS);
+            delete_option(self::OPTION_LICENSE_COUNTS);
             delete_transient(self::TRANSIENT_LICENSE_VALIDATION);
 
             self::log('License deactivated, token deleted, transient cleared');
@@ -250,18 +337,35 @@ final class License_Manager
 
         if ($response['success']) {
             // Update status based on validation result.
-            $is_valid = isset($response['data']['valid']) && $response['data']['valid'];
+            // API returns 'success' => true if valid.
+            $is_valid = isset($response['data']['success']) && $response['data']['success'];
             update_option(self::OPTION_LICENSE_STATUS, $is_valid ? 'active' : 'invalid');
 
             self::log('License validation result', ['is_valid' => $is_valid, 'status_set' => $is_valid ? 'active' : 'invalid']);
 
+            self::log('License validation result', ['is_valid' => $is_valid, 'status_set' => $is_valid ? 'active' : 'invalid']);
+
+            // Update license counts.
+            // If validation response doesn't have counts, fetch details.
+            // Check both direct and nested locations.
+            $has_counts = isset($response['data']['timesActivated']) || isset($response['data']['data']['timesActivated']);
+
+            if (!$has_counts) {
+                $details = License_Helper::get_license_details($license_key);
+                if ($details['success'] && isset($details['data'])) {
+                    $this->update_license_counts($details['data']);
+                }
+            } else {
+                $this->update_license_counts($response['data']);
+            }
+
             // Set transient for automatic validation (12 hours).
-            set_transient(self::TRANSIENT_LICENSE_VALIDATION, time(), self::VALIDATION_INTERVAL);
+            $this->schedule_validation();
         } else {
             // If silent mode (background check) and API failed, keep current status.
             if ($silent) {
                 // Reset transient to try again in 12 hours.
-                set_transient(self::TRANSIENT_LICENSE_VALIDATION, time(), self::VALIDATION_INTERVAL);
+                $this->schedule_validation();
                 self::log('Silent validation failed, keeping current status and resetting transient');
             } else {
                 self::log('Validation failed (non-silent mode)', $response);
@@ -303,6 +407,17 @@ final class License_Manager
     }
 
     /**
+     * Schedules the next license validation check.
+     *
+     * @return void
+     */
+    private function schedule_validation(): void
+    {
+        set_transient(self::TRANSIENT_LICENSE_VALIDATION, time(), self::VALIDATION_INTERVAL);
+        self::log('Validation transient set for ' . self::VALIDATION_INTERVAL . ' seconds');
+    }
+
+    /**
      * Automatically validate license if transient has expired.
      * 
      * This method is hooked to admin_init and runs every 12 hours.
@@ -332,6 +447,141 @@ final class License_Manager
             } else {
                 self::log('Skipping auto-validation', ['reason' => empty($license_key) ? 'no_key' : 'not_active']);
             }
+        }
+    }
+
+    /**
+     * Enqueue admin scripts.
+     *
+     * @return void
+     */
+    public function enqueue_scripts(): void
+    {
+        // Only load on our settings page.
+        $screen = get_current_screen();
+        if (!$screen || strpos($screen->id, 'cpt-table-engine') === false) {
+            return;
+        }
+
+        wp_enqueue_script(
+            'slk-license-manager',
+            CPT_TABLE_ENGINE_URL . 'modules/license-manager/assets/js/license-manager.js',
+            ['jquery'],
+            CPT_TABLE_ENGINE_VERSION,
+            true
+        );
+
+        wp_localize_script('slk-license-manager', 'slk_license_vars', [
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce'    => wp_create_nonce('slk_license_nonce'),
+            'status'   => $this->get_license_status(),
+            'strings'  => [
+                'enter_key'         => __('Please enter a license key.', 'cpt-table-engine'),
+                'confirm_deactivate' => __('Are you sure you want to deactivate this license?', 'cpt-table-engine'),
+                'network_error'     => __('Network error. Please try again.', 'cpt-table-engine'),
+                'active_desc'       => __('Your license is active. Click "Deactivate" to change or remove the license.', 'cpt-table-engine'),
+                'inactive_desc'     => __('Enter the license key you received after purchase.', 'cpt-table-engine'),
+            ],
+        ]);
+    }
+
+    /**
+     * Handle AJAX request for license management.
+     *
+     * @return void
+     */
+    public function handle_ajax_request(): void
+    {
+        // Verify nonce.
+        if (!check_ajax_referer('slk_license_nonce', 'security', false)) {
+            wp_send_json_error(['message' => __('Security check failed.', 'cpt-table-engine')]);
+        }
+
+        // Check capabilities.
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => __('Permission denied.', 'cpt-table-engine')]);
+        }
+
+        $method = isset($_POST['method']) ? sanitize_text_field($_POST['method']) : '';
+
+        if ($method === 'activate') {
+            $license_key = isset($_POST['license_key']) ? sanitize_text_field($_POST['license_key']) : '';
+            if (empty($license_key)) {
+                wp_send_json_error(['message' => __('License key is required.', 'cpt-table-engine')]);
+            }
+
+            $response = $this->activate_license($license_key);
+
+            if ($response['success']) {
+                // Return masked key for display
+                $key_length = strlen($license_key);
+                $masked_key = ($key_length > 8)
+                    ? substr($license_key, 0, 4) . str_repeat('*', $key_length - 8) . substr($license_key, -4)
+                    : str_repeat('*', $key_length);
+
+                // Get counts
+                $counts = $this->get_license_counts();
+                $usage = $counts ? sprintf('%d / %d', $counts['activated'], $counts['limit']) : '';
+
+                wp_send_json_success([
+                    'message'    => __('License activated successfully!', 'cpt-table-engine'),
+                    'masked_key' => $masked_key,
+                    'usage'      => $usage
+                ]);
+            } else {
+                wp_send_json_error(['message' => $response['message']]);
+            }
+        } elseif ($method === 'deactivate') {
+            $activation_token = $this->get_activation_token();
+
+            // Fallback to license key if token missing (same logic as before)
+            if (empty($activation_token)) {
+                $activation_token = $this->get_license_key();
+            }
+
+            if (!$activation_token) {
+                wp_send_json_error(['message' => __('No activation token found.', 'cpt-table-engine')]);
+            }
+
+            $license_key = $this->get_license_key();
+            if (!$license_key) {
+                wp_send_json_error(['message' => __('No license key found.', 'cpt-table-engine')]);
+            }
+
+            $response = $this->deactivate_license($license_key, $activation_token);
+
+            if ($response['success']) {
+                wp_send_json_success([
+                    'message'     => __('License deactivated successfully!', 'cpt-table-engine'),
+                    'license_key' => $this->get_license_key() // Return full key so user can edit it
+                ]);
+            } else {
+                wp_send_json_error(['message' => $response['message']]);
+            }
+        } elseif ($method === 'check_status') {
+            $license_key = $this->get_license_key();
+
+            if (empty($license_key)) {
+                wp_send_json_error(['message' => __('No license key found.', 'cpt-table-engine')]);
+            }
+
+            // Force validation (silent=true so we don't deactivate on network error, but we DO update on API result).
+            $response = $this->validate_license($license_key, true);
+
+            // Get fresh status and counts.
+            $status = $this->get_license_status();
+            $counts = $this->get_license_counts();
+            $usage = $counts ? sprintf('%d / %d', $counts['activated'], $counts['limit']) : '';
+
+            wp_send_json_success([
+                'status' => $status,
+                'usage'  => $usage,
+                'message' => ($status === 'active')
+                    ? __('License is active.', 'cpt-table-engine')
+                    : __('License is inactive.', 'cpt-table-engine')
+            ]);
+        } else {
+            wp_send_json_error(['message' => __('Invalid method.', 'cpt-table-engine')]);
         }
     }
 

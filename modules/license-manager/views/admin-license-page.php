@@ -19,6 +19,9 @@ if (! defined('ABSPATH')) {
 ?>
 
 <div class="cpt-license-manager">
+    <!-- Message Container for AJAX -->
+    <div id="slk-license-message" style="display: none; margin-bottom: 15px;"></div>
+
     <?php if (!empty($this->notice)) : ?>
         <div class="notice notice-<?php echo esc_attr($this->notice_type); ?> is-dismissible">
             <p><?php echo esc_html($this->notice); ?></p>
@@ -31,7 +34,7 @@ if (! defined('ABSPATH')) {
         </p>
     </div>
 
-    <form method="post" action="" class="cpt-license-form">
+    <form method="post" action="" class="cpt-license-form" onsubmit="return false;">
         <?php wp_nonce_field(\SLK\License_Manager\License_Admin_Page::NONCE_ACTION, \SLK\License_Manager\License_Admin_Page::NONCE_FIELD); ?>
 
         <table class="form-table" role="presentation">
@@ -68,27 +71,27 @@ if (! defined('ABSPATH')) {
                                 style="flex: 1; <?php echo $is_active ? 'background-color: #f0f0f1;' : ''; ?>"
                                 <?php echo $is_active ? 'readonly disabled' : ''; ?> />
 
-                            <?php if ($is_active) : ?>
-                                <!-- Deactivate Button (shown when license is active) -->
-                                <button
-                                    type="submit"
-                                    name="license_action"
-                                    value="deactivate"
-                                    class="button button-primary">
-                                    <span class="dashicons dashicons-lock" style="vertical-align: middle; margin-top: 3px;"></span>
-                                    <?php esc_html_e('Deactivate', 'cpt-table-engine'); ?>
-                                </button>
-                            <?php else : ?>
-                                <!-- Activate Button (shown when license is not active) -->
-                                <button
-                                    type="submit"
-                                    name="license_action"
-                                    value="activate"
-                                    class="button button-primary">
-                                    <span class="dashicons dashicons-unlock" style="vertical-align: middle; margin-top: 3px;"></span>
-                                    <?php esc_html_e('Activate', 'cpt-table-engine'); ?>
-                                </button>
-                            <?php endif; ?>
+                            <!-- Deactivate Button -->
+                            <button
+                                type="button"
+                                id="slk-deactivate-btn"
+                                class="button button-primary"
+                                style="<?php echo $is_active ? '' : 'display: none;'; ?>">
+                                <span class="dashicons dashicons-lock" style="vertical-align: middle; margin-top: 3px;"></span>
+                                <?php esc_html_e('Deactivate', 'cpt-table-engine'); ?>
+                            </button>
+
+                            <!-- Activate Button -->
+                            <button
+                                type="button"
+                                id="slk-activate-btn"
+                                class="button button-primary"
+                                style="<?php echo $is_active ? 'display: none;' : ''; ?>">
+                                <span class="dashicons dashicons-unlock" style="vertical-align: middle; margin-top: 3px;"></span>
+                                <?php esc_html_e('Activate', 'cpt-table-engine'); ?>
+                            </button>
+
+                            <span class="spinner slk-spinner" style="float: none; margin-top: 5px;"></span>
                         </div>
                         <p class="description">
                             <?php
@@ -108,19 +111,47 @@ if (! defined('ABSPATH')) {
                         <?php esc_html_e('Status', 'cpt-table-engine'); ?>
                     </th>
                     <td>
-                        <?php if (empty($license_status)) : ?>
-                            <span class="dashicons dashicons-minus" style="color: #999;"></span>
-                            <strong><?php esc_html_e('Not Activated', 'cpt-table-engine'); ?></strong>
-                        <?php elseif ($license_status === 'active') : ?>
-                            <span class="dashicons dashicons-yes-alt" style="color: #46b450;"></span>
-                            <strong style="color: #46b450;"><?php esc_html_e('Active', 'cpt-table-engine'); ?></strong>
-                        <?php elseif ($license_status === 'inactive') : ?>
-                            <span class="dashicons dashicons-warning" style="color: #f0b849;"></span>
-                            <strong style="color: #f0b849;"><?php esc_html_e('Inactive', 'cpt-table-engine'); ?></strong>
-                        <?php else : ?>
-                            <span class="dashicons dashicons-dismiss" style="color: #dc3232;"></span>
-                            <strong style="color: #dc3232;"><?php esc_html_e('Invalid', 'cpt-table-engine'); ?></strong>
-                        <?php endif; ?>
+                        <?php
+                        $status_icon = 'dashicons-minus';
+                        $status_color = '#999';
+                        $status_text = __('Not Activated', 'cpt-table-engine');
+                        $status_class = 'slk-status-inactive';
+
+                        if ($license_status === 'active') {
+                            $status_icon = 'dashicons-yes';
+                            $status_color = 'green';
+                            $status_text = 'active';
+                            $status_class = 'slk-status-active';
+                        } elseif ($license_status === 'inactive') {
+                            $status_icon = 'dashicons-minus';
+                            $status_color = '#999';
+                            $status_text = 'inactive';
+                            $status_class = 'slk-status-inactive';
+                        } elseif ($license_status === 'invalid') {
+                            $status_icon = 'dashicons-dismiss';
+                            $status_color = '#dc3232';
+                            $status_text = 'invalid';
+                            $status_class = 'slk-status-invalid';
+                        }
+                        ?>
+                        <span class="dashicons <?php echo esc_attr($status_icon); ?> slk-license-status-icon" style="color: <?php echo esc_attr($status_color); ?>;"></span>
+                        <strong class="slk-license-status-text <?php echo esc_attr($status_class); ?>" style="text-transform: capitalize;"><?php echo esc_html($status_text); ?></strong>
+                    </td>
+                </tr>
+
+                <!-- Activations -->
+                <tr class="slk-activations-row" style="<?php echo ($license_status === 'active') ? '' : 'display: none;'; ?>">
+                    <th scope="row">
+                        <?php esc_html_e('Activations', 'cpt-table-engine'); ?>
+                    </th>
+                    <td>
+                        <?php
+                        $usage_text = '';
+                        if ($license_counts && isset($license_counts['activated'], $license_counts['limit'])) {
+                            $usage_text = sprintf('%d / %d', $license_counts['activated'], $license_counts['limit']);
+                        }
+                        ?>
+                        <span class="slk-license-usage"><?php echo esc_html($usage_text); ?></span>
                     </td>
                 </tr>
             </tbody>
