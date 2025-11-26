@@ -22,7 +22,7 @@ if (! defined('ABSPATH')) {
  * 
  * Provides methods for communicating with the License Manager for WooCommerce REST API.
  */
-final class License_Helper
+class License_Helper
 {
     /**
      * API base URL.
@@ -30,21 +30,9 @@ final class License_Helper
     private const API_BASE_URL = 'https://slk-communications.de/';
 
     /**
-     * API consumer key.
-     */
-    private const CONSUMER_KEY = 'ck_683ce90cb4f537d47d293a8afbcb089309ee5853';
-
-    /**
-     * API consumer secret.
-     */
-    private const CONSUMER_SECRET = 'cs_296a62cfb54ed59d0670e8c37248e1ec222cf5c0';
-
-    /**
-     * Log debug messages when SLK_DEBUG is enabled.
-     *
-     * @param string $message Log message.
-     * @param mixed  $data    Optional data to log.
-     * @return void
+     * A secret key for decrypting the credentials fetched from the mu-plugin.
+     * IMPORTANT: This exact same key must be used in the mu-plugin to encrypt the credentials.
+     * We use the WordPress AUTH_KEY salt for this, which is unique to each installation.
      */
     private static function log(string $message, $data = null): void
     {
@@ -55,7 +43,7 @@ final class License_Helper
         $log_message = '[SLK License Helper] ' . $message;
 
         if ($data !== null) {
-            $log_message .= ' | Data: ' . print_r($data, true);
+            $log_message .= ' | Data: ' . json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         }
 
         error_log($log_message);
@@ -68,20 +56,34 @@ final class License_Helper
      * @param array  $params   Optional URL parameters.
      * @return array Response array with 'success', 'data', and 'message' keys.
      */
-    private static function make_request(string $endpoint, array $params = []): array
+    private static function make_request(string $endpoint, array $params = [], bool $with_auth = true): array
     {
         // Build URL.
         $url = self::build_url($endpoint, $params);
 
-        self::log('Making API request', ['url' => $url, 'params' => $params]);
+        self::log('Making API request', ['url' => $url, 'params' => $params, 'with_auth' => $with_auth]);
 
         // Prepare request arguments.
         $args = [
-            'headers' => [
-                'Authorization' => 'Basic ' . base64_encode(self::CONSUMER_KEY . ':' . self::CONSUMER_SECRET),
-            ],
             'timeout' => 30,
         ];
+
+        if ($with_auth) {
+            // Get credentials securely.
+            $credentials = self::get_credentials();
+            self::log('Fetched API credentials', is_wp_error($credentials) ? $credentials->get_error_message() : ['key_length' => strlen($credentials['key'])]);
+            if (is_wp_error($credentials)) {
+                return [
+                    'success' => false,
+                    'data'    => null,
+                    'message' => $credentials->get_error_message(),
+                ];
+            }
+
+            $args['headers'] = [
+                'Authorization' => 'Basic ' . base64_encode($credentials['key'] . ':' . $credentials['secret']),
+            ];
+        }
 
         // Make request.
         $response = wp_remote_get($url, $args);
@@ -106,12 +108,28 @@ final class License_Helper
         $data = json_decode($response_body, true);
 
         // Handle non-2xx responses.
+        error_log(print_r($data, true));
         if ($response_code < 200 || $response_code >= 300) {
+            if(isset($data['errors']) && is_array($data['errors'])) {
+                if(isset($data['errors']['lmfwc_rest_data_error'])) {
+                    $data['message'] = isset($data['errors']['lmfwc_rest_data_error'][0])
+                        ? sanitize_text_field($data['errors']['lmfwc_rest_data_error'][0])
+                        : __('API returned an error.', 'slk-cpt-table-engine');
+                    self::log('API returned specific lmfwc_rest_data_error', $data['errors']['lmfwc_rest_data_error']);
+                }
+            }
+
             $error_message = isset($data['message'])
                 ? sanitize_text_field($data['message'])
-                : sprintf(__('API request failed with status code: %d', 'cpt-table-engine'), $response_code);
+                : sprintf(__('API request failed with status code: %d', 'slk-cpt-table-engine'), $response_code);
 
             self::log('API returned error status', ['code' => $response_code, 'message' => $error_message, 'data' => $data]);
+
+            // Delete license data on error.
+            if($data['code'] === 'lmfwc_rest_license_not_found') {
+                self::log('License not found on server, deleting local license data to resync.', ['code' => $data['code']]);
+                self::delete_license_data();
+            }
 
             return [
                 'success' => false,
@@ -126,7 +144,7 @@ final class License_Helper
             return [
                 'success' => false,
                 'data'    => null,
-                'message' => __('Failed to parse API response.', 'cpt-table-engine'),
+                'message' => __('Failed to parse API response.', 'slk-cpt-table-engine'),
             ];
         }
 
@@ -135,8 +153,60 @@ final class License_Helper
         return [
             'success' => true,
             'data'    => $data,
-            'message' => isset($data['message']) ? sanitize_text_field($data['message']) : __('Request successful.', 'cpt-table-engine'),
+            'message' => isset($data['message']) ? sanitize_text_field($data['message']) : __('Request successful.', 'slk-cpt-table-engine'),
         ];
+    }
+
+    public static function delete_license_data(): void
+    {
+        delete_option(License_Manager::OPTION_LICENSE_KEY);
+        delete_option(License_Manager::OPTION_ACTIVATION_TOKEN);
+        delete_option(License_Manager::OPTION_LICENSE_STATUS);
+        delete_option(License_Manager::OPTION_LICENSE_COUNTS);
+        delete_transient(License_Manager::TRANSIENT_LICENSE_VALIDATION);
+
+        self::log('License data deleted');
+    }
+
+    /**
+     * Get API credentials from the secure mu-plugin endpoint.
+     * Caches the result in a transient for performance.
+     *
+     * @return array|WP_Error An array with 'key' and 'secret' on success, or WP_Error on failure.
+     */
+    private static function get_credentials()
+    {
+        $transient_key = 'slk_license_credentials';
+        $cached_credentials = get_transient($transient_key);
+
+        self::log('Fetched cached credentials', ['cached' => $cached_credentials !== false]);
+
+        if (false !== $cached_credentials && is_array($cached_credentials)) {
+            return $cached_credentials;
+        }
+
+        // --- Fetch from the remote credential provider endpoint ---
+        $token = md5(date('Y-m-d'));
+        $endpoint = 'wp-json/slk/v1/lic';
+        $params = ['token' => $token];
+
+        $result = self::make_request($endpoint, $params, false); // Important: false to prevent recursion
+
+        if (!$result['success']) {
+            return new \WP_Error('credential_request_failed', 'Could not connect to the credential provider.', $result['message']);
+        }
+
+        $credentials = $result['data'];
+
+        if (!is_array($credentials) || !isset($credentials['key']) || !isset($credentials['secret'])) {
+            return new \WP_Error('invalid_credential_response', 'Invalid response from the credential provider.');
+        }
+
+
+        // Cache for 12 hours.
+        set_transient($transient_key, $credentials, 12 * HOUR_IN_SECONDS);
+
+        return $credentials;
     }
 
     /**
@@ -180,7 +250,7 @@ final class License_Helper
             return [
                 'success' => false,
                 'data'    => null,
-                'message' => __('License key is required.', 'cpt-table-engine'),
+                'message' => __('License key is required.', 'slk-cpt-table-engine'),
             ];
         }
 
@@ -215,7 +285,7 @@ final class License_Helper
             return [
                 'success' => false,
                 'data'    => null,
-                'message' => __('License key and activation token are required.', 'cpt-table-engine'),
+                'message' => __('License key and activation token are required.', 'slk-cpt-table-engine'),
             ];
         }
 
@@ -224,14 +294,21 @@ final class License_Helper
         $endpoint = 'wp-json/lmfwc/v2/licenses/deactivate/' . urlencode($license_key);
         $params = ['token' => $activation_token];
 
-        // We need to append the query string manually or use add_query_arg in make_request if supported.
-        // make_request supports params as query args for GET requests, but this might be a GET request?
-        // The documentation implies a GET request for deactivation usually, or POST.
-        // Let's assume make_request handles params correctly.
-        // Based on make_request implementation:
-        // if (!empty($params)) { $url = add_query_arg($params, $url); }
-
         $result = self::make_request($endpoint, $params);
+
+        self::log('Processing deactivate license result', $result);
+
+        // Handle the case where the token is already invalid on the server.
+        // If the API says the token is not found, it's effectively deactivated.
+        if (
+            ! $result['success'] &&
+            isset($result['message']) &&
+            strpos($result['message'], 'could not be found or is deactivated') !== false
+        ) {
+            self::log('Deactivation token was not found on the server. Treating as a successful deactivation locally.', $result);
+            $result['success'] = true;
+            $result['message'] = __('The license is already inactive on the server.', 'slk-cpt-table-engine');
+        }
 
         self::log('Deactivate license result', $result);
         return $result;
@@ -255,7 +332,7 @@ final class License_Helper
             return [
                 'success' => false,
                 'data'    => null,
-                'message' => __('License key is required.', 'cpt-table-engine'),
+                'message' => __('License key is required.', 'slk-cpt-table-engine'),
             ];
         }
 
@@ -285,7 +362,7 @@ final class License_Helper
             return [
                 'success' => false,
                 'data'    => null,
-                'message' => __('License key is required.', 'cpt-table-engine'),
+                'message' => __('License key is required.', 'slk-cpt-table-engine'),
             ];
         }
 

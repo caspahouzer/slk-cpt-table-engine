@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Plugin Name: CPT Table Engine
- * Plugin URI: https://github.com/caspahouzer/cpt-table-engine
+ * Plugin Name: SLK CPT Table Engine
+ * Plugin URI: https://slk-communications.de/plugins/cpt-table-engine/
  * Description: Optimizes database performance by storing Custom Post Types in dedicated custom tables instead of wp_posts and wp_postmeta.
  * Version: 1.0.0
  * Requires at least: 6.7
@@ -11,15 +11,15 @@
  * Author URI: https://slk-communications.de
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: cpt-table-engine
+ * Text Domain: slk-cpt-table-engine
  * Domain Path: /languages
  *
- * @package CPT_Table_Engine
+ * @package SLK_Cpt_Table_Engine
  */
 
 declare(strict_types=1);
 
-namespace CPT_Table_Engine;
+namespace SLK_Cpt_Table_Engine;
 
 // Exit if accessed directly.
 if (! defined('ABSPATH')) {
@@ -35,13 +35,13 @@ define('CPT_TABLE_ENGINE_FILE', __FILE__);
 define('CPT_TABLE_ENGINE_PATH', plugin_dir_path(__FILE__));
 define('CPT_TABLE_ENGINE_URL', plugin_dir_url(__FILE__));
 define('CPT_TABLE_ENGINE_BASENAME', plugin_basename(__FILE__));
-define('CPT_TABLE_ENGINE_TEXT_DOMAIN', 'cpt-table-engine');
+define('CPT_TABLE_ENGINE_TEXT_DOMAIN', 'slk-cpt-table-engine');
 
 /**
  * PSR-4 Autoloader for the plugin.
  * 
  * Supports multiple namespace prefixes:
- * - CPT_Table_Engine -> /includes/
+ * - SLK_Cpt_Table_Engine -> /includes/
  * - SLK -> /modules/
  *
  * @param string $class The fully-qualified class name.
@@ -50,7 +50,7 @@ define('CPT_TABLE_ENGINE_TEXT_DOMAIN', 'cpt-table-engine');
 spl_autoload_register(function (string $class): void {
     // Define namespace to directory mappings.
     $namespace_mappings = [
-        'CPT_Table_Engine\\' => CPT_TABLE_ENGINE_PATH . 'includes/',
+        'SLK_Cpt_Table_Engine\\' => CPT_TABLE_ENGINE_PATH . 'includes/',
         'SLK\\'              => CPT_TABLE_ENGINE_PATH . 'modules/',
     ];
 

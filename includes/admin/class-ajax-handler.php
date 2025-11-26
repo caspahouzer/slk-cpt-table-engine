@@ -5,16 +5,16 @@
  *
  * Handles AJAX requests from the admin interface.
  *
- * @package CPT_Table_Engine
+ * @package SLK_Cpt_Table_Engine
  */
 
 declare(strict_types=1);
 
-namespace CPT_Table_Engine\Admin;
+namespace SLK_Cpt_Table_Engine\Admin;
 
-use CPT_Table_Engine\Migrations\Migration_Manager;
-use CPT_Table_Engine\Helpers\Sanitizer;
-use CPT_Table_Engine\Helpers\Validator;
+use SLK_Cpt_Table_Engine\Migrations\Migration_Manager;
+use SLK_Cpt_Table_Engine\Helpers\Sanitizer;
+use SLK_Cpt_Table_Engine\Helpers\Validator;
 
 /**
  * AJAX Handler class.
@@ -53,7 +53,7 @@ final class Ajax_Handler
         // Check user capabilities.
         if (! current_user_can('manage_options')) {
             wp_send_json_error([
-                'message' => __('You do not have permission to perform this action.', 'cpt-table-engine'),
+                'message' => __('You do not have permission to perform this action.', 'slk-cpt-table-engine'),
             ]);
         }
 
@@ -64,7 +64,7 @@ final class Ajax_Handler
         // Validate post type.
         if (! Validator::is_custom_post_type($post_type)) {
             wp_send_json_error([
-                'message' => __('Invalid post type.', 'cpt-table-engine'),
+                'message' => __('Invalid post type.', 'slk-cpt-table-engine'),
             ]);
         }
 
@@ -86,8 +86,8 @@ final class Ajax_Handler
 
         wp_send_json_success([
             'message' => $enabled
-                ? __('Custom table enabled successfully.', 'cpt-table-engine')
-                : __('Custom table disabled successfully.', 'cpt-table-engine'),
+                ? __('Custom table enabled successfully.', 'slk-cpt-table-engine')
+                : __('Custom table disabled successfully.', 'slk-cpt-table-engine'),
         ]);
     }
 
@@ -104,7 +104,7 @@ final class Ajax_Handler
         // Check user capabilities.
         if (! current_user_can('manage_options')) {
             wp_send_json_error([
-                'message' => __('You do not have permission to perform this action.', 'cpt-table-engine'),
+                'message' => __('You do not have permission to perform this action.', 'slk-cpt-table-engine'),
             ]);
         }
 
@@ -114,7 +114,7 @@ final class Ajax_Handler
         // Validate post type.
         if (empty($post_type)) {
             wp_send_json_error([
-                'message' => __('Invalid post type.', 'cpt-table-engine'),
+                'message' => __('Invalid post type.', 'slk-cpt-table-engine'),
             ]);
         }
 

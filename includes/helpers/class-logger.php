@@ -5,12 +5,12 @@
  *
  * Provides structured logging functionality.
  *
- * @package CPT_Table_Engine
+ * @package SLK_Cpt_Table_Engine
  */
 
 declare(strict_types=1);
 
-namespace CPT_Table_Engine\Helpers;
+namespace SLK_Cpt_Table_Engine\Helpers;
 
 /**
  * Logger class.

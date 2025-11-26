@@ -5,18 +5,18 @@
  *
  * Intercepts WordPress CRUD functions and routes to custom tables.
  *
- * @package CPT_Table_Engine
+ * @package SLK_Cpt_Table_Engine
  */
 
 declare(strict_types=1);
 
-namespace CPT_Table_Engine\Integration;
+namespace SLK_Cpt_Table_Engine\Integration;
 
-use CPT_Table_Engine\Controllers\Settings_Controller;
-use CPT_Table_Engine\Controllers\CPT_Controller;
-use CPT_Table_Engine\Controllers\Meta_Controller;
-use CPT_Table_Engine\Database\Table_Manager;
-use CPT_Table_Engine\Helpers\Logger;
+use SLK_Cpt_Table_Engine\Controllers\Settings_Controller;
+use SLK_Cpt_Table_Engine\Controllers\CPT_Controller;
+use SLK_Cpt_Table_Engine\Controllers\Meta_Controller;
+use SLK_Cpt_Table_Engine\Database\Table_Manager;
+use SLK_Cpt_Table_Engine\Helpers\Logger;
 
 /**
  * CRUD Interceptor class.

@@ -22,7 +22,7 @@ if (! defined('ABSPATH')) {
  * 
  * Renders the license management interface and processes form submissions.
  */
-final class License_Admin_Page
+class License_Admin_Page
 {
     /**
      * Nonce action name.
@@ -62,7 +62,7 @@ final class License_Admin_Page
     {
         // Check user capabilities.
         if (!current_user_can('manage_options')) {
-            wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'cpt-table-engine'));
+            wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'slk-cpt-table-engine'));
         }
 
         // Get license data.

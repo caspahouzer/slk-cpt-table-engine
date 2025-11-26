@@ -5,12 +5,12 @@
  *
  * Wrapper for WordPress object cache with plugin-specific cache groups.
  *
- * @package CPT_Table_Engine
+ * @package SLK_Cpt_Table_Engine
  */
 
 declare(strict_types=1);
 
-namespace CPT_Table_Engine\Helpers;
+namespace SLK_Cpt_Table_Engine\Helpers;
 
 /**
  * Cache class.

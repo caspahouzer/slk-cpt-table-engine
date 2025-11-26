@@ -3,7 +3,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: CPT Table Engine 1.0.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cpt-table-engine\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/slk-cpt-table-engine\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -12,14 +12,14 @@ msgstr ""
 "POT-Creation-Date: 2025-11-22T14:49:30+01:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.8.1\n"
-"X-Domain: cpt-table-engine\n"
+"X-Domain: slk-cpt-table-engine\n"
 
 #. Plugin Name of the plugin
 msgid "CPT Table Engine"
 msgstr ""
 
 #. Plugin URI of the plugin
-msgid "https://github.com/caspahouzer/cpt-table-engine"
+msgid "https://github.com/caspahouzer/slk-cpt-table-engine"
 msgstr ""
 
 #. Description of the plugin

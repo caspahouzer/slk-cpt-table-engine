@@ -5,14 +5,14 @@
  *
  * Handles table creation, deletion, and existence checks.
  *
- * @package CPT_Table_Engine
+ * @package SLK_Cpt_Table_Engine
  */
 
 declare(strict_types=1);
 
-namespace CPT_Table_Engine\Database;
+namespace SLK_Cpt_Table_Engine\Database;
 
-use CPT_Table_Engine\Helpers\Logger;
+use SLK_Cpt_Table_Engine\Helpers\Logger;
 
 /**
  * Table Manager class.

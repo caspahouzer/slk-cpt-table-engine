@@ -1,7 +1,7 @@
 /**
  * Admin JavaScript for CPT Table Engine.
  *
- * @package CPT_Table_Engine
+ * @package SLK_Cpt_Table_Engine
  */
 
 (function ($) {

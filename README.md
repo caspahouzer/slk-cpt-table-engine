@@ -1,4 +1,4 @@
-# CPT Table Engine
+# SLK CPT Table Engine
 
 A production-ready WordPress plugin that optimizes database performance by storing Custom Post Types in dedicated custom tables instead of `wp_posts` and `wp_postmeta`.
 
@@ -22,7 +22,7 @@ A production-ready WordPress plugin that optimizes database performance by stori
 
 ## Installation
 
-1. Upload the `cpt-table-engine` folder to `/wp-content/plugins/`
+1. Upload the `slk-cpt-table-engine` folder to `/wp-content/plugins/`
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Navigate to Settings → CPT Table Engine
 4. Toggle custom table storage for your desired post types
@@ -60,7 +60,7 @@ When you disable custom table storage:
 ### Folder Structure
 
 ```
-cpt-table-engine/
+slk-cpt-table-engine/
 ├── includes/
 │   ├── admin/              # Admin interface components
 │   ├── database/           # Table schema and management
@@ -73,7 +73,7 @@ cpt-table-engine/
 │   ├── css/               # Admin styles
 │   └── js/                # Admin JavaScript
 ├── languages/             # Translation files
-├── cpt-table-engine.php   # Main plugin file
+├── slk-cpt-table-engine.php   # Main plugin file
 └── uninstall.php          # Uninstall handler
 ```
 
@@ -102,7 +102,7 @@ add_filter( 'cpt_table_engine_migration_batch_size', function( $batch_size ) {
 
 **Check if CPT uses custom table:**
 ```php
-use CPT_Table_Engine\Controllers\Settings_Controller;
+use SLK_Cpt_Table_Engine\Controllers\Settings_Controller;
 
 if ( Settings_Controller::is_enabled( 'my_cpt' ) ) {
     // CPT uses custom table
@@ -111,7 +111,7 @@ if ( Settings_Controller::is_enabled( 'my_cpt' ) ) {
 
 **Manually trigger migration:**
 ```php
-use CPT_Table_Engine\Migrations\Migration_Manager;
+use SLK_Cpt_Table_Engine\Migrations\Migration_Manager;
 
 // Migrate to custom table
 $result = Migration_Manager::migrate_to_custom_table( 'my_cpt' );
@@ -193,7 +193,7 @@ GPL v2 or later
 
 ## Credits
 
-Developed by [Your Name]
+Developed by Sebastian Klaus
 
 ## Changelog
 

@@ -5,18 +5,18 @@
  *
  * Handles plugin initialization, component registration, and hook setup.
  *
- * @package CPT_Table_Engine
+ * @package SLK_Cpt_Table_Engine
  */
 
 declare(strict_types=1);
 
-namespace CPT_Table_Engine;
+namespace SLK_Cpt_Table_Engine;
 
-use CPT_Table_Engine\Admin\Settings_Page;
-use CPT_Table_Engine\Admin\Ajax_Handler;
-use CPT_Table_Engine\Admin\Deactivation_Guard;
-use CPT_Table_Engine\Integration\Query_Interceptor;
-use CPT_Table_Engine\Integration\CRUD_Interceptor;
+use SLK_Cpt_Table_Engine\Admin\Settings_Page;
+use SLK_Cpt_Table_Engine\Admin\Ajax_Handler;
+use SLK_Cpt_Table_Engine\Admin\Deactivation_Guard;
+use SLK_Cpt_Table_Engine\Integration\Query_Interceptor;
+use SLK_Cpt_Table_Engine\Integration\CRUD_Interceptor;
 
 /**
  * Bootstrap class.

@@ -5,15 +5,15 @@
  *
  * Handles bidirectional migration of post meta data.
  *
- * @package CPT_Table_Engine
+ * @package SLK_Cpt_Table_Engine
  */
 
 declare(strict_types=1);
 
-namespace CPT_Table_Engine\Migrations;
+namespace SLK_Cpt_Table_Engine\Migrations;
 
-use CPT_Table_Engine\Database\Table_Manager;
-use CPT_Table_Engine\Helpers\Logger;
+use SLK_Cpt_Table_Engine\Database\Table_Manager;
+use SLK_Cpt_Table_Engine\Helpers\Logger;
 
 /**
  * Meta Migrator class.
@@ -97,7 +97,7 @@ final class Meta_Migrator
 
             if (false === $result) {
                 Logger::error("Failed to migrate meta batch at offset {$offset}: " . $wpdb->last_error);
-                return new \WP_Error('migration_failed', __('Failed to migrate post meta.', 'cpt-table-engine'));
+                return new \WP_Error('migration_failed', __('Failed to migrate post meta.', 'slk-cpt-table-engine'));
             }
 
             $migrated += count($meta_entries);
@@ -108,7 +108,7 @@ final class Meta_Migrator
                 $post_type,
                 'in_progress',
                 /* translators: %1$d: Number of migrated entries, %2$d: Total number of entries. */
-                sprintf(__('Migrated %1$d of %2$d meta entries...', 'cpt-table-engine'), $migrated, $total),
+                sprintf(__('Migrated %1$d of %2$d meta entries...', 'slk-cpt-table-engine'), $migrated, $total),
                 $migrated,
                 $total
             );
@@ -189,7 +189,7 @@ final class Meta_Migrator
 
             if (false === $result) {
                 Logger::error("Failed to migrate meta batch at offset {$offset}: " . $wpdb->last_error);
-                return new \WP_Error('migration_failed', __('Failed to migrate post meta back to wp_postmeta.', 'cpt-table-engine'));
+                return new \WP_Error('migration_failed', __('Failed to migrate post meta back to wp_postmeta.', 'slk-cpt-table-engine'));
             }
 
             $migrated += count($meta_entries);
@@ -200,7 +200,7 @@ final class Meta_Migrator
                 $post_type,
                 'in_progress',
                 /* translators: %1$d: Number of migrated entries, %2$d: Total number of entries. */
-                sprintf(__('Migrated %1$d of %2$d meta entries back to wp_postmeta...', 'cpt-table-engine'), $migrated, $total),
+                sprintf(__('Migrated %1$d of %2$d meta entries back to wp_postmeta...', 'slk-cpt-table-engine'), $migrated, $total),
                 $migrated,
                 $total
             );

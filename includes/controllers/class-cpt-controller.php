@@ -5,18 +5,18 @@
  *
  * Handles CRUD operations for CPT entries in custom tables.
  *
- * @package CPT_Table_Engine
+ * @package SLK_Cpt_Table_Engine
  */
 
 declare(strict_types=1);
 
-namespace CPT_Table_Engine\Controllers;
+namespace SLK_Cpt_Table_Engine\Controllers;
 
-use CPT_Table_Engine\Database\Table_Manager;
-use CPT_Table_Engine\Helpers\Sanitizer;
-use CPT_Table_Engine\Helpers\Validator;
-use CPT_Table_Engine\Helpers\Cache;
-use CPT_Table_Engine\Helpers\Logger;
+use SLK_Cpt_Table_Engine\Database\Table_Manager;
+use SLK_Cpt_Table_Engine\Helpers\Sanitizer;
+use SLK_Cpt_Table_Engine\Helpers\Validator;
+use SLK_Cpt_Table_Engine\Helpers\Cache;
+use SLK_Cpt_Table_Engine\Helpers\Logger;
 
 /**
  * CPT Controller class.
@@ -100,7 +100,7 @@ final class CPT_Controller
 
         if (false === $result) {
             Logger::error("Failed to insert post into {$table_name}: " . $wpdb->last_error);
-            return new \WP_Error('db_insert_error', __('Could not insert post into database.', 'cpt-table-engine'));
+            return new \WP_Error('db_insert_error', __('Could not insert post into database.', 'slk-cpt-table-engine'));
         }
 
         $post_id = (int) $wpdb->insert_id;
@@ -144,7 +144,7 @@ final class CPT_Controller
 
         // Validate post ID.
         if (! Validator::is_valid_post_id($post_id)) {
-            return new \WP_Error('invalid_post_id', __('Invalid post ID.', 'cpt-table-engine'));
+            return new \WP_Error('invalid_post_id', __('Invalid post ID.', 'slk-cpt-table-engine'));
         }
 
         // Sanitize post data.
@@ -178,7 +178,7 @@ final class CPT_Controller
 
         if (false === $result) {
             Logger::error("Failed to update post ID {$post_id} in {$table_name}: " . $wpdb->last_error);
-            return new \WP_Error('db_update_error', __('Could not update post in database.', 'cpt-table-engine'));
+            return new \WP_Error('db_update_error', __('Could not update post in database.', 'slk-cpt-table-engine'));
         }
 
         // Clear cache.
@@ -203,7 +203,7 @@ final class CPT_Controller
 
         // Validate post ID.
         if (! Validator::is_valid_post_id($post_id)) {
-            return new \WP_Error('invalid_post_id', __('Invalid post ID.', 'cpt-table-engine'));
+            return new \WP_Error('invalid_post_id', __('Invalid post ID.', 'slk-cpt-table-engine'));
         }
 
         // Get table names.
@@ -226,7 +226,7 @@ final class CPT_Controller
 
         if (false === $result) {
             Logger::error("Failed to delete post ID {$post_id} from {$main_table}: " . $wpdb->last_error);
-            return new \WP_Error('db_delete_error', __('Could not delete post from database.', 'cpt-table-engine'));
+            return new \WP_Error('db_delete_error', __('Could not delete post from database.', 'slk-cpt-table-engine'));
         }
 
         // Clear cache.

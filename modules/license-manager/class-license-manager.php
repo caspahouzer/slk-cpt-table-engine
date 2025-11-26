@@ -22,7 +22,7 @@ if (! defined('ABSPATH')) {
  * 
  * Singleton class for managing license operations.
  */
-final class License_Manager
+class License_Manager
 {
     /**
      * Singleton instance.
@@ -34,11 +34,11 @@ final class License_Manager
     /**
      * WordPress option keys.
      */
-    private const OPTION_LICENSE_KEY = 'cpt_table_engine_license_key';
-    private const OPTION_ACTIVATION_TOKEN = 'cpt_table_engine_activation_token';
-    private const OPTION_LICENSE_STATUS = 'cpt_table_engine_license_status';
-    private const OPTION_LICENSE_COUNTS = 'cpt_table_engine_license_counts';
-    private const TRANSIENT_LICENSE_VALIDATION = 'cpt_table_engine_license_validation';
+    public const OPTION_LICENSE_KEY = 'cpt_table_engine_license_key';
+    public const OPTION_ACTIVATION_TOKEN = 'cpt_table_engine_activation_token';
+    public const OPTION_LICENSE_STATUS = 'cpt_table_engine_license_status';
+    public const OPTION_LICENSE_COUNTS = 'cpt_table_engine_license_counts';
+    public const TRANSIENT_LICENSE_VALIDATION = 'cpt_table_engine_license_validation';
     private const VALIDATION_INTERVAL = 12 * HOUR_IN_SECONDS; // 12 hours
 
     /**
@@ -119,7 +119,7 @@ final class License_Manager
             return [
                 'success' => false,
                 'data'    => null,
-                'message' => __('Invalid API response: No data returned.', 'cpt-table-engine'),
+                'message' => __('Invalid API response: No data returned.', 'slk-cpt-table-engine'),
             ];
         }
 
@@ -127,7 +127,7 @@ final class License_Manager
         if (isset($response['data']['success']) && $response['data']['success'] === false) {
             $error_msg = isset($response['data']['message'])
                 ? $response['data']['message']
-                : __('License activation was rejected by the API.', 'cpt-table-engine');
+                : __('License activation was rejected by the API.', 'slk-cpt-table-engine');
 
             self::log('Activation rejected by API', $response['data']);
             return [
@@ -141,7 +141,7 @@ final class License_Manager
         if (isset($response['data']['data']['errors']) && !empty($response['data']['data']['errors'])) {
             // Extract error message from the errors array.
             $errors = $response['data']['data']['errors'];
-            $error_msg = __('License activation failed.', 'cpt-table-engine');
+            $error_msg = __('License activation failed.', 'slk-cpt-table-engine');
 
             // Get the first error message.
             foreach ($errors as $error_key => $error_messages) {
@@ -226,7 +226,7 @@ final class License_Manager
 
         return [
             'success' => true,
-            'message' => __('License activated successfully.', 'cpt-table-engine'),
+            'message' => __('License activated successfully.', 'slk-cpt-table-engine'),
         ];
     }
 
@@ -287,7 +287,7 @@ final class License_Manager
             // API might return success:true but contain errors in data.
             if (isset($response['data']['data']['errors']) && !empty($response['data']['data']['errors'])) {
                 $errors = $response['data']['data']['errors'];
-                $error_msg = __('Deactivation failed.', 'cpt-table-engine');
+                $error_msg = __('Deactivation failed.', 'slk-cpt-table-engine');
 
                 foreach ($errors as $error_key => $error_messages) {
                     if (is_array($error_messages) && !empty($error_messages)) {
@@ -305,11 +305,7 @@ final class License_Manager
             }
 
             // Clear license data.
-            delete_option(self::OPTION_LICENSE_KEY);
-            delete_option(self::OPTION_ACTIVATION_TOKEN);
-            delete_option(self::OPTION_LICENSE_STATUS);
-            delete_option(self::OPTION_LICENSE_COUNTS);
-            delete_transient(self::TRANSIENT_LICENSE_VALIDATION);
+            License_Helper::delete_license_data();
 
             self::log('License deactivated, token deleted, transient cleared');
         } else {
@@ -459,7 +455,7 @@ final class License_Manager
     {
         // Only load on our settings page.
         $screen = get_current_screen();
-        if (!$screen || strpos($screen->id, 'cpt-table-engine') === false) {
+        if (!$screen || strpos($screen->id, 'slk-cpt-table-engine') === false) {
             return;
         }
 
@@ -476,11 +472,11 @@ final class License_Manager
             'nonce'    => wp_create_nonce('slk_license_nonce'),
             'status'   => $this->get_license_status(),
             'strings'  => [
-                'enter_key'         => __('Please enter a license key.', 'cpt-table-engine'),
-                'confirm_deactivate' => __('Are you sure you want to deactivate this license?', 'cpt-table-engine'),
-                'network_error'     => __('Network error. Please try again.', 'cpt-table-engine'),
-                'active_desc'       => __('Your license is active. Click "Deactivate" to change or remove the license.', 'cpt-table-engine'),
-                'inactive_desc'     => __('Enter the license key you received after purchase.', 'cpt-table-engine'),
+                'enter_key'         => __('Please enter a license key.', 'slk-cpt-table-engine'),
+                'confirm_deactivate' => __('Are you sure you want to deactivate this license?', 'slk-cpt-table-engine'),
+                'network_error'     => __('Network error. Please try again.', 'slk-cpt-table-engine'),
+                'active_desc'       => __('Your license is active. Click "Deactivate" to change or remove the license.', 'slk-cpt-table-engine'),
+                'inactive_desc'     => __('Enter the license key you received after purchase.', 'slk-cpt-table-engine'),
             ],
         ]);
     }
@@ -494,12 +490,12 @@ final class License_Manager
     {
         // Verify nonce.
         if (!check_ajax_referer('slk_license_nonce', 'security', false)) {
-            wp_send_json_error(['message' => __('Security check failed.', 'cpt-table-engine')]);
+            wp_send_json_error(['message' => __('Security check failed.', 'slk-cpt-table-engine')]);
         }
 
         // Check capabilities.
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => __('Permission denied.', 'cpt-table-engine')]);
+            wp_send_json_error(['message' => __('Permission denied.', 'slk-cpt-table-engine')]);
         }
 
         $method = isset($_POST['method']) ? sanitize_text_field($_POST['method']) : '';
@@ -507,7 +503,7 @@ final class License_Manager
         if ($method === 'activate') {
             $license_key = isset($_POST['license_key']) ? sanitize_text_field($_POST['license_key']) : '';
             if (empty($license_key)) {
-                wp_send_json_error(['message' => __('License key is required.', 'cpt-table-engine')]);
+                wp_send_json_error(['message' => __('License key is required.', 'slk-cpt-table-engine')]);
             }
 
             $response = $this->activate_license($license_key);
@@ -524,7 +520,7 @@ final class License_Manager
                 $usage = $counts ? sprintf('%d / %d', $counts['activated'], $counts['limit']) : '';
 
                 wp_send_json_success([
-                    'message'    => __('License activated successfully!', 'cpt-table-engine'),
+                    'message'    => __('License activated successfully!', 'slk-cpt-table-engine'),
                     'masked_key' => $masked_key,
                     'usage'      => $usage
                 ]);
@@ -540,19 +536,19 @@ final class License_Manager
             }
 
             if (!$activation_token) {
-                wp_send_json_error(['message' => __('No activation token found.', 'cpt-table-engine')]);
+                wp_send_json_error(['message' => __('No activation token found.', 'slk-cpt-table-engine')]);
             }
 
             $license_key = $this->get_license_key();
             if (!$license_key) {
-                wp_send_json_error(['message' => __('No license key found.', 'cpt-table-engine')]);
+                wp_send_json_error(['message' => __('No license key found.', 'slk-cpt-table-engine')]);
             }
 
             $response = $this->deactivate_license($license_key, $activation_token);
 
             if ($response['success']) {
                 wp_send_json_success([
-                    'message'     => __('License deactivated successfully!', 'cpt-table-engine'),
+                    'message'     => __('License deactivated successfully!', 'slk-cpt-table-engine'),
                     'license_key' => $this->get_license_key() // Return full key so user can edit it
                 ]);
             } else {
@@ -562,7 +558,7 @@ final class License_Manager
             $license_key = $this->get_license_key();
 
             if (empty($license_key)) {
-                wp_send_json_error(['message' => __('No license key found.', 'cpt-table-engine')]);
+                wp_send_json_error(['message' => __('No license key found.', 'slk-cpt-table-engine')]);
             }
 
             // Force validation (silent=true so we don't deactivate on network error, but we DO update on API result).
@@ -577,11 +573,11 @@ final class License_Manager
                 'status' => $status,
                 'usage'  => $usage,
                 'message' => ($status === 'active')
-                    ? __('License is active.', 'cpt-table-engine')
-                    : __('License is inactive.', 'cpt-table-engine')
+                    ? __('License is active.', 'slk-cpt-table-engine')
+                    : __('License is inactive.', 'slk-cpt-table-engine')
             ]);
         } else {
-            wp_send_json_error(['message' => __('Invalid method.', 'cpt-table-engine')]);
+            wp_send_json_error(['message' => __('Invalid method.', 'slk-cpt-table-engine')]);
         }
     }
 

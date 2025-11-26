@@ -5,12 +5,12 @@
  *
  * Defines database schema for CPT main and meta tables.
  *
- * @package CPT_Table_Engine
+ * @package SLK_Cpt_Table_Engine
  */
 
 declare(strict_types=1);
 
-namespace CPT_Table_Engine\Database;
+namespace SLK_Cpt_Table_Engine\Database;
 
 /**
  * Table Schema class.

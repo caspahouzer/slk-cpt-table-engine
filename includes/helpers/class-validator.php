@@ -5,12 +5,12 @@
  *
  * Validation utilities for post data and settings.
  *
- * @package CPT_Table_Engine
+ * @package SLK_Cpt_Table_Engine
  */
 
 declare(strict_types=1);
 
-namespace CPT_Table_Engine\Helpers;
+namespace SLK_Cpt_Table_Engine\Helpers;
 
 /**
  * Validator class.
@@ -27,22 +27,22 @@ final class Validator
     {
         // Post title is required.
         if (empty($data['post_title'])) {
-            return new \WP_Error('missing_post_title', __('Post title is required.', 'cpt-table-engine'));
+            return new \WP_Error('missing_post_title', __('Post title is required.', 'slk-cpt-table-engine'));
         }
 
         // Post type is required.
         if (empty($data['post_type'])) {
-            return new \WP_Error('missing_post_type', __('Post type is required.', 'cpt-table-engine'));
+            return new \WP_Error('missing_post_type', __('Post type is required.', 'slk-cpt-table-engine'));
         }
 
         // Validate post status.
         if (isset($data['post_status']) && ! self::is_valid_post_status($data['post_status'])) {
-            return new \WP_Error('invalid_post_status', __('Invalid post status.', 'cpt-table-engine'));
+            return new \WP_Error('invalid_post_status', __('Invalid post status.', 'slk-cpt-table-engine'));
         }
 
         // Validate post author.
         if (isset($data['post_author']) && ! self::is_valid_user_id((int) $data['post_author'])) {
-            return new \WP_Error('invalid_post_author', __('Invalid post author.', 'cpt-table-engine'));
+            return new \WP_Error('invalid_post_author', __('Invalid post author.', 'slk-cpt-table-engine'));
         }
 
         return true;

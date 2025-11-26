@@ -5,14 +5,14 @@
  *
  * Prevents plugin deactivation when CPTs are using custom tables.
  *
- * @package CPT_Table_Engine
+ * @package SLK_Cpt_Table_Engine
  */
 
 declare(strict_types=1);
 
-namespace CPT_Table_Engine\Admin;
+namespace SLK_Cpt_Table_Engine\Admin;
 
-use CPT_Table_Engine\Controllers\Settings_Controller;
+use SLK_Cpt_Table_Engine\Controllers\Settings_Controller;
 
 /**
  * Deactivation Guard class.
@@ -87,14 +87,14 @@ final class Deactivation_Guard
 ?>
         <div class="notice notice-error is-dismissible">
             <p>
-                <strong><?php esc_html_e('CPT Table Engine cannot be deactivated!', 'cpt-table-engine'); ?></strong>
+                <strong><?php esc_html_e('CPT Table Engine cannot be deactivated!', 'slk-cpt-table-engine'); ?></strong>
             </p>
             <p>
                 <?php
                 printf(
                     /* translators: %s: URL to settings page */
-                    esc_html__('You must migrate all Custom Post Types back to wp_posts before deactivating this plugin. Please go to the %s and disable all CPTs first.', 'cpt-table-engine'),
-                    '<a href="' . esc_url($settings_url) . '">' . esc_html__('settings page', 'cpt-table-engine') . '</a>'
+                    esc_html__('You must migrate all Custom Post Types back to wp_posts before deactivating this plugin. Please go to the %s and disable all CPTs first.', 'slk-cpt-table-engine'),
+                    '<a href="' . esc_url($settings_url) . '">' . esc_html__('settings page', 'slk-cpt-table-engine') . '</a>'
                 );
                 ?>
             </p>

@@ -16,8 +16,8 @@ msgid "CPT Table Engine"
 msgstr "CPT Table Engine"
 
 #. Plugin URI of the plugin
-msgid "https://github.com/caspahouzer/cpt-table-engine"
-msgstr "https://github.com/caspahouzer/cpt-table-engine"
+msgid "https://github.com/caspahouzer/slk-cpt-table-engine"
+msgstr "https://github.com/caspahouzer/slk-cpt-table-engine"
 
 #. Author of the plugin
 msgid "Sebastian Klaus"

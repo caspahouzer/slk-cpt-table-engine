@@ -5,16 +5,16 @@
  *
  * Handles bidirectional migration of post data.
  *
- * @package CPT_Table_Engine
+ * @package SLK_Cpt_Table_Engine
  */
 
 declare(strict_types=1);
 
-namespace CPT_Table_Engine\Migrations;
+namespace SLK_Cpt_Table_Engine\Migrations;
 
-use CPT_Table_Engine\Database\Table_Manager;
-use CPT_Table_Engine\Database\Table_Schema;
-use CPT_Table_Engine\Helpers\Logger;
+use SLK_Cpt_Table_Engine\Database\Table_Manager;
+use SLK_Cpt_Table_Engine\Database\Table_Schema;
+use SLK_Cpt_Table_Engine\Helpers\Logger;
 
 /**
  * Posts Migrator class.
@@ -125,7 +125,7 @@ final class Posts_Migrator
 
             if (false === $result) {
                 Logger::error("Failed to migrate posts batch at offset {$offset}: " . $wpdb->last_error);
-                return new \WP_Error('migration_failed', __('Failed to migrate posts.', 'cpt-table-engine'));
+                return new \WP_Error('migration_failed', __('Failed to migrate posts.', 'slk-cpt-table-engine'));
             }
 
             $migrated += count($posts);
@@ -136,7 +136,7 @@ final class Posts_Migrator
                 $post_type,
                 'in_progress',
                 /* translators: %1$d: Number of migrated posts, %2$d: Total number of posts. */
-                sprintf(__('Migrated %1$d of %2$d posts...', 'cpt-table-engine'), $migrated, $total),
+                sprintf(__('Migrated %1$d of %2$d posts...', 'slk-cpt-table-engine'), $migrated, $total),
                 $migrated,
                 $total
             );
@@ -247,7 +247,7 @@ final class Posts_Migrator
 
             if (false === $result) {
                 Logger::error("Failed to migrate posts batch at offset {$offset}: " . $wpdb->last_error);
-                return new \WP_Error('migration_failed', __('Failed to migrate posts back to wp_posts.', 'cpt-table-engine'));
+                return new \WP_Error('migration_failed', __('Failed to migrate posts back to wp_posts.', 'slk-cpt-table-engine'));
             }
 
             $migrated += count($posts);
@@ -258,7 +258,7 @@ final class Posts_Migrator
                 $post_type,
                 'in_progress',
                 /* translators: %1$d: Number of migrated posts, %2$d: Total number of posts. */
-                sprintf(__('Migrated %1$d of %2$d posts back to wp_posts...', 'cpt-table-engine'), $migrated, $total),
+                sprintf(__('Migrated %1$d of %2$d posts back to wp_posts...', 'slk-cpt-table-engine'), $migrated, $total),
                 $migrated,
                 $total
             );

@@ -30,7 +30,7 @@ if (! defined('ABSPATH')) {
 
     <div class="cpt-license-info" style="margin-bottom: 20px;">
         <p class="description">
-            <?php printf(esc_html__('Manage your %s license. Activate your license to receive updates and support.', 'cpt-table-engine'), '<strong>' . SLK_PLUGIN_NAME . '</strong>'); ?>
+            <?php printf(esc_html__('Manage your %s license. Activate your license to receive updates and support.', 'slk-cpt-table-engine'), '<strong>' . SLK_PLUGIN_NAME . '</strong>'); ?>
         </p>
     </div>
 
@@ -42,7 +42,7 @@ if (! defined('ABSPATH')) {
                 <!-- License Key -->
                 <tr>
                     <th scope="row">
-                        <label for="license_key"><?php esc_html_e('License Key', 'cpt-table-engine'); ?></label>
+                        <label for="license_key"><?php esc_html_e('License Key', 'slk-cpt-table-engine'); ?></label>
                     </th>
                     <td>
                         <div style="display: flex; gap: 10px; align-items: flex-start;">
@@ -67,7 +67,7 @@ if (! defined('ABSPATH')) {
                                 name="license_key"
                                 class="regular-text code"
                                 value="<?php echo esc_attr($display_key); ?>"
-                                placeholder="<?php esc_attr_e('Enter your license key', 'cpt-table-engine'); ?>"
+                                placeholder="<?php esc_attr_e('Enter your license key', 'slk-cpt-table-engine'); ?>"
                                 style="flex: 1; <?php echo $is_active ? 'background-color: #f0f0f1;' : ''; ?>"
                                 <?php echo $is_active ? 'readonly disabled' : ''; ?> />
 
@@ -78,7 +78,7 @@ if (! defined('ABSPATH')) {
                                 class="button button-primary"
                                 style="<?php echo $is_active ? '' : 'display: none;'; ?>">
                                 <span class="dashicons dashicons-lock" style="vertical-align: middle; margin-top: 3px;"></span>
-                                <?php esc_html_e('Deactivate', 'cpt-table-engine'); ?>
+                                <?php esc_html_e('Deactivate', 'slk-cpt-table-engine'); ?>
                             </button>
 
                             <!-- Activate Button -->
@@ -88,7 +88,7 @@ if (! defined('ABSPATH')) {
                                 class="button button-primary"
                                 style="<?php echo $is_active ? 'display: none;' : ''; ?>">
                                 <span class="dashicons dashicons-unlock" style="vertical-align: middle; margin-top: 3px;"></span>
-                                <?php esc_html_e('Activate', 'cpt-table-engine'); ?>
+                                <?php esc_html_e('Activate', 'slk-cpt-table-engine'); ?>
                             </button>
 
                             <span class="spinner slk-spinner" style="float: none; margin-top: 5px;"></span>
@@ -96,9 +96,9 @@ if (! defined('ABSPATH')) {
                         <p class="description">
                             <?php
                             if ($is_active) {
-                                esc_html_e('Your license is active. Click "Deactivate" to change or remove the license.', 'cpt-table-engine');
+                                esc_html_e('Your license is active. Click "Deactivate" to change or remove the license.', 'slk-cpt-table-engine');
                             } else {
-                                esc_html_e('Enter the license key you received after purchase.', 'cpt-table-engine');
+                                esc_html_e('Enter the license key you received after purchase.', 'slk-cpt-table-engine');
                             }
                             ?>
                         </p>
@@ -108,13 +108,13 @@ if (! defined('ABSPATH')) {
                 <!-- License Status -->
                 <tr>
                     <th scope="row">
-                        <?php esc_html_e('Status', 'cpt-table-engine'); ?>
+                        <?php esc_html_e('Status', 'slk-cpt-table-engine'); ?>
                     </th>
                     <td>
                         <?php
                         $status_icon = 'dashicons-minus';
                         $status_color = '#999';
-                        $status_text = __('Not Activated', 'cpt-table-engine');
+                        $status_text = __('Not Activated', 'slk-cpt-table-engine');
                         $status_class = 'slk-status-inactive';
 
                         if ($license_status === 'active') {
@@ -142,7 +142,7 @@ if (! defined('ABSPATH')) {
                 <!-- Activations -->
                 <tr class="slk-activations-row" style="<?php echo ($license_status === 'active') ? '' : 'display: none;'; ?>">
                     <th scope="row">
-                        <?php esc_html_e('Activations', 'cpt-table-engine'); ?>
+                        <?php esc_html_e('Activations', 'slk-cpt-table-engine'); ?>
                     </th>
                     <td>
                         <?php
@@ -161,32 +161,32 @@ if (! defined('ABSPATH')) {
     <hr />
 
     <div class="cpt-license-help" style="margin-top: 30px;">
-        <h3><?php esc_html_e('Need Help?', 'cpt-table-engine'); ?></h3>
+        <h3><?php esc_html_e('Need Help?', 'slk-cpt-table-engine'); ?></h3>
         <ul>
             <li>
-                <strong><?php esc_html_e('Where can I find my license key?', 'cpt-table-engine'); ?></strong><br />
+                <strong><?php esc_html_e('Where can I find my license key?', 'slk-cpt-table-engine'); ?></strong><br />
                 <?php
                 printf(
                     /* translators: %s: website link */
-                    esc_html__('Your license key was sent to you via email after purchase. You can also find it in your account on our %s.', 'cpt-table-engine'),
-                    '<a href="https://slk-communications.de/account/" target="_blank" rel="noopener noreferrer">' . esc_html__('website', 'cpt-table-engine') . '</a>'
+                    esc_html__('Your license key was sent to you via email after purchase. You can also find it in your account on our %s.', 'slk-cpt-table-engine'),
+                    '<a href="https://slk-communications.de/account/" target="_blank" rel="noopener noreferrer">' . esc_html__('website', 'slk-cpt-table-engine') . '</a>'
                 );
                 ?>
             </li>
             <li>
-                <strong><?php esc_html_e('How many sites can I activate?', 'cpt-table-engine'); ?></strong><br />
-                <?php esc_html_e('This depends on your license type. Check your purchase confirmation email or contact support for details.', 'cpt-table-engine'); ?>
+                <strong><?php esc_html_e('How many sites can I activate?', 'slk-cpt-table-engine'); ?></strong><br />
+                <?php esc_html_e('This depends on your license type. Check your purchase confirmation email or contact support for details.', 'slk-cpt-table-engine'); ?>
             </li>
             <li>
-                <strong><?php esc_html_e('What happens if I deactivate my license?', 'cpt-table-engine'); ?></strong><br />
-                <?php esc_html_e('Deactivating frees up an activation slot so you can use it on another site. The plugin will continue to work but you won\'t receive updates.', 'cpt-table-engine'); ?>
+                <strong><?php esc_html_e('What happens if I deactivate my license?', 'slk-cpt-table-engine'); ?></strong><br />
+                <?php esc_html_e('Deactivating frees up an activation slot so you can use it on another site. The plugin will continue to work but you won\'t receive updates.', 'slk-cpt-table-engine'); ?>
             </li>
             <li>
-                <strong><?php esc_html_e('Support', 'cpt-table-engine'); ?></strong><br />
+                <strong><?php esc_html_e('Support', 'slk-cpt-table-engine'); ?></strong><br />
                 <?php
                 printf(
                     /* translators: %s: support URL */
-                    esc_html__('For support, please visit %s', 'cpt-table-engine'),
+                    esc_html__('For support, please visit %s', 'slk-cpt-table-engine'),
                     '<a href="https://slk-communications.de/" target="_blank" rel="noopener noreferrer">https://slk-communications.de/</a>'
                 );
                 ?>

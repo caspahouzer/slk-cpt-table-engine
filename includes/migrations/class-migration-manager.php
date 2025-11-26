@@ -5,17 +5,17 @@
  *
  * Orchestrates migration process with batch processing and progress tracking.
  *
- * @package CPT_Table_Engine
+ * @package SLK_Cpt_Table_Engine
  */
 
 declare(strict_types=1);
 
-namespace CPT_Table_Engine\Migrations;
+namespace SLK_Cpt_Table_Engine\Migrations;
 
-use CPT_Table_Engine\Database\Table_Manager;
-use CPT_Table_Engine\Controllers\Settings_Controller;
-use CPT_Table_Engine\Helpers\Logger;
-use CPT_Table_Engine\Helpers\Cache;
+use SLK_Cpt_Table_Engine\Database\Table_Manager;
+use SLK_Cpt_Table_Engine\Controllers\Settings_Controller;
+use SLK_Cpt_Table_Engine\Helpers\Logger;
+use SLK_Cpt_Table_Engine\Helpers\Cache;
 
 /**
  * Migration Manager class.
@@ -44,13 +44,13 @@ final class Migration_Manager
 
         // Verify post type is valid.
         if (! post_type_exists($post_type)) {
-            return new \WP_Error('invalid_post_type', __('Invalid post type.', 'cpt-table-engine'));
+            return new \WP_Error('invalid_post_type', __('Invalid post type.', 'slk-cpt-table-engine'));
         }
 
         // Create tables if they don't exist.
         if (! Table_Manager::verify_tables($post_type)) {
             if (! Table_Manager::create_tables($post_type)) {
-                return new \WP_Error('table_creation_failed', __('Failed to create custom tables.', 'cpt-table-engine'));
+                return new \WP_Error('table_creation_failed', __('Failed to create custom tables.', 'slk-cpt-table-engine'));
             }
         }
 
@@ -97,7 +97,7 @@ final class Migration_Manager
 
         // Verify tables exist.
         if (! Table_Manager::verify_tables($post_type)) {
-            return new \WP_Error('tables_not_found', __('Custom tables do not exist.', 'cpt-table-engine'));
+            return new \WP_Error('tables_not_found', __('Custom tables do not exist.', 'slk-cpt-table-engine'));
         }
 
         // Initialize migration status.
@@ -172,7 +172,7 @@ final class Migration_Manager
             'direction' => $direction,
             'progress'  => 0,
             'total'     => 0,
-            'message'   => __('Migration started...', 'cpt-table-engine'),
+            'message'   => __('Migration started...', 'slk-cpt-table-engine'),
         ];
 
         set_transient($transient_key, $status, HOUR_IN_SECONDS);
