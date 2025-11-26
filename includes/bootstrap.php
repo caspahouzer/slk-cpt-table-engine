@@ -137,12 +137,12 @@ final class Bootstrap
     public function show_license_inactive_notice(): void
     {
         // Don't show on the plugin's own settings page.
-        if (isset($_GET['page'])) {
-            check_admin_referer('cpt_table_engine_tab_action');
-            $page = sanitize_text_field(wp_unslash($_GET['page']));
-            if ($page === 'slk-cpt-table-engine') {
-                return;
-            }
+        // Nonce verification is not required here because we are only reading the 'page' parameter
+        // to conditionally display an admin notice. This is a non-destructive read operation.
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : '';
+        if ($page === 'slk-cpt-table-engine') {
+            return;
         }
 
         if (!\SLK\License_Manager\License_Manager::is_active()) {

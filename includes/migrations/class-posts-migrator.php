@@ -38,12 +38,8 @@ final class Posts_Migrator
         $batch_size = Migration_Manager::get_batch_size();
 
         // Get total count.
-        $total = (int) $wpdb->get_var(
-            $wpdb->prepare(
-                "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = %s",
-                $post_type
-            )
-        );
+        $counts = wp_count_posts( $post_type );
+        $total = array_sum( (array) $counts );
 
         if (! $total) {
             Logger::info("No posts found to migrate for post type: {$post_type}");
@@ -123,8 +119,10 @@ final class Posts_Migrator
 				guid = VALUES(guid)';
 
             // Execute batch insert.
-            $prepared = $wpdb->prepare($sql, $values); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-            $result = $wpdb->query($prepared); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+            $prepared = $wpdb->prepare($sql, $values);
+            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+            $result = $wpdb->query($prepared);
 
             if (false === $result) {
                 Logger::error("Failed to migrate posts batch at offset {$offset}: " . $wpdb->last_error);
@@ -169,7 +167,7 @@ final class Posts_Migrator
         $batch_size = Migration_Manager::get_batch_size();
 
         // Get total count.
-        $total = (int) $wpdb->get_var("SELECT COUNT(*) FROM `{$custom_table}`"); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $total = self::count_posts_in_custom_table($custom_table);
 
         if (! $total) {
             Logger::info("No posts found to migrate back for post type: {$post_type}");
@@ -183,14 +181,7 @@ final class Posts_Migrator
 
         while ($offset < $total) {
             // Get batch of posts.
-            $posts = $wpdb->get_results(
-                $wpdb->prepare(
-                    "SELECT * FROM `{$custom_table}` ORDER BY ID ASC LIMIT %d OFFSET %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-                    $batch_size,
-                    $offset
-                ),
-                ARRAY_A
-            );
+            $posts = self::get_posts_from_custom_table($custom_table, $batch_size, $offset);
 
             if (empty($posts)) {
                 break;
@@ -248,8 +239,10 @@ final class Posts_Migrator
 				guid = VALUES(guid)';
 
             // Execute batch insert.
-            $prepared = $wpdb->prepare($sql, $values); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-            $result = $wpdb->query($prepared); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+            $prepared = $wpdb->prepare($sql, $values);
+            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+            $result = $wpdb->query($prepared);
 
             if (false === $result) {
                 Logger::error("Failed to migrate posts batch at offset {$offset}: " . $wpdb->last_error);
@@ -275,5 +268,39 @@ final class Posts_Migrator
         Logger::info("Successfully migrated {$migrated} posts back to wp_posts");
 
         return true;
+    }
+
+    /**
+     * Count posts in a custom table.
+     *
+     * @param string $table_name The name of the custom table.
+     * @return int The number of posts in the table.
+     */
+    private static function count_posts_in_custom_table(string $table_name): int
+    {
+        global $wpdb;
+        $query = $wpdb->prepare("SELECT COUNT(*) FROM `{$table_name}`");
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        return (int) $wpdb->get_var($query);
+    }
+
+    /**
+     * Get posts from a custom table.
+     *
+     * @param string $table_name The name of the custom table.
+     * @param int    $batch_size The number of posts to retrieve.
+     * @param int    $offset The offset for the query.
+     * @return array The posts from the custom table.
+     */
+    private static function get_posts_from_custom_table(string $table_name, int $batch_size, int $offset): array
+    {
+        global $wpdb;
+        $query = $wpdb->prepare(
+            "SELECT * FROM `{$table_name}` ORDER BY ID ASC LIMIT %d OFFSET %d",
+            $batch_size,
+            $offset
+        );
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        return $wpdb->get_results($query, ARRAY_A);
     }
 }

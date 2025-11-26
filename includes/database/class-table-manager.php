@@ -108,6 +108,7 @@ final class Table_Manager
     {
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange
         $result = dbDelta($schema);
 
         return self::table_exists($table_name);
@@ -130,7 +131,7 @@ final class Table_Manager
             return false;
         }
 
-        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange
         $result = $wpdb->query("DROP TABLE IF EXISTS `{$table_name}`");
 
         return false !== $result;
@@ -146,6 +147,7 @@ final class Table_Manager
     {
         global $wpdb;
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange
         $result = $wpdb->get_var(
             $wpdb->prepare(
                 'SHOW TABLES LIKE %s',
@@ -186,6 +188,7 @@ final class Table_Manager
         global $wpdb;
 
         $pattern = $wpdb->esc_like($wpdb->prefix . 'cpt_') . '%';
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
         $tables  = $wpdb->get_col(
             $wpdb->prepare(
                 'SHOW TABLES LIKE %s',
