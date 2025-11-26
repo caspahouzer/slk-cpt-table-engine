@@ -32,7 +32,7 @@ if (! defined('ABSPATH')) {
         <p class="description">
             <?php
             /* translators: %s: Plugin name. */
-            printf(esc_html__('Manage your %s license. Activate your license to receive updates and support.', 'slk-cpt-table-engine'), '<strong>' . SLK_PLUGIN_NAME . '</strong>');
+            printf(esc_html__('Manage your %s license. Activate your license to receive updates and support.', 'slk-cpt-table-engine'), '<strong>' . esc_html(SLK_PLUGIN_NAME) . '</strong>');
             ?>
         </p>
     </div>

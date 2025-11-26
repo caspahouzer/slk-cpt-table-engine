@@ -137,7 +137,7 @@ final class Bootstrap
     public function show_license_inactive_notice(): void
     {
         // Don't show on the plugin's own settings page.
-        $page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
+        $page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : '';
         if ($page === 'slk-cpt-table-engine') {
             return;
         }

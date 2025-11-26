@@ -8,7 +8,7 @@ Stable tag: 1.0.0
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-A production-ready WordPress plugin that optimizes database performance by storing Custom Post Types in dedicated custom tables instead of `wp_posts` and `wp_postmeta`.
+Optimizes database performance by storing Custom Post Types in dedicated custom tables instead of `wp_posts` and `wp_postmeta`.
 
 ## Features
 

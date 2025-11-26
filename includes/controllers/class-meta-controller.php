@@ -109,6 +109,23 @@ final class Meta_Controller
         }
 
         // Check if meta exists.
+        $sql = "SELECT meta_id FROM `{$table_name}` WHERE post_id = %d AND meta_key = %s";
+        $params = [$post_id, $meta_key];
+
+        if ('' !== $prev_value) {
+            $sql .= ' AND meta_value = %s';
+            $params[] = maybe_serialize($prev_value);
+        }
+
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $existing = $wpdb->get_var($wpdb->prepare($sql, ...$params));
+
+        if (! $existing) {
+            // Meta doesn't exist, add it.
+            return false !== self::add_meta($post_type, $post_id, $meta_key, maybe_unserialize($meta_value));
+        }
+
+        // Update existing meta.
         $where = [
             'post_id'  => $post_id,
             'meta_key' => $meta_key,
@@ -120,19 +137,6 @@ final class Meta_Controller
             $where_format[] = '%s';
         }
 
-        $existing = $wpdb->get_var(
-            $wpdb->prepare(
-                "SELECT meta_id FROM `{$table_name}` WHERE post_id = %d AND meta_key = %s" . ('' !== $prev_value ? ' AND meta_value = %s' : ''), // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-                ...array_values($where)
-            )
-        );
-
-        if (! $existing) {
-            // Meta doesn't exist, add it.
-            return false !== self::add_meta($post_type, $post_id, $meta_key, maybe_unserialize($meta_value));
-        }
-
-        // Update existing meta.
         $result = $wpdb->update(
             $table_name,
             ['meta_value' => $meta_value],
