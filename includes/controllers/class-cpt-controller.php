@@ -257,6 +257,9 @@ final class CPT_Controller
 
         // Get table name.
         $table_name = Table_Manager::get_table_name($post_type, 'main');
+        if (! $table_name) {
+            return null;
+        }
 
         // Query database.
         $post = $wpdb->get_row(
@@ -289,6 +292,9 @@ final class CPT_Controller
 
         // Get table name.
         $table_name = Table_Manager::get_table_name($post_type, 'main');
+        if (! $table_name) {
+            return [];
+        }
 
         // Build query.
         $where = ['1=1'];
@@ -296,41 +302,42 @@ final class CPT_Controller
 
         // Post status.
         if (isset($args['post_status'])) {
-            $where[] = 'post_status = %s';
-            $query_args[] = $args['post_status'];
+            $where[] = $wpdb->prepare('post_status = %s', $args['post_status']);
         }
 
         // Post author.
         if (isset($args['post_author'])) {
-            $where[] = 'post_author = %d';
-            $query_args[] = $args['post_author'];
+            $where[] = $wpdb->prepare('post_author = %d', $args['post_author']);
         }
 
         // Post parent.
         if (isset($args['post_parent'])) {
-            $where[] = 'post_parent = %d';
-            $query_args[] = $args['post_parent'];
+            $where[] = $wpdb->prepare('post_parent = %d', $args['post_parent']);
         }
 
-        // Order by.
+        // Order by - Whitelist to prevent SQL injection.
         $orderby = $args['orderby'] ?? 'post_date';
-        $order = $args['order'] ?? 'DESC';
+        $allowed_orderby = ['ID', 'post_title', 'post_date', 'post_modified', 'post_author', 'post_name', 'menu_order', 'post_parent'];
+        if (! in_array($orderby, $allowed_orderby, true)) {
+            $orderby = 'post_date';
+        }
+
+        // Order - Whitelist to prevent SQL injection.
+        $order = strtoupper($args['order'] ?? 'DESC');
+        if (! in_array($order, ['ASC', 'DESC'], true)) {
+            $order = 'DESC';
+        }
 
         // Limit and offset.
-        $posts_per_page = $args['posts_per_page'] ?? 10;
-        $offset = $args['offset'] ?? 0;
+        $posts_per_page = isset($args['posts_per_page']) ? (int) $args['posts_per_page'] : 10;
+        $offset = isset($args['offset']) ? (int) $args['offset'] : 0;
 
         // Build SQL.
         $where_clause = implode(' AND ', $where);
-        $sql = "SELECT * FROM `{$table_name}` WHERE {$where_clause} ORDER BY {$orderby} {$order}"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $sql = "SELECT * FROM `{$table_name}` WHERE {$where_clause} ORDER BY {$orderby} {$order}";
 
         if ($posts_per_page > 0) {
             $sql .= $wpdb->prepare(' LIMIT %d OFFSET %d', $posts_per_page, $offset);
-        }
-
-        // Prepare and execute.
-        if (! empty($query_args)) {
-            $sql = $wpdb->prepare($sql, $query_args); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
         }
 
         $posts = $wpdb->get_results($sql); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -351,6 +358,9 @@ final class CPT_Controller
 
         // Get table name.
         $table_name = Table_Manager::get_table_name($post_type, 'main');
+        if (! $table_name) {
+            return 0;
+        }
 
         // Build query.
         $where = ['1=1'];
@@ -358,18 +368,12 @@ final class CPT_Controller
 
         // Post status.
         if (isset($args['post_status'])) {
-            $where[] = 'post_status = %s';
-            $query_args[] = $args['post_status'];
+            $where[] = $wpdb->prepare('post_status = %s', $args['post_status']);
         }
 
         // Build SQL.
         $where_clause = implode(' AND ', $where);
-        $sql = "SELECT COUNT(*) FROM `{$table_name}` WHERE {$where_clause}"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-
-        // Prepare and execute.
-        if (! empty($query_args)) {
-            $sql = $wpdb->prepare($sql, $query_args); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-        }
+        $sql = "SELECT COUNT(*) FROM `{$table_name}` WHERE {$where_clause}";
 
         $count = $wpdb->get_var($sql); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 

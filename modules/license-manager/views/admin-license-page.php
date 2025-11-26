@@ -30,7 +30,10 @@ if (! defined('ABSPATH')) {
 
     <div class="cpt-license-info" style="margin-bottom: 20px;">
         <p class="description">
-            <?php printf(esc_html__('Manage your %s license. Activate your license to receive updates and support.', 'slk-cpt-table-engine'), '<strong>' . SLK_PLUGIN_NAME . '</strong>'); ?>
+            <?php
+            /* translators: %s: Plugin name. */
+            printf(esc_html__('Manage your %s license. Activate your license to receive updates and support.', 'slk-cpt-table-engine'), '<strong>' . SLK_PLUGIN_NAME . '</strong>');
+            ?>
         </p>
     </div>
 

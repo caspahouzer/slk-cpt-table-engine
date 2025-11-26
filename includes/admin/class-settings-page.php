@@ -245,7 +245,7 @@ final class Settings_Page
                                     <tr data-post-type="<?php echo esc_attr($setting['slug']); ?>">
                                         <td><code><?php echo esc_html($setting['slug']); ?></code></td>
                                         <td><?php echo esc_html($setting['label']); ?></td>
-                                        <td><?php echo number_format_i18n($setting['count']); ?></td>
+                                        <td><?php echo esc_html(number_format_i18n($setting['count'])); ?></td>
                                         <td>
                                             <label class="cpt-toggle-switch">
                                                 <input

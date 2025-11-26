@@ -205,7 +205,9 @@ final class Settings_Controller
                 if (Table_Manager::verify_tables($slug)) {
                     global $wpdb;
                     $table = Table_Manager::get_table_name($slug, 'main');
-                    $count = (int) $wpdb->get_var("SELECT COUNT(*) FROM `{$table}`");
+                    if ($table) {
+                        $count = (int) $wpdb->get_var("SELECT COUNT(*) FROM `{$table}`");
+                    }
                 }
             } else {
                 // Get count from wp_posts.

@@ -1,5 +1,13 @@
 # SLK CPT Table Engine
 
+Contributors: Sebastian Klaus
+Tags: custom post type, cpt, database, performance, custom table
+Requires at least: 6.7
+Tested up to: 6.8
+Stable tag: 1.0.0
+License: GPL v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
 A production-ready WordPress plugin that optimizes database performance by storing Custom Post Types in dedicated custom tables instead of `wp_posts` and `wp_postmeta`.
 
 ## Features

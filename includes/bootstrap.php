@@ -91,9 +91,6 @@ final class Bootstrap
      */
     public function init(): void
     {
-        // Load text domain for internationalization.
-        add_action('init', [$this, 'load_textdomain']);
-
         // Initialize admin components.
         if (is_admin()) {
             $this->init_admin();
@@ -101,20 +98,6 @@ final class Bootstrap
 
         // Initialize frontend components.
         $this->init_frontend();
-    }
-
-    /**
-     * Load plugin text domain for translations.
-     *
-     * @return void
-     */
-    public function load_textdomain(): void
-    {
-        load_plugin_textdomain(
-            CPT_TABLE_ENGINE_TEXT_DOMAIN,
-            false,
-            dirname(CPT_TABLE_ENGINE_BASENAME) . '/languages'
-        );
     }
 
     /**

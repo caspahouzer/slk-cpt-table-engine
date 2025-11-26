@@ -32,6 +32,9 @@ final class Posts_Migrator
         global $wpdb;
 
         $custom_table = Table_Manager::get_table_name($post_type, 'main');
+        if (! $custom_table) {
+            return new \WP_Error('invalid_table', __('Invalid custom table for post type.', 'slk-cpt-table-engine'));
+        }
         $batch_size = Migration_Manager::get_batch_size();
 
         // Get total count.
@@ -160,6 +163,9 @@ final class Posts_Migrator
         global $wpdb;
 
         $custom_table = Table_Manager::get_table_name($post_type, 'main');
+        if (! $custom_table) {
+            return new \WP_Error('invalid_table', __('Invalid custom table for post type.', 'slk-cpt-table-engine'));
+        }
         $batch_size = Migration_Manager::get_batch_size();
 
         // Get total count.

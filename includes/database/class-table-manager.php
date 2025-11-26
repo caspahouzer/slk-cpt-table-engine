@@ -123,6 +123,13 @@ final class Table_Manager
     {
         global $wpdb;
 
+        // Sanitize table name to prevent SQL injection.
+        // This is a basic check; ensure table names are generated securely.
+        if (preg_match('/[^a-zA-Z0-9_]/', str_replace($wpdb->prefix, '', $table_name))) {
+            Logger::error("Invalid table name provided for deletion: {$table_name}");
+            return false;
+        }
+
         // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         $result = $wpdb->query("DROP TABLE IF EXISTS `{$table_name}`");
 

@@ -32,6 +32,11 @@ final class Meta_Migrator
 
         $custom_table = Table_Manager::get_table_name($post_type, 'meta');
         $main_table = Table_Manager::get_table_name($post_type, 'main');
+
+        if (! $custom_table || ! $main_table) {
+            return new \WP_Error('invalid_table', __('Invalid custom table for post type.', 'slk-cpt-table-engine'));
+        }
+
         $batch_size = Migration_Manager::get_batch_size();
 
         // Get total count of meta entries for this post type.
@@ -132,6 +137,9 @@ final class Meta_Migrator
         global $wpdb;
 
         $custom_table = Table_Manager::get_table_name($post_type, 'meta');
+        if (! $custom_table) {
+            return new \WP_Error('invalid_table', __('Invalid custom table for post type.', 'slk-cpt-table-engine'));
+        }
         $batch_size = Migration_Manager::get_batch_size();
 
         // Get total count.

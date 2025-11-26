@@ -104,6 +104,9 @@ final class Meta_Controller
 
         // Get table name.
         $table_name = Table_Manager::get_table_name($post_type, 'meta');
+        if (! $table_name) {
+            return false;
+        }
 
         // Check if meta exists.
         $where = [
@@ -233,6 +236,9 @@ final class Meta_Controller
 
         // Get table name.
         $table_name = Table_Manager::get_table_name($post_type, 'meta');
+        if (! $table_name) {
+            return $single ? '' : [];
+        }
 
         // Build query.
         if (! empty($meta_key)) {

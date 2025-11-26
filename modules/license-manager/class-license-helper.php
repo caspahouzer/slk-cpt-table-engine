@@ -121,7 +121,9 @@ class License_Helper
 
             $error_message = isset($data['message'])
                 ? sanitize_text_field($data['message'])
-                : sprintf(__('API request failed with status code: %d', 'slk-cpt-table-engine'), $response_code);
+                :
+                /* translators: %d: HTTP status code */
+                sprintf(__('API request failed with status code: %d', 'slk-cpt-table-engine'), $response_code);
 
             self::log('API returned error status', ['code' => $response_code, 'message' => $error_message, 'data' => $data]);
 
