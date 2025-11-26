@@ -43,7 +43,8 @@ final class Meta_Migrator
         $total = (int) $wpdb->get_var(
             $wpdb->prepare(
                 "SELECT COUNT(*) FROM {$wpdb->postmeta} pm
-				INNER JOIN `{$main_table}` p ON pm.post_id = p.ID"
+                INNER JOIN %i p ON pm.post_id = p.ID",
+                $main_table
             )
         );
 
@@ -62,9 +63,10 @@ final class Meta_Migrator
             $meta_entries = $wpdb->get_results(
                 $wpdb->prepare(
                     "SELECT pm.* FROM {$wpdb->postmeta} pm
-					INNER JOIN `{$main_table}` p ON pm.post_id = p.ID
-					ORDER BY pm.meta_id ASC
-					LIMIT %d OFFSET %d",
+                    INNER JOIN %i p ON pm.post_id = p.ID
+                    ORDER BY pm.meta_id ASC
+                    LIMIT %d OFFSET %d",
+                    $main_table,
                     $batch_size,
                     $offset
                 ),

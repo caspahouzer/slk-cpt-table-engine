@@ -206,7 +206,7 @@ final class Settings_Controller
                     global $wpdb;
                     $table = Table_Manager::get_table_name($slug, 'main');
                     if ($table) {
-                        $count = (int) $wpdb->get_var("SELECT COUNT(*) FROM `{$table}`");
+                        $count = (int) $wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM %i', $table));
                     }
                 }
             } else {

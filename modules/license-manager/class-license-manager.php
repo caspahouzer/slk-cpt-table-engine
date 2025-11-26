@@ -75,9 +75,10 @@ class License_Manager
         $log_message = '[SLK License Manager] ' . $message;
 
         if ($data !== null) {
-            $log_message .= ' | Data: ' . json_encode($data);
+            // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+            error_log($log_message . ' | Data: ' . wp_json_encode($data));
         }
-
+        // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
         error_log($log_message);
     }
 
@@ -515,10 +516,10 @@ class License_Manager
             wp_send_json_error(['message' => __('Permission denied.', 'slk-cpt-table-engine')]);
         }
 
-        $method = isset($_POST['method']) ? sanitize_text_field($_POST['method']) : '';
+        $method = isset($_POST['method']) ? sanitize_text_field(wp_unslash($_POST['method'])) : '';
 
         if ($method === 'activate') {
-            $license_key = isset($_POST['license_key']) ? sanitize_text_field($_POST['license_key']) : '';
+            $license_key = isset($_POST['license_key']) ? sanitize_text_field(wp_unslash($_POST['license_key'])) : '';
             if (empty($license_key)) {
                 wp_send_json_error(['message' => __('License key is required.', 'slk-cpt-table-engine')]);
             }

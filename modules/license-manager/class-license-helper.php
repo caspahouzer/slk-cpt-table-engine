@@ -46,6 +46,7 @@ class License_Helper
             $log_message .= ' | Data: ' . json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         }
 
+        // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
         error_log($log_message);
     }
 
@@ -108,10 +109,9 @@ class License_Helper
         $data = json_decode($response_body, true);
 
         // Handle non-2xx responses.
-        error_log(print_r($data, true));
         if ($response_code < 200 || $response_code >= 300) {
-            if(isset($data['errors']) && is_array($data['errors'])) {
-                if(isset($data['errors']['lmfwc_rest_data_error'])) {
+            if (isset($data['errors']) && is_array($data['errors'])) {
+                if (isset($data['errors']['lmfwc_rest_data_error'])) {
                     $data['message'] = isset($data['errors']['lmfwc_rest_data_error'][0])
                         ? sanitize_text_field($data['errors']['lmfwc_rest_data_error'][0])
                         : __('API returned an error.', 'slk-cpt-table-engine');
@@ -128,7 +128,7 @@ class License_Helper
             self::log('API returned error status', ['code' => $response_code, 'message' => $error_message, 'data' => $data]);
 
             // Delete license data on error.
-            if($data['code'] === 'lmfwc_rest_license_not_found') {
+            if ($data['code'] === 'lmfwc_rest_license_not_found') {
                 self::log('License not found on server, deleting local license data to resync.', ['code' => $data['code']]);
                 self::delete_license_data();
             }
@@ -178,7 +178,7 @@ class License_Helper
      */
     private static function get_credentials()
     {
-        $transient_key = 'slk_license_credentials_'. SLK_LICENSE_MANAGER_VERSION;
+        $transient_key = 'slk_license_credentials_' . SLK_LICENSE_MANAGER_VERSION;
         $cached_credentials = get_transient($transient_key);
 
         self::log('Fetched cached credentials', ['cached' => $cached_credentials !== false]);
@@ -188,7 +188,7 @@ class License_Helper
         }
 
         // --- Fetch from the remote credential provider endpoint ---
-        $token = md5(date('Y-m-d'));
+        $token = md5(gmdate('Y-m-d'));
         $endpoint = 'wp-json/slk/v1/lic';
         $params = ['token' => $token];
 

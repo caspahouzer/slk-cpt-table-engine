@@ -164,10 +164,18 @@ final class Settings_Page
         }
 
         // Get current tab.
-        $current_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'cpt';
+        $current_tab = 'cpt';
+        if (isset($_GET['tab'])) {
+            check_admin_referer('cpt_table_engine_tab_action');
+            $current_tab = sanitize_text_field(wp_unslash($_GET['tab']));
+        }
 
         // Get settings.
         $settings = Settings_Controller::get_settings_for_display();
+
+        // Generate tab URLs with nonces.
+        $cpt_tab_url     = wp_nonce_url(admin_url('options-general.php?page=' . self::PAGE_SLUG . '&tab=cpt'), 'cpt_table_engine_tab_action');
+        $license_tab_url = wp_nonce_url(admin_url('options-general.php?page=' . self::PAGE_SLUG . '&tab=license'), 'cpt_table_engine_tab_action');
 
 ?>
         <div class="wrap">
@@ -175,10 +183,10 @@ final class Settings_Page
 
             <!-- Tab Navigation -->
             <h2 class="nav-tab-wrapper">
-                <a href="?page=<?php echo esc_attr(self::PAGE_SLUG); ?>&tab=cpt" class="nav-tab <?php echo $current_tab === 'cpt' ? 'nav-tab-active' : ''; ?>">
+                <a href="<?php echo esc_url($cpt_tab_url); ?>" class="nav-tab <?php echo $current_tab === 'cpt' ? 'nav-tab-active' : ''; ?>">
                     <?php esc_html_e('Custom Post Types', 'slk-cpt-table-engine'); ?>
                 </a>
-                <a href="?page=<?php echo esc_attr(self::PAGE_SLUG); ?>&tab=license" class="nav-tab <?php echo $current_tab === 'license' ? 'nav-tab-active' : ''; ?>">
+                <a href="<?php echo esc_url($license_tab_url); ?>" class="nav-tab <?php echo $current_tab === 'license' ? 'nav-tab-active' : ''; ?>">
                     <?php esc_html_e('License', 'slk-cpt-table-engine'); ?>
                 </a>
             </h2>
