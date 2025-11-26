@@ -12,12 +12,12 @@
  * @var string $notice_type       Admin notice type.
  */
 
+
 // Exit if accessed directly.
 if (! defined('ABSPATH')) {
     exit;
 }
 ?>
-
 <div class="cpt-license-manager">
     <!-- Message Container for AJAX -->
     <div id="slk-license-message" style="display: none; margin-bottom: 15px;"></div>

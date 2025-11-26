@@ -176,7 +176,7 @@ class License_Helper
      */
     private static function get_credentials()
     {
-        $transient_key = 'slk_license_credentials';
+        $transient_key = 'slk_license_credentials_'. SLK_LICENSE_MANAGER_VERSION;
         $cached_credentials = get_transient($transient_key);
 
         self::log('Fetched cached credentials', ['cached' => $cached_credentials !== false]);

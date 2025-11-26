@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace SLK_Cpt_Table_Engine\Admin;
 
+use SLK\License_Manager\License_Manager;
 use SLK_Cpt_Table_Engine\Controllers\Settings_Controller;
 
 /**

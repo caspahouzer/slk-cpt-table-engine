@@ -17,6 +17,8 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
+define('SLK_LICENSE_MANAGER_VERSION', '1.0.0');
+
 /**
  * License Manager class.
  * 
@@ -38,6 +40,7 @@ class License_Manager
     public const OPTION_ACTIVATION_TOKEN = 'cpt_table_engine_activation_token';
     public const OPTION_LICENSE_STATUS = 'cpt_table_engine_license_status';
     public const OPTION_LICENSE_COUNTS = 'cpt_table_engine_license_counts';
+    public const OPTION_LICENSE_CREDS = 'cpt_table_engine_license_creds';
     public const TRANSIENT_LICENSE_VALIDATION = 'cpt_table_engine_license_validation';
     private const VALIDATION_INTERVAL = 12 * HOUR_IN_SECONDS; // 12 hours
 
@@ -403,6 +406,16 @@ class License_Manager
     }
 
     /**
+     * Check if license is active.
+     *
+     * @return bool True if active, false otherwise.
+     */
+    public static function is_active(): bool
+    {
+        return (string) get_option(self::OPTION_LICENSE_STATUS, '') === 'active';
+    }
+
+    /**
      * Schedules the next license validation check.
      *
      * @return void
@@ -423,6 +436,11 @@ class License_Manager
      */
     public function maybe_validate_license(): void
     {
+        $license_key = $this->get_license_key();
+        if (empty($license_key)) {
+            return;
+        }
+
         // Check if transient exists.
         $last_validation = get_transient(self::TRANSIENT_LICENSE_VALIDATION);
 
@@ -430,7 +448,6 @@ class License_Manager
 
         // If transient doesn't exist, validate the license.
         if (false === $last_validation) {
-            $license_key = $this->get_license_key();
             $license_status = $this->get_license_status();
 
             self::log('Transient expired, checking license', ['has_key' => !empty($license_key), 'status' => $license_status]);

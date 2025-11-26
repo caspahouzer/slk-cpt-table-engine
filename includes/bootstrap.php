@@ -131,6 +131,7 @@ final class Bootstrap
         // Initialize License Manager.
         if (class_exists('\SLK\License_Manager\License_Manager')) {
             \SLK\License_Manager\License_Manager::instance();
+            add_action('admin_notices', [$this, 'show_license_inactive_notice']);
         }
     }
 
@@ -143,6 +144,38 @@ final class Bootstrap
     {
         $this->query_interceptor = new Query_Interceptor();
         $this->crud_interceptor  = new CRUD_Interceptor();
+    }
+
+    /**
+     * Show admin notice if license is not active.
+     *
+     * @return void
+     */
+    public function show_license_inactive_notice(): void
+    {
+        // Don't show on the plugin's own settings page.
+        $page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
+        if ($page === 'slk-cpt-table-engine') {
+            return;
+        }
+
+        if (!\SLK\License_Manager\License_Manager::is_active()) {
+            $settings_url = admin_url('options-general.php?page=slk-cpt-table-engine&tab=license');
+            ?>
+            <div class="notice notice-warning is-dismissible">
+                <p>
+                    <strong><?php echo esc_html(SLK_PLUGIN_NAME); ?>:</strong>
+                    <?php
+                    printf(
+                        /* translators: %s: URL to license settings page */
+                        wp_kses_post(__('Please <a href="%s">activate your license</a> to receive plugin updates and support.', 'slk-cpt-table-engine')),
+                        esc_url($settings_url)
+                    );
+                    ?>
+                </p>
+            </div>
+            <?php
+        }
     }
 
     /**
