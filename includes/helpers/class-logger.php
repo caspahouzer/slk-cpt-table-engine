@@ -1,13 +1,5 @@
 <?php
 
-/**
- * Logger class for CPT Table Engine.
- *
- * Provides structured logging functionality.
- *
- * @package SLK_Cpt_Table_Engine
- */
-
 declare(strict_types=1);
 
 namespace SLK\Cpt_Table_Engine\Helpers;

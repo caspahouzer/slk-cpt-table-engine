@@ -1,13 +1,5 @@
 <?php
 
-/**
- * Table Manager class for CPT Table Engine.
- *
- * Handles table creation, deletion, and existence checks.
- *
- * @package SLK_Cpt_Table_Engine
- */
-
 declare(strict_types=1);
 
 namespace SLK\Cpt_Table_Engine\Database;
@@ -221,5 +213,97 @@ final class Table_Manager
         self::$verified_tables_cache[$post_type] = $result;
 
         return $result;
+    }
+
+    /**
+     * Get row count for a table.
+     *
+     * @param string $table_name The table name.
+     * @return int Row count, or 0 if table doesn't exist.
+     */
+    public static function get_table_row_count(string $table_name): int
+    {
+        global $wpdb;
+
+        if (!self::table_exists($table_name)) {
+            return 0;
+        }
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $count = $wpdb->get_var("SELECT COUNT(*) FROM `{$table_name}`");
+
+        return (int) $count;
+    }
+
+    /**
+     * Create a backup of a table.
+     *
+     * @param string $table_name The table name to backup.
+     * @return string|false Backup table name on success, false on failure.
+     */
+    public static function backup_table(string $table_name)
+    {
+        global $wpdb;
+
+        if (!self::table_exists($table_name)) {
+            Logger::error("Cannot backup non-existent table: {$table_name}");
+            return false;
+        }
+
+        $timestamp   = gmdate('YmdHis');
+        $backup_name = "{$table_name}_backup_{$timestamp}";
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange
+        $result = $wpdb->query("CREATE TABLE `{$backup_name}` LIKE `{$table_name}`");
+
+        if (false === $result) {
+            Logger::error("Failed to create backup table structure: {$backup_name}");
+            return false;
+        }
+
+        // Copy data.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $result = $wpdb->query("INSERT INTO `{$backup_name}` SELECT * FROM `{$table_name}`");
+
+        if (false === $result) {
+            Logger::error("Failed to copy data to backup table: {$backup_name}");
+            // Clean up incomplete backup.
+            self::drop_table($backup_name);
+            return false;
+        }
+
+        $row_count = self::get_table_row_count($backup_name);
+        Logger::info("Created backup table {$backup_name} with {$row_count} rows");
+
+        return $backup_name;
+    }
+
+    /**
+     * Detect existing CPT tables and gather information.
+     *
+     * @return array<string, array<string, mixed>> Table information indexed by table name.
+     */
+    public static function detect_existing_tables(): array
+    {
+        $tables = self::get_all_cpt_tables();
+        $results = [];
+
+        foreach ($tables as $table_name) {
+            $row_count = self::get_table_row_count($table_name);
+
+            // Determine if it's a main or meta table.
+            $type = (strpos($table_name, '_meta') !== false) ? 'meta' : 'main';
+
+            $results[$table_name] = [
+                'name'      => $table_name,
+                'type'      => $type,
+                'row_count' => $row_count,
+                'has_data'  => $row_count > 0,
+            ];
+
+            Logger::info("Detected existing table: {$table_name} ({$row_count} rows, type: {$type})");
+        }
+
+        return $results;
     }
 }

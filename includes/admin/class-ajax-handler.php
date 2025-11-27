@@ -1,18 +1,10 @@
 <?php
 
-/**
- * AJAX Handler for CPT Table Engine.
- *
- * Handles AJAX requests from the admin interface.
- *
- * @package SLK_Cpt_Table_Engine
- */
-
 declare(strict_types=1);
 
 namespace SLK\Cpt_Table_Engine\Admin;
 
-use SLK\Cpt_Table_Engine\Migrations\Migration_Manager;
+use SLK\Cpt_Table_Engine\Helpers\Logger;
 use SLK\Cpt_Table_Engine\Helpers\Sanitizer;
 use SLK\Cpt_Table_Engine\Helpers\Validator;
 

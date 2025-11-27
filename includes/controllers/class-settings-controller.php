@@ -1,18 +1,10 @@
 <?php
 
-/**
- * Settings Controller for CPT Table Engine.
- *
- * Manages plugin settings and CPT configuration.
- *
- * @package SLK_Cpt_Table_Engine
- */
-
 declare(strict_types=1);
 
 namespace SLK\Cpt_Table_Engine\Controllers;
 
-use SLK\Cpt_Table_Engine\Helpers\Sanitizer;
+use SLK\Cpt_Table_Engine\Helpers\Logger;
 use SLK\Cpt_Table_Engine\Helpers\Validator;
 use SLK\Cpt_Table_Engine\Database\Table_Manager;
 

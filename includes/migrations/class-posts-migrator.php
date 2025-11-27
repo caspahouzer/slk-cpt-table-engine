@@ -1,13 +1,5 @@
 <?php
 
-/**
- * Posts Migrator for CPT Table Engine.
- *
- * Handles bidirectional migration of post data.
- *
- * @package SLK_Cpt_Table_Engine
- */
-
 declare(strict_types=1);
 
 namespace SLK\Cpt_Table_Engine\Migrations;
@@ -31,6 +23,7 @@ final class Posts_Migrator
     {
         $custom_table = Table_Manager::get_table_name($post_type, 'main');
         if (! $custom_table) {
+            /* translators: %s: post type */
             return new \WP_Error('invalid_table', __('Invalid custom table for post type.', 'slk-cpt-table-engine'));
         }
         $batch_size = Migration_Manager::get_batch_size();
@@ -89,6 +82,7 @@ final class Posts_Migrator
             // Execute batch insert.
             if (false === self::execute_query($sql, $values)) {
                 Logger::error("Failed to migrate posts batch at offset {$offset}");
+                /* translators: %s: post type */
                 return new \WP_Error('migration_failed', __('Failed to migrate posts.', 'slk-cpt-table-engine'));
             }
 
@@ -175,6 +169,7 @@ final class Posts_Migrator
             // Execute batch insert.
             if (false === self::execute_query($sql, $values)) {
                 Logger::error("Failed to migrate posts batch at offset {$offset}");
+                /* translators: %s: post type */
                 return new \WP_Error('migration_failed', __('Failed to migrate posts back to wp_posts.', 'slk-cpt-table-engine'));
             }
 
@@ -288,8 +283,10 @@ final class Posts_Migrator
     {
         $message = $is_rollback ?
             /* translators: %1$d: Number of migrated posts, %2$d: Total number of posts. */
+            /* translators: %1$d: migrated posts, %2$d: total posts */
             sprintf(__('Migrated %1$d of %2$d posts back to wp_posts...', 'slk-cpt-table-engine'), $migrated, $total) :
             /* translators: %1$d: Number of migrated posts, %2$d: Total number of posts. */
+            /* translators: %1$d: migrated posts, %2$d: total posts */
             sprintf(__('Migrated %1$d of %2$d posts...', 'slk-cpt-table-engine'), $migrated, $total);
 
         Migration_Manager::update_migration_status(

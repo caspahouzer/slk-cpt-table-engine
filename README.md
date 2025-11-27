@@ -4,7 +4,7 @@ Contributors: Sebastian Klaus
 Tags: custom post type, cpt, database, performance, custom table
 Requires at least: 6.7
 Tested up to: 6.8
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,6 +34,13 @@ Optimizes database performance by storing Custom Post Types in dedicated custom 
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Navigate to Settings → CPT Table Engine
 4. Toggle custom table storage for your desired post types
+
+## Changelog
+
+### 1.1.0 - 2025-11-27
+* **Enhancement**: Refactored the entire plugin to use the `SLK\Cpt_Table_Engine` namespace for better code organization and to align with modern PHP standards.
+* **Enhancement**: Added internationalization support. The plugin is now translation-ready and includes a `.pot` file. A German translation (`de_DE`) is also included.
+* **Fix**: Resolved several fatal errors related to incorrect namespace usage and class loading.
 
 ## How It Works
 

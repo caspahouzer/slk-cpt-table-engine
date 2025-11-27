@@ -1,13 +1,5 @@
 <?php
 
-/**
- * Cache helper class for CPT Table Engine.
- *
- * Wrapper for WordPress object cache with plugin-specific cache groups.
- *
- * @package SLK_Cpt_Table_Engine
- */
-
 declare(strict_types=1);
 
 namespace SLK\Cpt_Table_Engine\Helpers;

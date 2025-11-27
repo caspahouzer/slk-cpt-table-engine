@@ -1,22 +1,18 @@
 <?php
 
-/**
- * Bootstrap class for CPT Table Engine.
- *
- * Handles plugin initialization, component registration, and hook setup.
- *
- * @package SLK_Cpt_Table_Engine
- */
-
 declare(strict_types=1);
 
 namespace SLK\Cpt_Table_Engine;
 
 use SLK\Cpt_Table_Engine\Admin\Settings_Page;
+use SLK\Cpt_Table_Engine\Helpers\Logger;
 use SLK\Cpt_Table_Engine\Admin\Ajax_Handler;
 use SLK\Cpt_Table_Engine\Admin\Deactivation_Guard;
+use SLK\Cpt_Table_Engine\Admin\Table_Admin_Notices;
 use SLK\Cpt_Table_Engine\Integration\Query_Interceptor;
 use SLK\Cpt_Table_Engine\Integration\CRUD_Interceptor;
+use SLK\Cpt_Table_Engine\Database\Table_Manager;
+use SLK\Cpt_Table_Engine\Database\Table_Schema;
 
 /**
  * Bootstrap class.
@@ -66,6 +62,13 @@ final class Bootstrap
     private ?Deactivation_Guard $deactivation_guard = null;
 
     /**
+     * Table admin notices instance.
+     *
+     * @var Table_Admin_Notices|null
+     */
+    private ?Table_Admin_Notices $table_admin_notices = null;
+
+    /**
      * Private constructor to prevent direct instantiation.
      */
     private function __construct() {}
@@ -110,6 +113,7 @@ final class Bootstrap
         $this->settings_page = new Settings_Page();
         $this->ajax_handler  = new Ajax_Handler();
         $this->deactivation_guard = new Deactivation_Guard();
+        $this->table_admin_notices = new Table_Admin_Notices();
 
         // Initialize License Manager.
         if (class_exists('\SLK\License_Manager\License_Manager')) {
@@ -176,6 +180,14 @@ final class Bootstrap
             add_option('cpt_table_engine_enabled_cpts', [], '', 'no');
         }
 
+        // Set default table handling mode if not exists.
+        if (false === get_option('cpt_table_engine_table_handling_mode')) {
+            add_option('cpt_table_engine_table_handling_mode', 'auto', '', 'no');
+        }
+
+        // Detect existing tables.
+        $this->detect_and_handle_existing_tables();
+
         // Store plugin version.
         update_option('cpt_table_engine_version', CPT_TABLE_ENGINE_VERSION);
 
@@ -198,6 +210,84 @@ final class Bootstrap
 
         // Clear all plugin-related transients.
         $this->clear_transients();
+    }
+
+    /**
+     * Detect and handle existing CPT tables on activation.
+     *
+     * @return void
+     */
+    private function detect_and_handle_existing_tables(): void
+    {
+        Logger::info('Checking for existing CPT tables during activation...');
+
+        // Detect all existing CPT tables.
+        $existing_tables = Table_Manager::detect_existing_tables();
+
+        if (empty($existing_tables)) {
+            Logger::info('No existing CPT tables detected.');
+            Table_Admin_Notices::store_activation_results([
+                'existing_tables'   => [],
+                'tables_with_data'  => [],
+                'validated_tables'  => [],
+            ]);
+            return;
+        }
+
+        Logger::info(sprintf('Found %d existing CPT table(s).', count($existing_tables)));
+
+        $tables_with_data  = [];
+        $validated_tables  = [];
+        $handling_mode     = get_option('cpt_table_engine_table_handling_mode', 'auto');
+
+        foreach ($existing_tables as $table_name => $table_info) {
+            // Track tables with data.
+            if ($table_info['has_data']) {
+                $tables_with_data[] = $table_name;
+            }
+
+            // Validate schema if mode is 'validate' or 'backup'.
+            if (in_array($handling_mode, ['validate', 'backup'], true)) {
+                $validation = Table_Schema::validate_table_schema(
+                    $table_name,
+                    $table_info['type']
+                );
+
+                $validated_tables[$table_name] = $validation;
+
+                if (!$validation['valid']) {
+                    Logger::warning(
+                        "Schema mismatch for {$table_name}: {$validation['message']}"
+                    );
+
+                    // Add warning notice for invalid schema.
+                    Table_Admin_Notices::add_schema_warning(
+                        $table_name,
+                        $validation['message']
+                    );
+                }
+            }
+
+            // Create backup if mode is 'backup' and table has data.
+            if ('backup' === $handling_mode && $table_info['has_data']) {
+                $backup_name = Table_Manager::backup_table($table_name);
+                if ($backup_name) {
+                    Logger::info("Created backup: {$backup_name}");
+                } else {
+                    Logger::error("Failed to create backup for: {$table_name}");
+                }
+            }
+        }
+
+        // Store results for admin notice display.
+        Table_Admin_Notices::store_activation_results([
+            'existing_tables'   => array_keys($existing_tables),
+            'tables_with_data'  => $tables_with_data,
+            'validated_tables'  => $validated_tables,
+            'handling_mode'     => $handling_mode,
+        ]);
+
+        Logger::info('Existing table detection and handling complete.');
     }
 
     /**

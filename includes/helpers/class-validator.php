@@ -1,16 +1,8 @@
 <?php
 
-/**
- * Validator helper class for CPT Table Engine.
- *
- * Validation utilities for post data and settings.
- *
- * @package SLK_Cpt_Table_Engine
- */
-
 declare(strict_types=1);
 
-namespace SLK\Cpt_Table_Engine\Helpers;
+namespace SLK\Cpt__Table_Engine\Helpers;
 
 /**
  * Validator class.

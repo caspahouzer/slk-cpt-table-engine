@@ -1,13 +1,5 @@
 <?php
 
-/**
- * Query Interceptor for CPT Table Engine.
- *
- * Intercepts WP_Query and redirects to custom tables when appropriate.
- *
- * @package SLK_Cpt_Table_Engine
- */
-
 declare(strict_types=1);
 
 namespace SLK\Cpt_Table_Engine\Integration;

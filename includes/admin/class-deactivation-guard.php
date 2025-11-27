@@ -1,18 +1,10 @@
 <?php
 
-/**
- * Deactivation Guard for CPT Table Engine.
- *
- * Prevents plugin deactivation when CPTs are using custom tables.
- *
- * @package SLK_Cpt_Table_Engine
- */
-
 declare(strict_types=1);
 
 namespace SLK\Cpt_Table_Engine\Admin;
 
-use SLK\Cpt_Table_Engine\Controllers\Settings_Controller;
+use SLK\Cpt_Table_Engine\Helpers\Logger;
 
 /**
  * Deactivation Guard class.

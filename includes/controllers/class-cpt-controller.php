@@ -1,13 +1,5 @@
 <?php
 
-/**
- * CPT Controller for CPT Table Engine.
- *
- * Handles CRUD operations for CPT entries in custom tables.
- *
- * @package SLK_Cpt_Table_Engine
- */
-
 declare(strict_types=1);
 
 namespace SLK\Cpt_Table_Engine\Controllers;

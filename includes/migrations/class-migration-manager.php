@@ -1,13 +1,5 @@
 <?php
 
-/**
- * Migration Manager for CPT Table Engine.
- *
- * Orchestrates migration process with batch processing and progress tracking.
- *
- * @package SLK_Cpt_Table_Engine
- */
-
 declare(strict_types=1);
 
 namespace SLK\Cpt_Table_Engine\Migrations;
@@ -44,6 +36,7 @@ final class Migration_Manager
 
         // Verify post type is valid.
         if (! post_type_exists($post_type)) {
+            /* translators: %s is the post type */
             return new \WP_Error('invalid_post_type', __('Invalid post type.', 'slk-cpt-table-engine'));
         }
 
