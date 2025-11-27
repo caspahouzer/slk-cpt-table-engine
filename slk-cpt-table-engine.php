@@ -70,10 +70,10 @@ spl_autoload_register(function (string $class): void {
         $parts = explode('\\', $relative_class);
         $class_name = array_pop($parts);
 
-        // Convert class name to file name (License_Manager -> class-license-manager).
+        // Convert class name to file name (License_Checker -> class-license-checker).
         $file_name = 'class-' . strtolower(str_replace('_', '-', $class_name)) . '.php';
 
-        // Build the namespace path (License_Manager -> license-manager/).
+        // Build the namespace path (License_Checker -> license-checker/).
         $namespace_path = '';
         if (!empty($parts)) {
             $converted_parts = array_map(function ($part) {

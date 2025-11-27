@@ -5,12 +5,12 @@
  *
  * Handles HTTP communication with the License Manager REST API.
  *
- * @package SLK\License_Manager
+ * @package SLK\License_Checker
  */
 
 declare(strict_types=1);
 
-namespace SLK\License_Manager;
+namespace SLK\License_Checker;
 
 // Exit if accessed directly.
 if (! defined('ABSPATH')) {

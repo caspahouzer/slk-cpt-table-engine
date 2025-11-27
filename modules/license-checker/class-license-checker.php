@@ -1,37 +1,37 @@
 <?php
 
 /**
- * License Manager main controller.
+ * License Checker main controller.
  *
  * Handles license operations and data storage.
  *
- * @package SLK\License_Manager
+ * @package SLK\License_Checker
  */
 
 declare(strict_types=1);
 
-namespace SLK\License_Manager;
+namespace SLK\License_Checker;
 
 // Exit if accessed directly.
 if (! defined('ABSPATH')) {
     exit;
 }
 
-define('SLK_LICENSE_MANAGER_VERSION', '1.0.0');
+define('SLK_LICENSE_CHECKER_VERSION', '1.0.0');
 
 /**
  * License Manager class.
  * 
  * Singleton class for managing license operations.
  */
-class License_Manager
+class License_Checker
 {
     /**
      * Singleton instance.
      *
-     * @var License_Manager|null
+     * @var License_Checker|null
      */
-    private static ?License_Manager $instance = null;
+    private static ?License_Checker $instance = null;
 
     /**
      * WordPress option keys.
@@ -72,7 +72,7 @@ class License_Manager
             return;
         }
 
-        $log_message = '[SLK License Manager] ' . $message;
+        $log_message = '[SLK License Checker] ' . $message;
 
         if ($data !== null) {
             // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
@@ -85,9 +85,9 @@ class License_Manager
     /**
      * Get singleton instance.
      *
-     * @return License_Manager
+     * @return License_Checker
      */
-    public static function instance(): License_Manager
+    public static function instance(): License_Checker
     {
         if (null === self::$instance) {
             self::$instance = new self();
@@ -478,14 +478,14 @@ class License_Manager
         }
 
         wp_enqueue_script(
-            'slk-license-manager',
-            CPT_TABLE_ENGINE_URL . 'modules/license-manager/assets/js/license-manager.js',
+            'slk-license-checker',
+            CPT_TABLE_ENGINE_URL . 'modules/license-checker/assets/js/license-checker.js',
             ['jquery'],
             CPT_TABLE_ENGINE_VERSION,
             true
         );
 
-        wp_localize_script('slk-license-manager', 'slk_license_vars', [
+        wp_localize_script('slk-license-checker', 'slk_license_vars', [
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce'    => wp_create_nonce('slk_license_nonce'),
             'status'   => $this->get_license_status(),

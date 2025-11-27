@@ -5,7 +5,7 @@
  *
  * This template is loaded by License_Admin_Page::render().
  *
- * @package SLK\License_Manager
+ * @package SLK\License_Checker
  * @var string $license_key       Current license key.
  * @var string $license_status    Current license status.
  * @var string $notice            Admin notice message.
