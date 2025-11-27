@@ -37,7 +37,7 @@ class License_Checker
      * WordPress option keys.
      */
     public const OPTION_LICENSE_KEY = 'cpt_table_engine_license_key';
-    public const OPTION_ACTIVATION_TOKEN = 'cpt_table_engine_activation_token';
+    public const OPTION_ACTIVATION_HASH = 'cpt_table_engine_activation_hash';
     public const OPTION_LICENSE_STATUS = 'cpt_table_engine_license_status';
     public const OPTION_LICENSE_COUNTS = 'cpt_table_engine_license_counts';
     public const OPTION_LICENSE_CREDS = 'cpt_table_engine_license_creds';
@@ -169,48 +169,12 @@ class License_Checker
 
         self::log('License status set to active');
 
-        // Store activation token if provided - check multiple possible field names.
-        $token = null;
-        if (isset($response['data']['activationToken'])) {
-            $token = $response['data']['activationToken'];
-        } elseif (isset($response['data']['activation_token'])) {
-            $token = $response['data']['activation_token'];
-        } elseif (isset($response['data']['token'])) {
-            $token = $response['data']['token'];
-        }
-
-        // If no token in activation response, try to get it from license details.
-        if (!$token) {
-            self::log('No token in activation response, fetching license details');
-            $details = License_Helper::get_license_details($license_key);
-
-            if ($details['success']) {
-                // Check for nested data structure.
-                $activations = null;
-                if (isset($details['data']['data']['activationData'])) {
-                    $activations = $details['data']['data']['activationData'];
-                } elseif (isset($details['data']['activationData'])) {
-                    $activations = $details['data']['activationData'];
-                }
-
-                if ($activations) {
-                    // Get the most recent activation (last item in array or first non-deactivated).
-                    foreach ($activations as $activation) {
-                        if (isset($activation['token']) && empty($activation['deactivated_at'])) {
-                            $token = $activation['token'];
-                            self::log('Found active token in license details', ['token_length' => strlen($token)]);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        if ($token) {
-            update_option(self::OPTION_ACTIVATION_TOKEN, sanitize_text_field($token));
-            self::log('Activation token stored', ['token_length' => strlen($token)]);
+        // Store activation hash if provided.
+        if (isset($response['data']['activation_hash'])) {
+            update_option(self::OPTION_ACTIVATION_HASH, sanitize_text_field($response['data']['activation_hash']));
+            self::log('Activation hash stored');
         } else {
-            self::log('Warning: No activation token found in API response or license details', $response['data']);
+            self::log('Warning: No activation hash found in API response', $response['data']);
         }
 
         // Update license counts.
@@ -270,19 +234,18 @@ class License_Checker
     /**
      * Deactivate a license.
      *
-     * @param string $license_key      The license key.
-     * @param string $activation_token The activation token.
+     * @param string $activation_hash The activation hash.
      * @return array Response array with success status and message.
      */
-    public function deactivate_license(string $license_key, string $activation_token): array
+    public function deactivate_license(string $license_key, string $activation_hash): array
     {
         self::log('Deactivating license', [
             'license_key_length' => strlen($license_key),
-            'token_length'       => strlen($activation_token)
+            'hash_length'       => strlen($activation_hash)
         ]);
 
         // Call API.
-        $response = License_Helper::deactivate_license($license_key, $activation_token);
+        $response = License_Helper::deactivate_license($license_key, $activation_hash);
 
         self::log('Deactivation API response', $response);
 
@@ -330,8 +293,18 @@ class License_Checker
     {
         self::log('Validating license', ['key_length' => strlen($license_key), 'silent_mode' => $silent]);
 
+        $activation_hash = $this->get_activation_hash();
+        if (empty($activation_hash)) {
+            self::log('Validation failed: empty activation hash');
+            return [
+                'success' => false,
+                'data'    => null,
+                'message' => __('Activation hash is required.', 'slk-cpt-table-engine'),
+            ];
+        }
+
         // Call API.
-        $response = License_Helper::validate_license($license_key);
+        $response = License_Helper::validate_license($license_key, $activation_hash);
 
         self::log('Validation API response', $response);
 
@@ -387,13 +360,13 @@ class License_Checker
     }
 
     /**
-     * Get stored activation token.
+     * Get stored activation hash.
      *
-     * @return string Activation token or empty string.
+     * @return string Activation hash or empty string.
      */
-    public function get_activation_token(): string
+    public function get_activation_hash(): string
     {
-        return (string) get_option(self::OPTION_ACTIVATION_TOKEN, '');
+        return (string) get_option(self::OPTION_ACTIVATION_HASH, '');
     }
 
     /**
@@ -489,6 +462,7 @@ class License_Checker
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce'    => wp_create_nonce('slk_license_nonce'),
             'status'   => $this->get_license_status(),
+            'domain'   => parse_url(home_url(), PHP_URL_HOST),
             'strings'  => [
                 'enter_key'         => __('Please enter a license key.', 'slk-cpt-table-engine'),
                 'confirm_deactivate' => __('Are you sure you want to deactivate this license?', 'slk-cpt-table-engine'),
@@ -546,15 +520,10 @@ class License_Checker
                 wp_send_json_error(['message' => $response['message']]);
             }
         } elseif ($method === 'deactivate') {
-            $activation_token = $this->get_activation_token();
+            $activation_hash = $this->get_activation_hash();
 
-            // Fallback to license key if token missing (same logic as before)
-            if (empty($activation_token)) {
-                $activation_token = $this->get_license_key();
-            }
-
-            if (!$activation_token) {
-                wp_send_json_error(['message' => __('No activation token found.', 'slk-cpt-table-engine')]);
+            if (empty($activation_hash)) {
+                wp_send_json_error(['message' => __('No activation hash found.', 'slk-cpt-table-engine')]);
             }
 
             $license_key = $this->get_license_key();
@@ -562,7 +531,7 @@ class License_Checker
                 wp_send_json_error(['message' => __('No license key found.', 'slk-cpt-table-engine')]);
             }
 
-            $response = $this->deactivate_license($license_key, $activation_token);
+            $response = $this->deactivate_license($license_key, $activation_hash);
 
             if ($response['success']) {
                 wp_send_json_success([

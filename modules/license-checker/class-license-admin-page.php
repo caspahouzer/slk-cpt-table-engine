@@ -68,7 +68,7 @@ class License_Admin_Page
         // Get license data.
         $manager = License_Checker::instance();
         $license_key = $manager->get_license_key();
-        $activation_token = $manager->get_activation_token();
+        $activation_hash = $manager->get_activation_hash();
         $license_status = $manager->get_license_status();
         $license_counts = $manager->get_license_counts();
 

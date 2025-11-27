@@ -47,7 +47,8 @@ jQuery(document).ready(function ($) {
                 action: 'slk_manage_license',
                 security: slk_license_vars.nonce,
                 method: 'activate',
-                license_key: licenseKey
+                license_key: licenseKey,
+                domain: slk_license_vars.domain
             },
             success: function (response) {
                 toggleLoading(false);
