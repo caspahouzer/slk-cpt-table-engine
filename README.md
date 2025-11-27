@@ -110,7 +110,7 @@ add_filter( 'cpt_table_engine_migration_batch_size', function( $batch_size ) {
 
 **Check if CPT uses custom table:**
 ```php
-use SLK_Cpt_Table_Engine\Controllers\Settings_Controller;
+use SLK\Cpt_Table_Engine\Controllers\Settings_Controller;
 
 if ( Settings_Controller::is_enabled( 'my_cpt' ) ) {
     // CPT uses custom table
@@ -119,7 +119,7 @@ if ( Settings_Controller::is_enabled( 'my_cpt' ) ) {
 
 **Manually trigger migration:**
 ```php
-use SLK_Cpt_Table_Engine\Migrations\Migration_Manager;
+use SLK\Cpt_Table_Engine\Migrations\Migration_Manager;
 
 // Migrate to custom table
 $result = Migration_Manager::migrate_to_custom_table( 'my_cpt' );

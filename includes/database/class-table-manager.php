@@ -10,9 +10,9 @@
 
 declare(strict_types=1);
 
-namespace SLK_Cpt_Table_Engine\Database;
+namespace SLK\Cpt_Table_Engine\Database;
 
-use SLK_Cpt_Table_Engine\Helpers\Logger;
+use SLK\Cpt_Table_Engine\Helpers\Logger;
 
 /**
  * Table Manager class.

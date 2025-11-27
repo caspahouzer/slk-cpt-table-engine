@@ -10,11 +10,11 @@
 
 declare(strict_types=1);
 
-namespace SLK_Cpt_Table_Engine\Migrations;
+namespace SLK\Cpt_Table_Engine\Migrations;
 
-use SLK_Cpt_Table_Engine\Database\Table_Manager;
-use SLK_Cpt_Table_Engine\Database\Table_Schema;
-use SLK_Cpt_Table_Engine\Helpers\Logger;
+use SLK\Cpt_Table_Engine\Database\Table_Manager;
+use SLK\Cpt_Table_Engine\Database\Table_Schema;
+use SLK\Cpt_Table_Engine\Helpers\Logger;
 
 /**
  * Posts Migrator class.
@@ -268,8 +268,11 @@ final class Posts_Migrator
     private static function execute_query(string $sql, array $values)
     {
         global $wpdb;
+        // phpcs:disable WordPress.DB.PreparedSQL.NotPrepared -- $sql contains placeholders, values are passed safely to prepare().
         $prepared = $wpdb->prepare($sql, $values);
-        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        // phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Already prepared above.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching -- Migration batch operations, not cacheable.
         return $wpdb->query($prepared);
     }
 
@@ -307,8 +310,10 @@ final class Posts_Migrator
     private static function count_posts_in_custom_table(string $table_name): int
     {
         global $wpdb;
+        // Table name is sanitized by Table_Manager and cannot use placeholders.
         // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-        $query = $wpdb->prepare("SELECT COUNT(*) FROM `{$table_name}`");
+        $query = "SELECT COUNT(*) FROM `{$table_name}`";
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- No user input, table name validated.
         return (int) $wpdb->get_var($query);
     }
 
@@ -323,12 +328,15 @@ final class Posts_Migrator
     private static function get_posts_from_custom_table(string $table_name, int $batch_size, int $offset): array
     {
         global $wpdb;
-        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        // Table name is sanitized by Table_Manager and cannot use placeholders.
+        // phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name validated by Table_Manager, not user input.
         $query = $wpdb->prepare(
             "SELECT * FROM `{$table_name}` ORDER BY ID ASC LIMIT %d OFFSET %d",
             $batch_size,
             $offset
         );
+        // phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Already prepared above.
         return $wpdb->get_results($query, ARRAY_A);
     }
 }

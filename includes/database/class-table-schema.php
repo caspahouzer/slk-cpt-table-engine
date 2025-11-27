@@ -10,7 +10,7 @@
 
 declare(strict_types=1);
 
-namespace SLK_Cpt_Table_Engine\Database;
+namespace SLK\Cpt_Table_Engine\Database;
 
 /**
  * Table Schema class.

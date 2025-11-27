@@ -10,10 +10,10 @@
 
 declare(strict_types=1);
 
-namespace SLK_Cpt_Table_Engine\Migrations;
+namespace SLK\Cpt_Table_Engine\Migrations;
 
-use SLK_Cpt_Table_Engine\Database\Table_Manager;
-use SLK_Cpt_Table_Engine\Helpers\Logger;
+use SLK\Cpt_Table_Engine\Database\Table_Manager;
+use SLK\Cpt_Table_Engine\Helpers\Logger;
 
 /**
  * Meta Migrator class.

@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace SLK_Cpt_Table_Engine;
+namespace SLK\Cpt_Table_Engine;
 
 // Exit if accessed directly.
 if (! defined('ABSPATH')) {
@@ -50,8 +50,8 @@ define('CPT_TABLE_ENGINE_TEXT_DOMAIN', 'slk-cpt-table-engine');
 spl_autoload_register(function (string $class): void {
     // Define namespace to directory mappings.
     $namespace_mappings = [
-        'SLK_Cpt_Table_Engine\\' => CPT_TABLE_ENGINE_PATH . 'includes/',
-        'SLK\\'              => CPT_TABLE_ENGINE_PATH . 'modules/',
+        'SLK\\Cpt_Table_Engine\\' => CPT_TABLE_ENGINE_PATH . 'includes/',
+        'SLK\\'                   => CPT_TABLE_ENGINE_PATH . 'modules/',
     ];
 
     // Try each namespace prefix.

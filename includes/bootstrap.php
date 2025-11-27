@@ -10,13 +10,13 @@
 
 declare(strict_types=1);
 
-namespace SLK_Cpt_Table_Engine;
+namespace SLK\Cpt_Table_Engine;
 
-use SLK_Cpt_Table_Engine\Admin\Settings_Page;
-use SLK_Cpt_Table_Engine\Admin\Ajax_Handler;
-use SLK_Cpt_Table_Engine\Admin\Deactivation_Guard;
-use SLK_Cpt_Table_Engine\Integration\Query_Interceptor;
-use SLK_Cpt_Table_Engine\Integration\CRUD_Interceptor;
+use SLK\Cpt_Table_Engine\Admin\Settings_Page;
+use SLK\Cpt_Table_Engine\Admin\Ajax_Handler;
+use SLK\Cpt_Table_Engine\Admin\Deactivation_Guard;
+use SLK\Cpt_Table_Engine\Integration\Query_Interceptor;
+use SLK\Cpt_Table_Engine\Integration\CRUD_Interceptor;
 
 /**
  * Bootstrap class.
@@ -147,7 +147,7 @@ final class Bootstrap
 
         if (!\SLK\License_Manager\License_Manager::is_active()) {
             $settings_url = admin_url('options-general.php?page=slk-cpt-table-engine&tab=license');
-            ?>
+?>
             <div class="notice notice-warning is-dismissible">
                 <p>
                     <strong><?php echo esc_html(SLK_PLUGIN_NAME); ?>:</strong>
@@ -160,7 +160,7 @@ final class Bootstrap
                     ?>
                 </p>
             </div>
-            <?php
+<?php
         }
     }
 

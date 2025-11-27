@@ -10,9 +10,9 @@
 
 declare(strict_types=1);
 
-namespace SLK_Cpt_Table_Engine\Admin;
+namespace SLK\Cpt_Table_Engine\Admin;
 
-use SLK_Cpt_Table_Engine\Controllers\Settings_Controller;
+use SLK\Cpt_Table_Engine\Controllers\Settings_Controller;
 
 /**
  * Deactivation Guard class.

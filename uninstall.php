@@ -37,7 +37,12 @@ function cpt_table_engine_drop_all_tables(): void
 
     // Drop each table.
     foreach ($tables as $table) {
-        $wpdb->query("DROP TABLE IF EXISTS `{$table}`"); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $wpdb->query(
+            $wpdb->prepare(
+                'DROP TABLE IF EXISTS %i',
+                $table
+            )
+        );
     }
 }
 

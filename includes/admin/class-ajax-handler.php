@@ -10,11 +10,11 @@
 
 declare(strict_types=1);
 
-namespace SLK_Cpt_Table_Engine\Admin;
+namespace SLK\Cpt_Table_Engine\Admin;
 
-use SLK_Cpt_Table_Engine\Migrations\Migration_Manager;
-use SLK_Cpt_Table_Engine\Helpers\Sanitizer;
-use SLK_Cpt_Table_Engine\Helpers\Validator;
+use SLK\Cpt_Table_Engine\Migrations\Migration_Manager;
+use SLK\Cpt_Table_Engine\Helpers\Sanitizer;
+use SLK\Cpt_Table_Engine\Helpers\Validator;
 
 /**
  * AJAX Handler class.

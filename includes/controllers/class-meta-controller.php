@@ -10,13 +10,13 @@
 
 declare(strict_types=1);
 
-namespace SLK_Cpt_Table_Engine\Controllers;
+namespace SLK\Cpt_Table_Engine\Controllers;
 
-use SLK_Cpt_Table_Engine\Database\Table_Manager;
-use SLK_Cpt_Table_Engine\Helpers\Sanitizer;
-use SLK_Cpt_Table_Engine\Helpers\Validator;
-use SLK_Cpt_Table_Engine\Helpers\Cache;
-use SLK_Cpt_Table_Engine\Helpers\Logger;
+use SLK\Cpt_Table_Engine\Database\Table_Manager;
+use SLK\Cpt_Table_Engine\Helpers\Sanitizer;
+use SLK\Cpt_Table_Engine\Helpers\Validator;
+use SLK\Cpt_Table_Engine\Helpers\Cache;
+use SLK\Cpt_Table_Engine\Helpers\Logger;
 
 /**
  * Meta Controller class.
@@ -55,8 +55,8 @@ final class Meta_Controller
             $table_name,
             [
                 'post_id'    => $post_id,
-                'meta_key'   => $meta_key,
-                'meta_value' => $meta_value,
+                'meta_key'   => $meta_key, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+                'meta_value' => $meta_value, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
             ],
             ['%d', '%s', '%s']
         );
@@ -128,18 +128,18 @@ final class Meta_Controller
         // Update existing meta.
         $where = [
             'post_id'  => $post_id,
-            'meta_key' => $meta_key,
+            'meta_key' => $meta_key, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
         ];
         $where_format = ['%d', '%s'];
 
         if ('' !== $prev_value) {
-            $where['meta_value'] = maybe_serialize($prev_value);
+            $where['meta_value'] = maybe_serialize($prev_value); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
             $where_format[] = '%s';
         }
 
         $result = $wpdb->update(
             $table_name,
-            ['meta_value' => $meta_value],
+            ['meta_value' => $meta_value], // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
             $where,
             ['%s'],
             $where_format
@@ -186,12 +186,12 @@ final class Meta_Controller
         // Build where clause.
         $where = [
             'post_id'  => $post_id,
-            'meta_key' => $meta_key,
+            'meta_key' => $meta_key, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
         ];
         $where_format = ['%d', '%s'];
 
         if ('' !== $meta_value) {
-            $where['meta_value'] = maybe_serialize($meta_value);
+            $where['meta_value'] = maybe_serialize($meta_value); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
             $where_format[] = '%s';
         }
 

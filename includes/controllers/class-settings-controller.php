@@ -10,11 +10,11 @@
 
 declare(strict_types=1);
 
-namespace SLK_Cpt_Table_Engine\Controllers;
+namespace SLK\Cpt_Table_Engine\Controllers;
 
-use SLK_Cpt_Table_Engine\Helpers\Sanitizer;
-use SLK_Cpt_Table_Engine\Helpers\Validator;
-use SLK_Cpt_Table_Engine\Database\Table_Manager;
+use SLK\Cpt_Table_Engine\Helpers\Sanitizer;
+use SLK\Cpt_Table_Engine\Helpers\Validator;
+use SLK\Cpt_Table_Engine\Database\Table_Manager;
 
 /**
  * Settings Controller class.
