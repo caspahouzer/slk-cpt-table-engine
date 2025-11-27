@@ -170,11 +170,11 @@ class License_Checker
         self::log('License status set to active');
 
         // Store activation hash if provided.
-        if (isset($response['data']['activation_hash'])) {
-            update_option(self::OPTION_ACTIVATION_HASH, sanitize_text_field($response['data']['activation_hash']));
+        if (isset($response['activation_hash'])) {
+            update_option(self::OPTION_ACTIVATION_HASH, sanitize_text_field($response['activation_hash']));
             self::log('Activation hash stored');
         } else {
-            self::log('Warning: No activation hash found in API response', $response['data']);
+            self::log('Warning: No activation hash found in API response', $response);
         }
 
         // Update license counts.

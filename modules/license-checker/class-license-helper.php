@@ -116,11 +116,7 @@ class License_Helper
 
         self::log('API request successful', ['data' => $data]);
 
-        return [
-            'success' => true,
-            'data'    => $data,
-            'message' => isset($data['message']) ? sanitize_text_field($data['message']) : __('Request successful.', 'slk-cpt-table-engine'),
-        ];
+        return $data;
     }
 
     public static function delete_license_data(): void

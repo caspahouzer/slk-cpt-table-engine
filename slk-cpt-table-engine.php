@@ -136,6 +136,7 @@ add_action('plugins_loaded', __NAMESPACE__ . '\\init');
 add_action('admin_init', function() {
     if (isset($_GET['slk_full_api_test']) && $_GET['slk_full_api_test'] === '1' && current_user_can('manage_options')) {
         $license_key = 'slk-S386-DAJG-F3BG-28Y1';
+        $invalid_license_key = 'slk-S386-DAJG-F3BG-28Y2'; // Changed last digit
 
         // Set a longer execution time in case the API is slow.
         @set_time_limit(300);
@@ -148,8 +149,14 @@ add_action('admin_init', function() {
         print_r($activation_result);
         echo '<hr>';
 
+        // 1.5. Activate License Again (to check for errors)
+        echo '<h2>1.5. Activating License Again...</h2>';
+        $activation_result_2 = \SLK\License_Checker\License_Helper::activate_license($license_key);
+        print_r($activation_result_2);
+        echo '<hr>';
+
         // Extract activation hash for deactivation
-        $activation_hash = $activation_result['data']['activation_hash'] ?? null;
+        $activation_hash = $activation_result['activation_hash'] ?? null;
 
         // 2. Get Details (after activation)
         echo '<h2>2. Getting License Details (after activation)...</h2>';
@@ -175,9 +182,14 @@ add_action('admin_init', function() {
         sleep(1);
         $details_after_deactivation = \SLK\License_Checker\License_Helper::get_license_details($license_key);
         print_r($details_after_deactivation);
+        echo '<hr>';
+        
+        // 5. Attempt to activate an invalid license key
+        echo '<h2>5. Activating Invalid License...</h2>';
+        $invalid_activation_result = \SLK\License_Checker\License_Helper::activate_license($invalid_license_key);
+        print_r($invalid_activation_result);
 
         echo '</pre>';
         die();
     }
 });
-
