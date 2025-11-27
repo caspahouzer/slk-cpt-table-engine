@@ -133,63 +133,63 @@ register_deactivation_hook(CPT_TABLE_ENGINE_FILE, __NAMESPACE__ . '\\deactivate'
 add_action('plugins_loaded', __NAMESPACE__ . '\\init');
 
 // --- TEMPORARY FULL API TEST SCRIPT ---
-add_action('admin_init', function() {
-    if (isset($_GET['slk_full_api_test']) && $_GET['slk_full_api_test'] === '1' && current_user_can('manage_options')) {
-        $license_key = 'slk-S386-DAJG-F3BG-28Y1';
-        $invalid_license_key = 'slk-S386-DAJG-F3BG-28Y2'; // Changed last digit
+// add_action('admin_init', function() {
+//     if (isset($_GET['slk_full_api_test']) && $_GET['slk_full_api_test'] === '1' && current_user_can('manage_options')) {
+//         $license_key = 'slk-S386-DAJG-F3BG-28Y1';
+//         $invalid_license_key = 'slk-S386-DAJG-F3BG-28Y2'; // Changed last digit
 
-        // Set a longer execution time in case the API is slow.
-        @set_time_limit(300);
+//         // Set a longer execution time in case the API is slow.
+//         @set_time_limit(300);
 
-        echo '<pre>';
+//         echo '<pre>';
 
-        // 1. Activate License
-        echo '<h2>1. Activating License...</h2>';
-        $activation_result = \SLK\License_Checker\License_Helper::activate_license($license_key);
-        print_r($activation_result);
-        echo '<hr>';
+//         // 1. Activate License
+//         echo '<h2>1. Activating License...</h2>';
+//         $activation_result = \SLK\License_Checker\License_Helper::activate_license($license_key);
+//         print_r($activation_result);
+//         echo '<hr>';
 
-        // 1.5. Activate License Again (to check for errors)
-        echo '<h2>1.5. Activating License Again...</h2>';
-        $activation_result_2 = \SLK\License_Checker\License_Helper::activate_license($license_key);
-        print_r($activation_result_2);
-        echo '<hr>';
+//         // 1.5. Activate License Again (to check for errors)
+//         echo '<h2>1.5. Activating License Again...</h2>';
+//         $activation_result_2 = \SLK\License_Checker\License_Helper::activate_license($license_key);
+//         print_r($activation_result_2);
+//         echo '<hr>';
 
-        // Extract activation hash for deactivation
-        $activation_hash = $activation_result['activation_hash'] ?? null;
+//         // Extract activation hash for deactivation
+//         $activation_hash = $activation_result['activation_hash'] ?? null;
 
-        // 2. Get Details (after activation)
-        echo '<h2>2. Getting License Details (after activation)...</h2>';
-        $details_after_activation = \SLK\License_Checker\License_Helper::get_license_details($license_key);
-        print_r($details_after_activation);
-        echo '<hr>';
+//         // 2. Get Details (after activation)
+//         echo '<h2>2. Getting License Details (after activation)...</h2>';
+//         $details_after_activation = \SLK\License_Checker\License_Helper::get_license_details($license_key);
+//         print_r($details_after_activation);
+//         echo '<hr>';
 
-        // 3. Deactivate License
-        echo '<h2>3. Deactivating License...</h2>';
-        if ($activation_hash) {
-            // Add a small delay to ensure the server can process the activation before deactivation.
-            sleep(1);
-            $deactivation_result = \SLK\License_Checker\License_Helper::deactivate_license($license_key, $activation_hash);
-            print_r($deactivation_result);
-        } else {
-            echo 'Skipping deactivation because no activation hash was found in the activation response.';
-        }
-        echo '<hr>';
+//         // 3. Deactivate License
+//         echo '<h2>3. Deactivating License...</h2>';
+//         if ($activation_hash) {
+//             // Add a small delay to ensure the server can process the activation before deactivation.
+//             sleep(1);
+//             $deactivation_result = \SLK\License_Checker\License_Helper::deactivate_license($license_key, $activation_hash);
+//             print_r($deactivation_result);
+//         } else {
+//             echo 'Skipping deactivation because no activation hash was found in the activation response.';
+//         }
+//         echo '<hr>';
 
-        // 4. Get Details (after deactivation)
-        echo '<h2>4. Getting License Details (after deactivation)...</h2>';
-        // Add another small delay.
-        sleep(1);
-        $details_after_deactivation = \SLK\License_Checker\License_Helper::get_license_details($license_key);
-        print_r($details_after_deactivation);
-        echo '<hr>';
+//         // 4. Get Details (after deactivation)
+//         echo '<h2>4. Getting License Details (after deactivation)...</h2>';
+//         // Add another small delay.
+//         sleep(1);
+//         $details_after_deactivation = \SLK\License_Checker\License_Helper::get_license_details($license_key);
+//         print_r($details_after_deactivation);
+//         echo '<hr>';
         
-        // 5. Attempt to activate an invalid license key
-        echo '<h2>5. Activating Invalid License...</h2>';
-        $invalid_activation_result = \SLK\License_Checker\License_Helper::activate_license($invalid_license_key);
-        print_r($invalid_activation_result);
+//         // 5. Attempt to activate an invalid license key
+//         echo '<h2>5. Activating Invalid License...</h2>';
+//         $invalid_activation_result = \SLK\License_Checker\License_Helper::activate_license($invalid_license_key);
+//         print_r($invalid_activation_result);
 
-        echo '</pre>';
-        die();
-    }
-});
+//         echo '</pre>';
+//         die();
+//     }
+// });
