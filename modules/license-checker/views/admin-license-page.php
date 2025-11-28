@@ -38,7 +38,7 @@ if (! defined('ABSPATH')) {
     </div>
 
     <form method="post" action="" class="cpt-license-form" onsubmit="return false;">
-        <?php wp_nonce_field(\SLK\License_Manager\License_Admin_Page::NONCE_ACTION, \SLK\License_Manager\License_Admin_Page::NONCE_FIELD); ?>
+        <?php wp_nonce_field(\SLK\License_Checker\License_Admin_Page::NONCE_ACTION, \SLK\License_Checker\License_Admin_Page::NONCE_FIELD); ?>
 
         <table class="form-table" role="presentation">
             <tbody>

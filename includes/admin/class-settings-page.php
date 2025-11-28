@@ -341,7 +341,7 @@ final class Settings_Page
                     <div id="cpt-license-container" style="margin-top: 20px;">
                         <?php
                         // Render the license form
-                        \SLK\License_Manager\License_Manager::instance()->render_license_form();
+                        \SLK\License_Checker\License_Checker::instance()->render_license_form();
                         ?>
                     </div>
 

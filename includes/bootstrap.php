@@ -116,8 +116,8 @@ final class Bootstrap
         $this->table_admin_notices = new Table_Admin_Notices();
 
         // Initialize License Manager.
-        if (class_exists('\SLK\License_Manager\License_Manager')) {
-            \SLK\License_Manager\License_Manager::instance();
+        if (class_exists('\SLK\License_Checker\License_Checker')) {
+            \SLK\License_Checker\License_Checker::instance();
             add_action('admin_notices', [$this, 'show_license_inactive_notice']);
         }
     }
@@ -149,7 +149,7 @@ final class Bootstrap
             return;
         }
 
-        if (!\SLK\License_Manager\License_Manager::is_active()) {
+        if (!\SLK\License_Checker\License_Checker::is_active()) {
             $settings_url = admin_url('options-general.php?page=slk-cpt-table-engine&tab=license');
 ?>
             <div class="notice notice-warning is-dismissible">
