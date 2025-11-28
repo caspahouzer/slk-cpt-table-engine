@@ -27,7 +27,7 @@ class License_Helper
     /**
      * API base URL.
      */
-    private const API_BASE_URL = 'http://localhost/plugins/base/';
+    private const API_BASE_URL = 'https://slk-communications.de/';
 
     /**
      * Log debug messages.
