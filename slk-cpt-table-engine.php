@@ -144,8 +144,8 @@ register_activation_hook(CPT_TABLE_ENGINE_FILE, __NAMESPACE__ . '\\activate');
 register_deactivation_hook(CPT_TABLE_ENGINE_FILE, __NAMESPACE__ . '\\deactivate');
 
 // Initialize the plugin.
-add_action('plugins_loaded', __NAMESPACE__ . '\\init');
-add_action('init', __NAMESPACE__ . '\\load_textdomain');
+add_action('plugins_loaded', __NAMESPACE__ . '\\init', 0);
+add_action('init', __NAMESPACE__ . '\\load_textdomain', 5);
 
 // --- TEMPORARY FULL API TEST SCRIPT ---
 // add_action('admin_init', function() {
