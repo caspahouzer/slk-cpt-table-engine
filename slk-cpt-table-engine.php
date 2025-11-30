@@ -104,6 +104,20 @@ function init(): void
 }
 
 /**
+ * Load the plugin text domain.
+ *
+ * @return void
+ */
+function load_textdomain(): void
+{
+    load_plugin_textdomain(
+        CPT_TABLE_ENGINE_TEXT_DOMAIN,
+        false,
+        dirname(CPT_TABLE_ENGINE_BASENAME) . '/languages'
+    );
+}
+
+/**
  * Plugin activation hook.
  *
  * @return void
@@ -131,6 +145,7 @@ register_deactivation_hook(CPT_TABLE_ENGINE_FILE, __NAMESPACE__ . '\\deactivate'
 
 // Initialize the plugin.
 add_action('plugins_loaded', __NAMESPACE__ . '\\init');
+add_action('init', __NAMESPACE__ . '\\load_textdomain');
 
 // --- TEMPORARY FULL API TEST SCRIPT ---
 // add_action('admin_init', function() {

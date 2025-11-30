@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SLK\Cpt_Table_Engine\Admin;
 
+use SLK\Cpt_Table_Engine\Controllers\Settings_Controller;
 use SLK\Cpt_Table_Engine\Helpers\Logger;
 
 /**
