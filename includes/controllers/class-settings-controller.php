@@ -7,6 +7,7 @@ namespace SLK\Cpt_Table_Engine\Controllers;
 use SLK\Cpt_Table_Engine\Helpers\Logger;
 use SLK\Cpt_Table_Engine\Helpers\Validator;
 use SLK\Cpt_Table_Engine\Database\Table_Manager;
+use SLK\Cpt_Table_Engine\Helpers\Sanitizer;
 
 /**
  * Settings Controller class.

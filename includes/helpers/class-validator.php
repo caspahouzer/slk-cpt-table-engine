@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace SLK\Cpt__Table_Engine\Helpers;
+namespace SLK\Cpt_Table_Engine\Helpers;
 
 /**
  * Validator class.

@@ -12,6 +12,7 @@
 
 # htaccess
 /.htaccess
+populate.php
 
 # All plugins
 #

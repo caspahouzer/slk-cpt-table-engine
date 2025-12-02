@@ -7,6 +7,7 @@ namespace SLK\Cpt_Table_Engine\Admin;
 use SLK\Cpt_Table_Engine\Helpers\Logger;
 use SLK\Cpt_Table_Engine\Helpers\Sanitizer;
 use SLK\Cpt_Table_Engine\Helpers\Validator;
+use SLK\Cpt_Table_Engine\Migrations\Migration_Manager;
 
 /**
  * AJAX Handler class.

@@ -120,6 +120,13 @@ final class Migration_Manager
         // Mark migration as complete.
         self::update_migration_status($post_type, 'completed');
 
+        // Drop custom tables after successful migration back to wp_posts.
+        $drop_result = Table_Manager::drop_tables($post_type);
+        if (! $drop_result) {
+            Logger::warning("Migration completed but failed to drop tables for post type: {$post_type}. Tables can be dropped manually if needed.");
+            // Don't fail the migration - data is already safely in wp_posts/wp_postmeta
+        }
+
         Logger::info("Completed migration to wp_posts for post type: {$post_type}");
 
         return true;

@@ -104,7 +104,7 @@ msgstr "Migration fehlgeschlagen. Bitte überprüfe das Fehlerprotokoll."
 #: includes/admin/class-settings-page.php:153
 #: includes/admin/class-settings-page.php:301
 msgid "Using custom table"
-msgstr "Verwendet benutzerdefinierte Tabelle"
+msgstr "Verwendet eigene Tabelle"
 
 #: includes/admin/class-settings-page.php:154
 #: includes/admin/class-settings-page.php:304
