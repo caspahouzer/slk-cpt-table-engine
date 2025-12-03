@@ -100,6 +100,21 @@ final class Meta_Migrator
                 return new \WP_Error('migration_failed', __('Failed to migrate post meta.', 'slk-cpt-table-engine'));
             }
 
+            // Delete meta from wp_postmeta after successful migration to custom table.
+            $meta_ids = array_column($meta_entries, 'meta_id');
+            if (!empty($meta_ids)) {
+                $meta_placeholders = implode(',', array_fill(0, count($meta_ids), '%d'));
+                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $meta_placeholders is safe, constructed above
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching -- Bulk migration operation
+                $wpdb->query(
+                    $wpdb->prepare(
+                        "DELETE FROM {$wpdb->postmeta} WHERE meta_id IN ($meta_placeholders)",
+                        ...$meta_ids
+                    )
+                );
+                Logger::debug("Deleted " . count($meta_ids) . " meta entries from wp_postmeta");
+            }
+
             $migrated += count($meta_entries);
             $offset += $batch_size;
 

@@ -23,6 +23,13 @@ final class CRUD_Interceptor
     private static array $post_type_cache = [];
 
     /**
+     * Track posts being processed to prevent recursive calls.
+     *
+     * @var array<int, bool>
+     */
+    private static array $processing_posts = [];
+
+    /**
      * Constructor.
      */
     public function __construct()
@@ -65,6 +72,13 @@ final class CRUD_Interceptor
         add_action('wp_insert_post', [$this, 'handle_insert_post'], 10, 3);
         add_filter('wp_insert_post_data', [$this, 'handle_insert_post_data'], 10, 2);
 
+        // Cleanup hook - runs after post and meta are saved.
+        // Priority 9999 ensures it runs after all other hooks.
+        add_action('wp_after_insert_post', [$this, 'cleanup_post_from_wp_posts'], 9999, 4);
+
+        // Additional cleanup on shutdown to catch any remaining orphaned meta.
+        add_action('shutdown', [$this, 'cleanup_orphaned_meta'], 99999);
+
         // Meta CRUD hooks.
         add_filter('add_post_metadata', [$this, 'handle_add_post_meta'], 10, 5);
         add_filter('update_post_metadata', [$this, 'handle_update_post_meta'], 10, 5);
@@ -92,6 +106,16 @@ final class CRUD_Interceptor
             return;
         }
 
+        // Prevent duplicate processing of the same post during this request.
+        // Keep the flag set for the entire request to prevent multiple insertions.
+        if (isset(self::$processing_posts[$post_id])) {
+            Logger::debug("Skipping duplicate processing of post {$post_id}");
+            return;
+        }
+
+        // Mark post as processed for this request (flag is never unset).
+        self::$processing_posts[$post_id] = true;
+
         // Convert WP_Post to array.
         $post_data = get_object_vars($post);
 
@@ -104,6 +128,67 @@ final class CRUD_Interceptor
         }
 
         Logger::debug("Intercepted post " . ($update ? 'update' : 'insert') . " for ID: {$post_id}");
+    }
+
+    /**
+     * Cleanup post from wp_posts after all insert operations complete.
+     * This runs on 'wp_after_insert_post' hook which fires after post and meta are saved.
+     *
+     * @param int      $post_id     Post ID.
+     * @param \WP_Post $post        Post object.
+     * @param bool     $update      Whether this is an existing post being updated.
+     * @param \WP_Post $post_before Post object before the update (null for new posts).
+     * @return void
+     */
+    public function cleanup_post_from_wp_posts(int $post_id, \WP_Post $post, bool $update, $post_before): void
+    {
+        // Skip if post type doesn't use custom tables.
+        if (! Settings_Controller::is_enabled($post->post_type)) {
+            return;
+        }
+
+        // Skip if tables don't exist.
+        if (! Table_Manager::verify_tables($post->post_type)) {
+            return;
+        }
+
+        // Delete post and its meta from wp_posts/wp_postmeta now that all operations are complete.
+        global $wpdb;
+
+        // Delete meta first (foreign key constraint).
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
+        $meta_deleted = $wpdb->delete($wpdb->postmeta, ['post_id' => $post_id], ['%d']);
+
+        // Then delete post.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
+        $post_deleted = $wpdb->delete($wpdb->posts, ['ID' => $post_id], ['%d']);
+
+        if ($post_deleted) {
+            Logger::debug("Cleaned up post {$post_id} from wp_posts and {$meta_deleted} meta entries from wp_postmeta after all operations completed");
+        }
+    }
+
+    /**
+     * Cleanup orphaned post meta on shutdown.
+     * Removes any wp_postmeta entries whose posts no longer exist in wp_posts.
+     *
+     * @return void
+     */
+    public function cleanup_orphaned_meta(): void
+    {
+        global $wpdb;
+
+        // Delete orphaned meta entries (where post_id doesn't exist in wp_posts).
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared
+        $deleted = $wpdb->query(
+            "DELETE pm FROM {$wpdb->postmeta} pm
+             LEFT JOIN {$wpdb->posts} p ON pm.post_id = p.ID
+             WHERE p.ID IS NULL"
+        );
+
+        if ($deleted > 0) {
+            Logger::debug("Cleaned up {$deleted} orphaned post meta entries on shutdown");
+        }
     }
 
     /**

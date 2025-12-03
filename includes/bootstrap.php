@@ -94,13 +94,13 @@ final class Bootstrap
      */
     public function init(): void
     {
+        // Initialize frontend components.
+        $this->init_frontend();
+
         // Initialize admin components.
         if (is_admin()) {
             $this->init_admin();
         }
-
-        // Initialize frontend components.
-        $this->init_frontend();
     }
 
     /**
@@ -131,6 +131,16 @@ final class Bootstrap
     {
         $this->query_interceptor = new Query_Interceptor();
         $this->crud_interceptor  = new CRUD_Interceptor();
+    }
+
+    /**
+     * Re-initialize frontend components.
+     *
+     * @return void
+     */
+    public function reinit(): void
+    {
+        $this->init_frontend();
     }
 
     /**

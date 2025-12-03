@@ -86,6 +86,34 @@ final class Posts_Migrator
                 return new \WP_Error('migration_failed', __('Failed to migrate posts.', 'slk-cpt-table-engine'));
             }
 
+            // Delete posts and their meta from wp_posts/wp_postmeta after successful migration to custom table.
+            $post_ids = array_map(function($post) { return $post->ID; }, $posts);
+            if (!empty($post_ids)) {
+                global $wpdb;
+                $placeholders = implode(',', array_fill(0, count($post_ids), '%d'));
+
+                // Delete post meta first (foreign key constraint).
+                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $placeholders is safe, constructed above
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching -- Bulk migration operation
+                $meta_deleted = $wpdb->query(
+                    $wpdb->prepare(
+                        "DELETE FROM {$wpdb->postmeta} WHERE post_id IN ($placeholders)",
+                        ...$post_ids
+                    )
+                );
+
+                // Then delete posts.
+                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $placeholders is safe, constructed above
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching -- Bulk migration operation
+                $wpdb->query(
+                    $wpdb->prepare(
+                        "DELETE FROM {$wpdb->posts} WHERE ID IN ($placeholders)",
+                        ...$post_ids
+                    )
+                );
+                Logger::debug("Deleted " . count($post_ids) . " posts from wp_posts and {$meta_deleted} meta entries from wp_postmeta");
+            }
+
             $migrated += count($posts);
             $offset += $batch_size;
 
@@ -116,6 +144,14 @@ final class Posts_Migrator
 
         // Get total count.
         $total = self::count_posts_in_custom_table($custom_table);
+
+        if ($total > 0) {
+            // CRITICAL: Check for ID conflicts before reverse migration.
+            $conflict_check = self::check_id_conflicts($custom_table, $post_type);
+            if (is_wp_error($conflict_check)) {
+                return $conflict_check;
+            }
+        }
 
         if (! $total) {
             Logger::info("No posts found to migrate back for post type: {$post_type}");
@@ -335,5 +371,69 @@ final class Posts_Migrator
         // phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Already prepared above.
         return $wpdb->get_results($query, ARRAY_A);
+    }
+
+    /**
+     * Check for ID conflicts before reverse migration.
+     * Prevents data loss by detecting if wp_posts already contains posts with IDs
+     * that exist in the custom table.
+     *
+     * @param string $custom_table The custom table name.
+     * @param string $post_type    The post type being migrated.
+     * @return true|\WP_Error True if no conflicts, WP_Error if conflicts found.
+     */
+    private static function check_id_conflicts(string $custom_table, string $post_type)
+    {
+        global $wpdb;
+
+        // Get IDs from custom table.
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $custom_ids = $wpdb->get_col("SELECT ID FROM `{$custom_table}` ORDER BY ID ASC");
+
+        if (empty($custom_ids)) {
+            return true;
+        }
+
+        // Check if any of these IDs already exist in wp_posts (for different post types).
+        $placeholders = implode(',', array_fill(0, count($custom_ids), '%d'));
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $conflicts = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT ID, post_type, post_title FROM {$wpdb->posts}
+                 WHERE ID IN ($placeholders) AND post_type != %s
+                 ORDER BY ID ASC",
+                array_merge($custom_ids, [$post_type])
+            ),
+            ARRAY_A
+        );
+
+        if (!empty($conflicts)) {
+            $conflict_count = count($conflicts);
+            $conflict_ids = array_column($conflicts, 'ID');
+            $conflict_list = implode(', ', array_slice($conflict_ids, 0, 10));
+
+            if ($conflict_count > 10) {
+                $conflict_list .= sprintf(' ... (+%d more)', $conflict_count - 10);
+            }
+
+            Logger::error(
+                "ID conflicts detected during reverse migration for post type '{$post_type}': " .
+                "{$conflict_count} IDs already exist in wp_posts with different post types. " .
+                "Conflicting IDs: {$conflict_list}"
+            );
+
+            return new \WP_Error(
+                'id_conflicts',
+                sprintf(
+                    /* translators: 1: number of conflicts, 2: post type, 3: list of conflicting IDs */
+                    __('Cannot migrate back: %1$d ID conflicts detected. Posts with these IDs already exist in wp_posts as different post types: %2$s. This would cause data loss. Please resolve these conflicts manually before attempting reverse migration.', 'slk-cpt-table-engine'),
+                    $conflict_count,
+                    $conflict_list
+                )
+            );
+        }
+
+        Logger::info("ID conflict check passed for post type '{$post_type}': No conflicts found.");
+        return true;
     }
 }

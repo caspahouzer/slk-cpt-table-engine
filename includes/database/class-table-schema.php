@@ -51,7 +51,7 @@ final class Table_Schema
 			comment_count bigint(20) NOT NULL DEFAULT 0,
 			guid varchar(255) NOT NULL DEFAULT '',
 			PRIMARY KEY  (ID),
-			UNIQUE KEY post_name (post_name),
+			KEY post_name (post_name(191)),
 			KEY post_status (post_status),
 			KEY post_date (post_date),
 			KEY post_modified (post_modified),

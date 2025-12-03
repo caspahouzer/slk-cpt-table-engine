@@ -67,8 +67,12 @@ final class Migration_Manager
         // Update settings to mark CPT as enabled.
         Settings_Controller::enable_cpt($post_type);
 
+        // Reinitialize interceptors to register hooks with new state.
+        \SLK\Cpt_Table_Engine\Bootstrap::instance()->reinit();
+
         // Clear cache.
         Cache::flush_post_type($post_type);
+        Table_Manager::clear_verification_cache($post_type);
 
         // Mark migration as complete.
         self::update_migration_status($post_type, 'completed');
@@ -96,6 +100,13 @@ final class Migration_Manager
         // Initialize migration status.
         self::init_migration_status($post_type, 'to_wp_posts');
 
+        // IMPORTANT: Disable CPT and reinitialize interceptors BEFORE migration
+        // to prevent interceptors from interfering with the reverse migration process.
+        Settings_Controller::disable_cpt($post_type);
+        \SLK\Cpt_Table_Engine\Bootstrap::instance()->reinit();
+        Cache::flush_post_type($post_type);
+        Table_Manager::clear_verification_cache($post_type);
+
         // Migrate posts.
         $posts_result = Posts_Migrator::migrate_to_wp_posts($post_type);
         if (is_wp_error($posts_result)) {
@@ -110,11 +121,7 @@ final class Migration_Manager
             return $meta_result;
         }
 
-        // Update settings to mark CPT as disabled.
-        Settings_Controller::disable_cpt($post_type);
-
-        // Clear cache.
-        Cache::flush_post_type($post_type);
+        // Clear any remaining caches.
         wp_cache_flush();
 
         // Mark migration as complete.

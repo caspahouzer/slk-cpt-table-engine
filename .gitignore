@@ -12,7 +12,12 @@
 
 # htaccess
 /.htaccess
-populate.php
+/bin
+/tests
+/*.dist
+/composer.*
+/.travis.yml
+/vendor
 
 # All plugins
 #

@@ -65,37 +65,54 @@ final class CPT_Controller
         // Get table name.
         $table_name = Table_Manager::get_table_name($post_type, 'main');
 
+        // Prepare insert data with explicit column order.
+        $insert_data = [];
+        $format = [];
+
+        // If ID is set (e.g., from interception), include it first.
+        if (isset($data['ID']) && $data['ID'] > 0) {
+            $insert_data['ID'] = (int) $data['ID'];
+            $format[] = '%d';
+        }
+
+        // Add all other fields in a consistent order.
+        $fields_map = [
+            'post_title' => '%s',
+            'post_content' => '%s',
+            'post_excerpt' => '%s',
+            'post_status' => '%s',
+            'post_date' => '%s',
+            'post_date_gmt' => '%s',
+            'post_modified' => '%s',
+            'post_modified_gmt' => '%s',
+            'post_author' => '%d',
+            'post_name' => '%s',
+            'post_type' => '%s',
+            'post_parent' => '%d',
+            'menu_order' => '%d',
+            'comment_status' => '%s',
+            'ping_status' => '%s',
+            'comment_count' => '%d',
+            'guid' => '%s',
+        ];
+
+        foreach ($fields_map as $field => $field_format) {
+            if (isset($data[$field])) {
+                $insert_data[$field] = $data[$field];
+                $format[] = $field_format;
+            }
+        }
+
         // Insert into database.
-        $result = $wpdb->insert(
-            $table_name,
-            $data,
-            [
-                '%s', // post_title
-                '%s', // post_content
-                '%s', // post_excerpt
-                '%s', // post_status
-                '%s', // post_date
-                '%s', // post_date_gmt
-                '%s', // post_modified
-                '%s', // post_modified_gmt
-                '%d', // post_author
-                '%s', // post_name
-                '%s', // post_type
-                '%d', // post_parent
-                '%d', // menu_order
-                '%s', // comment_status
-                '%s', // ping_status
-                '%d', // comment_count
-                '%s', // guid
-            ]
-        );
+        $result = $wpdb->insert($table_name, $insert_data, $format);
 
         if (false === $result) {
             Logger::error("Failed to insert post into {$table_name}: " . $wpdb->last_error);
             return new \WP_Error('db_insert_error', __('Could not insert post into database.', 'slk-cpt-table-engine'));
         }
 
-        $post_id = (int) $wpdb->insert_id;
+        // Get post ID - use the one from data if it was set, otherwise use insert_id.
+        $post_id = isset($insert_data['ID']) && $insert_data['ID'] > 0 ? (int) $insert_data['ID'] : (int) $wpdb->insert_id;
 
         // Update GUID if empty.
         if (empty($data['guid'])) {

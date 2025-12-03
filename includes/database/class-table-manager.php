@@ -216,6 +216,21 @@ final class Table_Manager
     }
 
     /**
+     * Clear the verification cache.
+     *
+     * @param string|null $post_type Optional post type to clear. If null, clears all cache.
+     * @return void
+     */
+    public static function clear_verification_cache(?string $post_type = null): void
+    {
+        if ($post_type === null) {
+            self::$verified_tables_cache = [];
+        } else {
+            unset(self::$verified_tables_cache[$post_type]);
+        }
+    }
+
+    /**
      * Get row count for a table.
      *
      * @param string $table_name The table name.
