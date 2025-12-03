@@ -103,16 +103,7 @@ final class Meta_Migrator
             // Delete meta from wp_postmeta after successful migration to custom table.
             $meta_ids = array_column($meta_entries, 'meta_id');
             if (!empty($meta_ids)) {
-                $meta_placeholders = implode(',', array_fill(0, count($meta_ids), '%d'));
-                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $meta_placeholders is safe, constructed above
-                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching -- Bulk migration operation
-                $wpdb->query(
-                    $wpdb->prepare(
-                        "DELETE FROM {$wpdb->postmeta} WHERE meta_id IN ($meta_placeholders)",
-                        ...$meta_ids
-                    )
-                );
-                Logger::debug("Deleted " . count($meta_ids) . " meta entries from wp_postmeta");
+                self::delete_wp_postmeta_batch($meta_ids);
             }
 
             $migrated += count($meta_entries);
@@ -232,5 +223,25 @@ final class Meta_Migrator
         Logger::info("Successfully migrated {$migrated} meta entries back to wp_postmeta");
 
         return true;
+    }
+
+    /**
+     * Delete a batch of meta entries from wp_postmeta.
+     *
+     * @param array $meta_ids
+     * @return int|false
+     */
+    private static function delete_wp_postmeta_batch(array $meta_ids)
+    {
+        global $wpdb;
+
+        $placeholders = implode(',', array_fill(0, count($meta_ids), '%d'));
+
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $deleted_meta = $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->postmeta} WHERE meta_id IN ($placeholders)", ...$meta_ids));
+
+        Logger::debug("Deleted " . $deleted_meta . " meta entries from wp_postmeta.");
+
+        return $deleted_meta;
     }
 }

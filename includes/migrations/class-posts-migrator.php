@@ -86,32 +86,13 @@ final class Posts_Migrator
                 return new \WP_Error('migration_failed', __('Failed to migrate posts.', 'slk-cpt-table-engine'));
             }
 
-            // Delete posts and their meta from wp_posts/wp_postmeta after successful migration to custom table.
-            $post_ids = array_map(function($post) { return $post->ID; }, $posts);
-            if (!empty($post_ids)) {
-                global $wpdb;
-                $placeholders = implode(',', array_fill(0, count($post_ids), '%d'));
+            // Delete posts from wp_posts after successful migration to custom table.
+            $post_ids = array_map(function ($post) {
+                return $post->ID;
+            }, $posts);
 
-                // Delete post meta first (foreign key constraint).
-                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $placeholders is safe, constructed above
-                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching -- Bulk migration operation
-                $meta_deleted = $wpdb->query(
-                    $wpdb->prepare(
-                        "DELETE FROM {$wpdb->postmeta} WHERE post_id IN ($placeholders)",
-                        ...$post_ids
-                    )
-                );
-
-                // Then delete posts.
-                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $placeholders is safe, constructed above
-                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching -- Bulk migration operation
-                $wpdb->query(
-                    $wpdb->prepare(
-                        "DELETE FROM {$wpdb->posts} WHERE ID IN ($placeholders)",
-                        ...$post_ids
-                    )
-                );
-                Logger::debug("Deleted " . count($post_ids) . " posts from wp_posts and {$meta_deleted} meta entries from wp_postmeta");
+            if (! empty($post_ids)) {
+                self::delete_wp_posts_batch($post_ids);
             }
 
             $migrated += count($posts);
@@ -308,6 +289,31 @@ final class Posts_Migrator
     }
 
     /**
+     * Delete a batch of posts from wp_posts.
+     *
+     * @param array $post_ids
+     * @return int|false
+     */
+    private static function delete_wp_posts_batch(array $post_ids)
+    {
+        global $wpdb;
+
+        $placeholders = implode(',', array_fill(0, count($post_ids), '%d'));
+
+        // First, delete associated meta to avoid orphaned data.
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $meta_deleted = $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->postmeta} WHERE post_id IN ($placeholders)", ...$post_ids));
+
+        // Then, delete the posts.
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $deleted_posts = $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->posts} WHERE ID IN ($placeholders)", ...$post_ids));
+
+        Logger::debug("Deleted " . $deleted_posts . " posts from wp_posts and " . $meta_deleted . " meta entries from wp_postmeta");
+
+        return $deleted_posts;
+    }
+
+    /**
      * Update migration status.
      *
      * @param string $post_type The post type.
@@ -418,8 +424,8 @@ final class Posts_Migrator
 
             Logger::error(
                 "ID conflicts detected during reverse migration for post type '{$post_type}': " .
-                "{$conflict_count} IDs already exist in wp_posts with different post types. " .
-                "Conflicting IDs: {$conflict_list}"
+                    "{$conflict_count} IDs already exist in wp_posts with different post types. " .
+                    "Conflicting IDs: {$conflict_list}"
             );
 
             return new \WP_Error(
