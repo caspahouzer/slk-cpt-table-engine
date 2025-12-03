@@ -1,0 +1,778 @@
+# Copyright (C) 2025 Sebastian Klaus
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: SLK CPT Table Engine 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/slk-cpt-table-engine\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-11-27T08:01:58+01:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.8.1\n"
+"X-Domain: slk-cpt-table-engine\n"
+
+#. Plugin Name of the plugin
+msgid "SLK CPT Table Engine"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "https://slk-communications.de/plugins/cpt-table-engine/"
+msgstr ""
+
+#. Description of the plugin
+msgid "Optimizes database performance by storing Custom Post Types in dedicated custom tables instead of wp_posts and wp_postmeta."
+msgstr ""
+
+#. Author of the plugin
+msgid "Sebastian Klaus"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://slk-communications.de"
+msgstr ""
+
+#: includes/admin/class-ajax-handler.php:48
+#: includes/admin/class-ajax-handler.php:99
+msgid "You do not have permission to perform this action."
+msgstr ""
+
+#. translators: %s is the post type
+#: includes/admin/class-ajax-handler.php:59
+#: includes/admin/class-ajax-handler.php:109
+#: includes/migrations/class-migration-manager.php:40
+msgid "Invalid post type."
+msgstr ""
+
+#: includes/admin/class-ajax-handler.php:81
+msgid "Custom table enabled successfully."
+msgstr ""
+
+#: includes/admin/class-ajax-handler.php:82
+msgid "Custom table disabled successfully."
+msgstr ""
+
+#: includes/admin/class-deactivation-guard.php:82
+msgid "CPT Table Engine cannot be deactivated!"
+msgstr ""
+
+#. translators: %s: URL to settings page
+#: includes/admin/class-deactivation-guard.php:88
+msgid "You must migrate all Custom Post Types back to wp_posts before deactivating this plugin. Please go to the %s and disable all CPTs first."
+msgstr ""
+
+#: includes/admin/class-deactivation-guard.php:89
+msgid "settings page"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:68
+msgid "Settings"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:149
+msgid "Are you sure you want to disable custom table storage? This will migrate all data back to wp_posts."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:150
+msgid "Migrating..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:151
+msgid "Migration completed successfully!"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:152
+msgid "Migration failed. Please check the error log."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:153
+#: includes/admin/class-settings-page.php:301
+msgid "Using custom table"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:154
+#: includes/admin/class-settings-page.php:304
+msgid "Using wp_posts"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:156
+msgid "Reticulating splines..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:157
+msgid "Gerbil feeding time..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:158
+msgid "Recalibrating flux capacitor..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:159
+msgid "Bending the space-time continuum..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:160
+msgid "Definitely not downloading a car..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:161
+msgid "Dividing by zero..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:162
+msgid "Twiddling thumbs..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:163
+msgid "Warming up the hamsters..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:164
+msgid "It's not you, it's me..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:165
+msgid "Constructing additional pylons..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:166
+msgid "Compiling the internet..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:167
+msgid "Debugging the coffee machine..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:168
+msgid "Converting caffeine to code..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:169
+msgid "Optimizing SQL queries nobody will read..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:170
+msgid "Teaching robots to love..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:171
+msgid "Untangling Ethernet cables..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:172
+msgid "Reversing the polarity..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:173
+msgid "Summoning the database gremlins..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:174
+msgid "Applying percussive maintenance..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:175
+msgid "Installing Adobe Reader..."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:191
+#: modules/license-manager/class-license-admin-page.php:65
+msgid "You do not have sufficient permissions to access this page."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:219
+msgid "Custom Post Types"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:222
+msgid "Advanced"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:225
+msgid "License"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:241
+msgid "Enable custom table storage for specific Custom Post Types to optimize database performance."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:257
+msgid "Important:"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:258
+msgid "Before deactivating this plugin, you must disable all CPTs. This ensures all data is safely migrated back to wp_posts."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:266
+msgid "No custom post types found. Custom post types will appear here once registered."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:274
+msgid "Post Type"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:275
+msgid "Label"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:276
+msgid "Posts"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:277
+msgid "Custom Table Storage"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:278
+#: includes/admin/class-settings-page.php:404
+#: modules/license-manager/views/admin-license-page.php:114
+msgid "Status"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:324
+msgid "How It Works"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:326
+msgid "When enabled, posts of the selected type are stored in dedicated custom tables instead of wp_posts."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:327
+msgid "This can significantly improve query performance for post types with large datasets."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:328
+msgid "All existing posts are automatically migrated when you enable custom table storage."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:329
+msgid "You can safely switch back to wp_posts at any time - all data will be migrated back."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:330
+msgid "WP_Query and all standard WordPress functions continue to work normally."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:351
+msgid "Table Handling Settings"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:353
+msgid "Configure how the plugin handles existing CPT tables during activation and when enabling custom storage."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:362
+msgid "Table Handling Mode"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:367
+#: includes/admin/class-table-admin-notices.php:250
+msgid "Auto (Recommended)"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:370
+#: includes/admin/class-table-admin-notices.php:272
+msgid "Backup Before Modifications"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:373
+#: includes/admin/class-table-admin-notices.php:298
+msgid "Validate Schema Only"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:376
+#: includes/admin/class-table-admin-notices.php:320
+msgid "Skip Existing Tables"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:380
+msgid "Select how the plugin should handle existing custom post type tables. See the sidebar for detailed explanations."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:391
+msgid "Existing CPT Tables"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:396
+msgid "No custom post type tables found."
+msgstr ""
+
+#: includes/admin/class-settings-page.php:401
+msgid "Table Name"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:402
+msgid "Type"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:403
+msgid "Rows"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:416
+msgid "Contains data"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:419
+msgid "Empty"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:110
+msgid "CPT Table Engine activated successfully. No existing custom tables detected."
+msgstr ""
+
+#. translators: 1: Number of tables found, 2: Number of tables with data
+#: includes/admin/class-table-admin-notices.php:122
+msgid "CPT Table Engine detected %1$d existing custom table, %2$d containing data. The plugin will use these tables if compatible."
+msgid_plural "CPT Table Engine detected %1$d existing custom tables, %2$d containing data. The plugin will use these tables if compatible."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: Number of tables found
+#: includes/admin/class-table-admin-notices.php:138
+msgid "CPT Table Engine detected %d existing empty custom table."
+msgid_plural "CPT Table Engine detected %d existing empty custom tables."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin/class-table-admin-notices.php:198
+msgid "CPT Table Engine"
+msgstr ""
+
+#. translators: 1: Table name, 2: Warning message
+#: includes/admin/class-table-admin-notices.php:219
+msgid "Table %1$s: %2$s"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:243
+#: includes/admin/class-table-admin-notices.php:247
+msgid "Selected Mode: Auto"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:253
+#: includes/admin/class-table-admin-notices.php:275
+#: includes/admin/class-table-admin-notices.php:301
+#: includes/admin/class-table-admin-notices.php:323
+msgid "What it does:"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:254
+msgid "Uses WordPress dbDelta() to automatically create or update table schemas. If tables exist, it compares the schema and makes necessary updates while preserving data."
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:257
+#: includes/admin/class-table-admin-notices.php:279
+#: includes/admin/class-table-admin-notices.php:305
+#: includes/admin/class-table-admin-notices.php:327
+msgid "Benefits:"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:258
+msgid "Non-destructive - preserves all existing data"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:259
+msgid "Automatic schema updates on plugin upgrades"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:260
+msgid "No manual intervention required"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:263
+#: includes/admin/class-table-admin-notices.php:289
+#: includes/admin/class-table-admin-notices.php:311
+#: includes/admin/class-table-admin-notices.php:336
+msgid "Best for:"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:264
+msgid "Most users - this is the standard WordPress approach"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:269
+msgid "Selected Mode: Backup"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:276
+msgid "Creates timestamped backup copies of existing tables before any modifications. Backup tables are named with format: tablename_backup_YYYYMMDDHHMMSS"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:280
+msgid "Extra safety layer for critical data"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:281
+msgid "Easy rollback if issues occur"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:282
+msgid "Peace of mind for production environments"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:285
+msgid "Note:"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:286
+msgid "Backup tables are not automatically deleted. You may need to clean them up manually to save disk space."
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:290
+msgid "Production sites with critical data or cautious administrators"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:295
+msgid "Selected Mode: Validate"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:302
+msgid "Checks existing table structures against expected schemas and displays warnings if mismatches are found. Does NOT modify any tables."
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:306
+msgid "Safe inspection without changes"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:307
+msgid "Identifies schema conflicts before they cause issues"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:308
+msgid "Useful for troubleshooting and debugging"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:312
+msgid "Development/staging environments, debugging schema issues"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:317
+msgid "Selected Mode: Skip"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:324
+msgid "Leaves all existing tables completely untouched. The plugin will use them as-is without any validation or modifications."
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:328
+msgid "Maximum control - no automatic changes"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:329
+msgid "Useful for custom table structures"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:332
+msgid "Warning:"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:333
+msgid "If table schemas are incompatible, you may experience errors or data corruption. Use only if you know what you are doing!"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:337
+msgid "Advanced users with custom-modified tables or specific requirements"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:345
+msgid "Quick Tips"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:348
+msgid "The mode setting applies to both plugin activation and when enabling individual CPTs"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:349
+msgid "You can change the mode at any time in Settings → Advanced"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:350
+msgid "All modes are logged - check your debug.log for detailed information"
+msgstr ""
+
+#: includes/admin/class-table-admin-notices.php:351
+msgid "When in doubt, stick with \"Auto\" - it is tested and reliable"
+msgstr ""
+
+#. translators: %s: URL to license settings page
+#: includes/bootstrap.php:161
+msgid "Please <a href=\"%s\">activate your license</a> to receive plugin updates and support."
+msgstr ""
+
+#: includes/controllers/class-cpt-controller.php:95
+msgid "Could not insert post into database."
+msgstr ""
+
+#: includes/controllers/class-cpt-controller.php:139
+#: includes/controllers/class-cpt-controller.php:198
+msgid "Invalid post ID."
+msgstr ""
+
+#: includes/controllers/class-cpt-controller.php:173
+msgid "Could not update post in database."
+msgstr ""
+
+#: includes/controllers/class-cpt-controller.php:221
+msgid "Could not delete post from database."
+msgstr ""
+
+#: includes/helpers/class-validator.php:22
+msgid "Post title is required."
+msgstr ""
+
+#: includes/helpers/class-validator.php:27
+msgid "Post type is required."
+msgstr ""
+
+#: includes/helpers/class-validator.php:32
+msgid "Invalid post status."
+msgstr ""
+
+#: includes/helpers/class-validator.php:37
+msgid "Invalid post author."
+msgstr ""
+
+#. translators: %s: post type
+#: includes/migrations/class-meta-migrator.php:29
+#: includes/migrations/class-meta-migrator.php:137
+#: includes/migrations/class-posts-migrator.php:27
+#: includes/migrations/class-posts-migrator.php:113
+msgid "Invalid custom table for post type."
+msgstr ""
+
+#. translators: %s: post type
+#: includes/migrations/class-meta-migrator.php:100
+msgid "Failed to migrate post meta."
+msgstr ""
+
+#. translators: %1$d: migrated meta entries, %2$d: total meta entries
+#: includes/migrations/class-meta-migrator.php:112
+msgid "Migrated %1$d of %2$d meta entries..."
+msgstr ""
+
+#. translators: %s: post type
+#: includes/migrations/class-meta-migrator.php:197
+msgid "Failed to migrate post meta back to wp_postmeta."
+msgstr ""
+
+#. translators: %1$d: migrated meta entries, %2$d: total meta entries
+#: includes/migrations/class-meta-migrator.php:209
+msgid "Migrated %1$d of %2$d meta entries back to wp_postmeta..."
+msgstr ""
+
+#: includes/migrations/class-migration-manager.php:46
+msgid "Failed to create custom tables."
+msgstr ""
+
+#: includes/migrations/class-migration-manager.php:93
+msgid "Custom tables do not exist."
+msgstr ""
+
+#: includes/migrations/class-migration-manager.php:168
+msgid "Migration started..."
+msgstr ""
+
+#. translators: %s: post type
+#: includes/migrations/class-posts-migrator.php:86
+msgid "Failed to migrate posts."
+msgstr ""
+
+#. translators: %s: post type
+#: includes/migrations/class-posts-migrator.php:173
+msgid "Failed to migrate posts back to wp_posts."
+msgstr ""
+
+#. translators: %1$d: migrated posts, %2$d: total posts
+#: includes/migrations/class-posts-migrator.php:287
+msgid "Migrated %1$d of %2$d posts back to wp_posts..."
+msgstr ""
+
+#. translators: %1$d: migrated posts, %2$d: total posts
+#: includes/migrations/class-posts-migrator.php:290
+msgid "Migrated %1$d of %2$d posts..."
+msgstr ""
+
+#: modules/license-manager/class-license-helper.php:117
+msgid "API returned an error."
+msgstr ""
+
+#. translators: %d: HTTP status code
+#: modules/license-manager/class-license-helper.php:126
+msgid "API request failed with status code: %d"
+msgstr ""
+
+#: modules/license-manager/class-license-helper.php:149
+msgid "Failed to parse API response."
+msgstr ""
+
+#: modules/license-manager/class-license-helper.php:158
+msgid "Request successful."
+msgstr ""
+
+#: modules/license-manager/class-license-helper.php:255
+#: modules/license-manager/class-license-helper.php:337
+#: modules/license-manager/class-license-helper.php:367
+#: modules/license-manager/class-license-manager.php:524
+msgid "License key is required."
+msgstr ""
+
+#: modules/license-manager/class-license-helper.php:290
+msgid "License key and activation token are required."
+msgstr ""
+
+#: modules/license-manager/class-license-helper.php:312
+msgid "The license is already inactive on the server."
+msgstr ""
+
+#: modules/license-manager/class-license-manager.php:126
+msgid "Invalid API response: No data returned."
+msgstr ""
+
+#: modules/license-manager/class-license-manager.php:134
+msgid "License activation was rejected by the API."
+msgstr ""
+
+#: modules/license-manager/class-license-manager.php:148
+msgid "License activation failed."
+msgstr ""
+
+#: modules/license-manager/class-license-manager.php:233
+msgid "License activated successfully."
+msgstr ""
+
+#: modules/license-manager/class-license-manager.php:294
+msgid "Deactivation failed."
+msgstr ""
+
+#: modules/license-manager/class-license-manager.php:493
+msgid "Please enter a license key."
+msgstr ""
+
+#: modules/license-manager/class-license-manager.php:494
+msgid "Are you sure you want to deactivate this license?"
+msgstr ""
+
+#: modules/license-manager/class-license-manager.php:495
+msgid "Network error. Please try again."
+msgstr ""
+
+#: modules/license-manager/class-license-manager.php:496
+#: modules/license-manager/views/admin-license-page.php:102
+msgid "Your license is active. Click \"Deactivate\" to change or remove the license."
+msgstr ""
+
+#: modules/license-manager/class-license-manager.php:497
+#: modules/license-manager/views/admin-license-page.php:104
+msgid "Enter the license key you received after purchase."
+msgstr ""
+
+#: modules/license-manager/class-license-manager.php:511
+msgid "Security check failed."
+msgstr ""
+
+#: modules/license-manager/class-license-manager.php:516
+msgid "Permission denied."
+msgstr ""
+
+#: modules/license-manager/class-license-manager.php:541
+msgid "License activated successfully!"
+msgstr ""
+
+#: modules/license-manager/class-license-manager.php:557
+msgid "No activation token found."
+msgstr ""
+
+#: modules/license-manager/class-license-manager.php:562
+#: modules/license-manager/class-license-manager.php:579
+msgid "No license key found."
+msgstr ""
+
+#: modules/license-manager/class-license-manager.php:569
+msgid "License deactivated successfully!"
+msgstr ""
+
+#: modules/license-manager/class-license-manager.php:594
+msgid "License is active."
+msgstr ""
+
+#: modules/license-manager/class-license-manager.php:595
+msgid "License is inactive."
+msgstr ""
+
+#: modules/license-manager/class-license-manager.php:598
+msgid "Invalid method."
+msgstr ""
+
+#. translators: %s: Plugin name.
+#: modules/license-manager/views/admin-license-page.php:35
+msgid "Manage your %s license. Activate your license to receive updates and support."
+msgstr ""
+
+#: modules/license-manager/views/admin-license-page.php:48
+msgid "License Key"
+msgstr ""
+
+#: modules/license-manager/views/admin-license-page.php:73
+msgid "Enter your license key"
+msgstr ""
+
+#: modules/license-manager/views/admin-license-page.php:84
+msgid "Deactivate"
+msgstr ""
+
+#: modules/license-manager/views/admin-license-page.php:94
+msgid "Activate"
+msgstr ""
+
+#: modules/license-manager/views/admin-license-page.php:120
+msgid "Not Activated"
+msgstr ""
+
+#: modules/license-manager/views/admin-license-page.php:148
+msgid "Activations"
+msgstr ""
+
+#: modules/license-manager/views/admin-license-page.php:167
+msgid "Need Help?"
+msgstr ""
+
+#: modules/license-manager/views/admin-license-page.php:170
+msgid "Where can I find my license key?"
+msgstr ""
+
+#. translators: %s: website link
+#: modules/license-manager/views/admin-license-page.php:174
+msgid "Your license key was sent to you via email after purchase. You can also find it in your account on our %s."
+msgstr ""
+
+#: modules/license-manager/views/admin-license-page.php:175
+msgid "website"
+msgstr ""
+
+#: modules/license-manager/views/admin-license-page.php:180
+msgid "How many sites can I activate?"
+msgstr ""
+
+#: modules/license-manager/views/admin-license-page.php:181
+msgid "This depends on your license type. Check your purchase confirmation email or contact support for details."
+msgstr ""
+
+#: modules/license-manager/views/admin-license-page.php:184
+msgid "What happens if I deactivate my license?"
+msgstr ""
+
+#: modules/license-manager/views/admin-license-page.php:185
+msgid "Deactivating frees up an activation slot so you can use it on another site. The plugin will continue to work but you won't receive updates."
+msgstr ""
+
+#: modules/license-manager/views/admin-license-page.php:188
+msgid "Support"
+msgstr ""
+
+#. translators: %s: support URL
+#: modules/license-manager/views/admin-license-page.php:192
+msgid "For support, please visit %s"
+msgstr ""

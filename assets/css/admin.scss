@@ -1,0 +1,173 @@
+/**
+ * Admin styles for CPT Table Engine.
+ *
+ * @package SLK_Cpt_Table_Engine
+ */
+
+// Variables
+$toggle-width: 50px;
+$toggle-height: 24px;
+$toggle-width-mobile: 40px;
+$toggle-height-mobile: 20px;
+$slider-dot-size: 18px;
+$slider-dot-size-mobile: 14px;
+$primary-color: #2271b1;
+$background-disabled: #ccc;
+$background-white: #fff;
+$border-color: #c3c4c7;
+$background-code: #f0f0f1;
+$transition-speed: 0.3s;
+
+// Mixins
+@mixin flex-center($gap: 0) {
+    display: inline-flex;
+    align-items: center;
+    @if $gap > 0 {
+        gap: #{$gap}px;
+    }
+}
+.settings_page_slk-cpt-table-engine {
+    #wpcontent,
+    #wpwrap {
+        background-color: #fff;
+    }
+
+    .nav-tab-wrapper {
+        a {
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+            background-color: #f1f1f1;
+            color: #555;
+
+            &.nav-tab-active {
+                background-color: #fff;
+                border-bottom-color: #fff;
+            }
+        }
+    }
+
+    // Toggle Switch Styles
+    .cpt-toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: $toggle-width;
+        height: $toggle-height;
+
+        input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+    }
+
+    .cpt-toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: $background-disabled;
+        transition: $transition-speed;
+        border-radius: $toggle-height;
+
+        &:before {
+            position: absolute;
+            content: '';
+            height: $slider-dot-size;
+            width: $slider-dot-size;
+            left: 3px;
+            bottom: 3px;
+            background-color: $background-white;
+            transition: $transition-speed;
+            border-radius: 50%;
+        }
+    }
+
+    .cpt-toggle-checkbox {
+        &:checked + .cpt-toggle-slider {
+            background-color: $primary-color;
+
+            &:before {
+                transform: translateX(26px);
+            }
+        }
+
+        &:focus + .cpt-toggle-slider {
+            box-shadow: 0 0 1px $primary-color;
+        }
+
+        &:disabled + .cpt-toggle-slider {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+
+    // Status Styles
+    .cpt-status {
+        @include flex-center(5);
+    }
+
+    .cpt-progress {
+        @include flex-center();
+        color: $primary-color;
+    }
+
+    .cpt-progress-text {
+        font-style: italic;
+    }
+
+    // Info Section
+    .cpt-table-engine-info {
+        background: $background-white;
+        border: 1px solid $border-color;
+        border-left-width: 4px;
+        border-left-color: $primary-color;
+        padding: 20px;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+
+        h2 {
+            margin-top: 0;
+        }
+
+        ul {
+            margin-left: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+    }
+
+    // Table Styles
+    .wp-list-table {
+        code {
+            background: $background-code;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+    }
+
+    // Responsive
+    @media screen and (max-width: 782px) {
+        .cpt-toggle-switch {
+            width: $toggle-width-mobile;
+            height: $toggle-height-mobile;
+        }
+
+        .cpt-toggle-slider {
+            &:before {
+                height: $slider-dot-size-mobile;
+                width: $slider-dot-size-mobile;
+            }
+        }
+
+        .cpt-toggle-checkbox {
+            &:checked + .cpt-toggle-slider:before {
+                transform: translateX(20px);
+            }
+        }
+    }
+}
