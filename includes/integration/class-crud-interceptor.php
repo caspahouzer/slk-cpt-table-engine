@@ -142,6 +142,11 @@ final class CRUD_Interceptor
      */
     public function cleanup_post_from_wp_posts(int $post_id, \WP_Post $post, bool $update, $post_before): void
     {
+        // Do not clean up auto-drafts or revisions from wp_posts
+        if (wp_is_post_revision($post_id) || $post->post_status === 'auto-draft') {
+            return;
+        }
+
         // Skip if post type doesn't use custom tables.
         if (! Settings_Controller::is_enabled($post->post_type)) {
             return;
@@ -256,10 +261,15 @@ final class CRUD_Interceptor
             }
         }
 
-        // Add to custom table.
-        $result = Meta_Controller::add_meta($post_type, $object_id, $meta_key, $meta_value);
+        // Skip logging for frequently checked internal meta keys.
+        $skip_logging = in_array($meta_key, ['_edit_lock', '_edit_last'], true);
 
-        Logger::debug("Intercepted add_post_meta for post ID: {$object_id}, key: {$meta_key}");
+        if (! $skip_logging) {
+            Logger::debug("Intercepted add_post_meta for post ID: {$object_id}, key: {$meta_key}");
+        }
+
+        // Add meta in custom table.
+        $result = Meta_Controller::add_meta($post_type, $object_id, $meta_key, $meta_value, $unique);
 
         // Return the meta ID or false to short-circuit WordPress's add_metadata.
         return false !== $result ? $result : false;
