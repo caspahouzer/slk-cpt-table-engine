@@ -8,6 +8,7 @@ use SLK\Cpt_Table_Engine\Helpers\Logger;
 use SLK\Cpt_Table_Engine\Helpers\Validator;
 use SLK\Cpt_Table_Engine\Database\Table_Manager;
 use SLK\Cpt_Table_Engine\Helpers\Sanitizer;
+use SLK\License_Checker\License_Checker;
 
 /**
  * Settings Controller class.
@@ -233,5 +234,41 @@ final class Settings_Controller
         }
 
         return $settings;
+    }
+
+    /**
+     * Check if another CPT can be enabled based on license status.
+     *
+     * @return bool True if another CPT can be enabled, false if limit reached.
+     */
+    public static function can_enable_another_cpt(): bool
+    {
+        // No limit if license is active.
+        if (License_Checker::is_active()) {
+            return true;
+        }
+
+        // Free version: limit to 3 CPTs.
+        $enabled_cpts = self::get_enabled_cpts();
+        return count($enabled_cpts) < 3;
+    }
+
+    /**
+     * Get remaining CPT slots for unlicensed users.
+     *
+     * @return int Number of CPTs that can still be enabled, or -1 if unlimited.
+     */
+    public static function get_remaining_cpt_slots(): int
+    {
+        // Unlimited if license is active.
+        if (License_Checker::is_active()) {
+            return -1;
+        }
+
+        // Calculate remaining slots (max 3).
+        $enabled_cpts = self::get_enabled_cpts();
+        $remaining = 3 - count($enabled_cpts);
+
+        return max(0, $remaining);
     }
 }

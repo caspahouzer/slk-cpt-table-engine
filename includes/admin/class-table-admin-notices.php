@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace SLK\Cpt_Table_Engine\Admin;
 
 use SLK\Cpt_Table_Engine\Helpers\Logger;
+use SLK\Cpt_Table_Engine\Controllers\Settings_Controller;
+use SLK\License_Checker\License_Checker;
 
 /**
  * Table Admin Notices class.
@@ -38,6 +40,7 @@ final class Table_Admin_Notices
     {
         add_action('admin_notices', [$this, 'show_activation_notice']);
         add_action('admin_notices', [$this, 'show_schema_warnings']);
+        add_action('admin_notices', [$this, 'show_license_limit_notice']);
     }
 
     /**
@@ -224,6 +227,42 @@ final class Table_Admin_Notices
         set_transient('cpt_table_engine_schema_warnings', $warnings, self::TRANSIENT_EXPIRATION);
 
         Logger::warning("Schema warning for {$table_name}: {$message}");
+    }
+
+    /**
+     * Display notice about CPT activation limit for unlicensed users.
+     *
+     * Shows on settings page only when license is inactive.
+     *
+     * @return void
+     */
+    public function show_license_limit_notice(): void
+    {
+        // Only show on plugin settings page.
+        $screen = get_current_screen();
+        if (! $screen || $screen->id !== 'settings_page_slk-cpt-table-engine') {
+            return;
+        }
+
+        // Only show if license is not active.
+        if (License_Checker::is_active()) {
+            return;
+        }
+
+        // Count enabled CPTs.
+        $enabled_cpts = Settings_Controller::get_enabled_cpts();
+        $count = count($enabled_cpts);
+
+        // Show different messages based on usage.
+        if ($count >= 3) {
+            // At limit - warning (non-dismissible).
+            $message = sprintf(
+                /* translators: %s: URL to license page */
+                __('You have reached the 3 CPT limit for the free version. <a href="%s">Activate your license</a> to enable unlimited custom post types.', 'slk-cpt-table-engine'),
+                esc_url(admin_url('admin.php?page=slk-cpt-table-engine-license'))
+            );
+            $this->render_notice('warning', $message, false);
+        }
     }
 
     /**

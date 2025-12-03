@@ -20,7 +20,7 @@ wp i18n make-pot . languages/slk-cpt-table-engine.pot
 2. Translate the strings
 3. Compile to `.mo` file:
    ```bash
-   msgfmt languages/slk-cpt-table-engine-de_DE.po -o languages/slk-cpt-table-engine-de_DE.mo
+   msgfmt slk-cpt-table-engine-de_DE.po -o slk-cpt-table-engine-de_DE.mo
    ```
 
 ## Translatable Strings

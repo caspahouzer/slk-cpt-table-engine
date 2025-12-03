@@ -816,7 +816,7 @@ msgstr "Aktivierungen"
 
 #: modules/license-manager/views/admin-license-page.php:167
 msgid "Need Help?"
-msgstr "Brauchen Sie Hilfe?"
+msgstr "Brauchst du Hilfe?"
 
 #: modules/license-manager/views/admin-license-page.php:170
 msgid "Where can I find my license key?"

@@ -8,6 +8,8 @@ use SLK\Cpt_Table_Engine\Helpers\Logger;
 use SLK\Cpt_Table_Engine\Helpers\Sanitizer;
 use SLK\Cpt_Table_Engine\Helpers\Validator;
 use SLK\Cpt_Table_Engine\Migrations\Migration_Manager;
+use SLK\Cpt_Table_Engine\Controllers\Settings_Controller;
+use SLK\License_Checker\License_Checker;
 
 /**
  * AJAX Handler class.
@@ -59,6 +61,24 @@ final class Ajax_Handler
             wp_send_json_error([
                 'message' => __('Invalid post type.', 'slk-cpt-table-engine'),
             ]);
+        }
+
+        // Check license limit before enabling
+        if ($enabled) {
+            if (! License_Checker::is_active()) {
+                $enabled_cpts = Settings_Controller::get_enabled_cpts();
+                $current_count = count($enabled_cpts);
+
+                if ($current_count >= 3) {
+                    wp_send_json_error([
+                        'message' => sprintf(
+                            /* translators: %s: URL to license page */
+                            __('License activation required. You can enable up to 3 custom post types with the free version. Please <a href="%s">activate your license</a> to enable unlimited CPTs.', 'slk-cpt-table-engine'),
+                            esc_url(admin_url('admin.php?page=slk-cpt-table-engine-license'))
+                        ),
+                    ]);
+                }
+            }
         }
 
         // Perform migration.

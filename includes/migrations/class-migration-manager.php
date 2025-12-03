@@ -111,14 +111,25 @@ final class Migration_Manager
         $posts_result = Posts_Migrator::migrate_to_wp_posts($post_type);
         if (is_wp_error($posts_result)) {
             self::update_migration_status($post_type, 'failed', $posts_result->get_error_message());
+            // Re-enable CPT since migration failed.
+            Settings_Controller::enable_cpt($post_type);
+            \SLK\Cpt_Table_Engine\Bootstrap::instance()->reinit();
             return $posts_result;
         }
+
+        // Get the ID map from the posts migration.
+        $id_map = $posts_result['id_map'] ?? [];
 
         // Migrate meta.
         $meta_result = Meta_Migrator::migrate_to_wp_posts($post_type);
         if (is_wp_error($meta_result)) {
             self::update_migration_status($post_type, 'failed', $meta_result->get_error_message());
             return $meta_result;
+        }
+
+        // Update relationships if any posts were re-IDed.
+        if (! empty($id_map)) {
+            Relationship_Updater::update($id_map);
         }
 
         // Clear any remaining caches.
