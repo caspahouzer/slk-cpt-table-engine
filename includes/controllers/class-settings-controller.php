@@ -159,16 +159,6 @@ final class Settings_Controller
     {
         $enabled_cpts = self::get_enabled_cpts();
         $is_enabled = in_array($post_type, $enabled_cpts, true);
-
-        Logger::debug(
-            sprintf(
-                "Checking if post type '%s' is enabled. Result: %s. Enabled CPTs: %s",
-                $post_type,
-                $is_enabled ? 'yes' : 'no',
-                implode(', ', $enabled_cpts)
-            )
-        );
-
         return $is_enabled;
     }
 
