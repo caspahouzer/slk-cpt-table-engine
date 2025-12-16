@@ -5,14 +5,14 @@
  * Plugin URI: https://slk-communications.de/plugins/cpt-table-engine/
  * Description: Optimizes database performance by storing Custom Post Types in dedicated custom tables instead of wp_posts and wp_postmeta.
  * Version: 1.1.0
- * Requires at least: 6.7
- * Requires PHP: 8.1
  * Author: Sebastian Klaus
  * Author URI: https://slk-communications.de
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: slk-cpt-table-engine
  * Domain Path: /languages
+ * Requires at least: 6.2
+ * Requires PHP: 8.1
  *
  * @package SLK\Cpt_Table_Engine
  */
