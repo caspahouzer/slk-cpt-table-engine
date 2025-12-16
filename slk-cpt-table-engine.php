@@ -37,15 +37,17 @@ define('CPT_TABLE_ENGINE_URL', plugin_dir_url(__FILE__));
 define('CPT_TABLE_ENGINE_BASENAME', plugin_basename(__FILE__));
 define('CPT_TABLE_ENGINE_TEXT_DOMAIN', 'slk-cpt-table-engine');
 
-add_filter('slk_update_checker_text_domain', function () {
-    $plugin_data = get_file_data(CPT_TABLE_ENGINE_FILE, ['TextDomain' => 'Text Domain'], 'plugin');
-    $text_domain = !empty($plugin_data['TextDomain']) ? $plugin_data['TextDomain'] : 'slk-cpt-table-engine';
-    return $text_domain;
-});
+if (file_exists(__DIR__ . '/modules/update-checker/check.php')) {
+    add_filter('slk_update_checker_text_domain', function () {
+        $plugin_data = get_file_data(CPT_TABLE_ENGINE_FILE, ['TextDomain' => 'Text Domain'], 'plugin');
+        $text_domain = !empty($plugin_data['TextDomain']) ? $plugin_data['TextDomain'] : 'slk-cpt-table-engine';
+        return $text_domain;
+    });
 
-add_filter('slk_update_checker_version', function () {
-    return CPT_TABLE_ENGINE_VERSION;
-});
+    add_filter('slk_update_checker_version', function () {
+        return CPT_TABLE_ENGINE_VERSION;
+    });
+}
 
 /**
  * PSR-4 Autoloader for the plugin.
@@ -110,7 +112,6 @@ spl_autoload_register(function (string $class): void {
 function init(): void
 {
     require_once CPT_TABLE_ENGINE_PATH . 'includes/bootstrap.php';
-    require_once CPT_TABLE_ENGINE_PATH . 'modules/update-checker/check.php';
     Bootstrap::instance()->init();
 }
 
