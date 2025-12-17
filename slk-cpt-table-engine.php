@@ -38,15 +38,7 @@ define('CPT_TABLE_ENGINE_BASENAME', plugin_basename(__FILE__));
 define('CPT_TABLE_ENGINE_TEXT_DOMAIN', 'slk-cpt-table-engine');
 
 if (file_exists(__DIR__ . '/modules/update-checker/check.php')) {
-    add_filter('slk_update_checker_text_domain', function () {
-        $plugin_data = get_file_data(CPT_TABLE_ENGINE_FILE, ['TextDomain' => 'Text Domain'], 'plugin');
-        $text_domain = !empty($plugin_data['TextDomain']) ? $plugin_data['TextDomain'] : 'slk-cpt-table-engine';
-        return $text_domain;
-    });
-
-    add_filter('slk_update_checker_version', function () {
-        return CPT_TABLE_ENGINE_VERSION;
-    });
+    require_once __DIR__ . '/modules/update-checker/check.php';
 }
 
 /**
