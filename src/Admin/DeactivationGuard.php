@@ -2,15 +2,17 @@
 
 declare(strict_types=1);
 
-namespace SLK\Cpt_Table_Engine\Admin;
+namespace SLK\CptTableEngine\Admin;
 
-use SLK\Cpt_Table_Engine\Controllers\Settings_Controller;
-use SLK\Cpt_Table_Engine\Helpers\Logger;
+use SLK\CptTableEngine\Controllers\SettingsController;
+use SLK\CptTableEngine\Utilities\Logger;
 
 /**
  * Deactivation Guard class.
+ *
+ * @package SLK\CptTableEngine
  */
-final class Deactivation_Guard
+final class DeactivationGuard
 {
     /**
      * Transient key for deactivation notice.
@@ -42,7 +44,7 @@ final class Deactivation_Guard
      */
     public static function can_deactivate(): bool
     {
-        $enabled_cpts = Settings_Controller::get_enabled_cpts();
+        $enabled_cpts = SettingsController::get_enabled_cpts();
         return empty($enabled_cpts);
     }
 

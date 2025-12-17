@@ -2,18 +2,20 @@
 
 declare(strict_types=1);
 
-namespace SLK\Cpt_Table_Engine\Integration;
+namespace SLK\CptTableEngine\Services\Integration;
 
-use SLK\Cpt_Table_Engine\Controllers\CPT_Controller;
-use SLK\Cpt_Table_Engine\Controllers\Meta_Controller;
-use SLK\Cpt_Table_Engine\Controllers\Settings_Controller;
-use SLK\Cpt_Table_Engine\Database\Table_Manager;
-use SLK\Cpt_Table_Engine\Helpers\Logger;
+use SLK\CptTableEngine\Controllers\CptController;
+use SLK\CptTableEngine\Controllers\MetaController;
+use SLK\CptTableEngine\Controllers\SettingsController;
+use SLK\CptTableEngine\Services\Database\TableManager;
+use SLK\CptTableEngine\Utilities\Logger;
 
 /**
  * CRUD Interceptor class.
+ *
+ * @package SLK\CptTableEngine
  */
-final class CRUD_Interceptor
+final class CrudInterceptor
 {
     /**
      * Static cache for post type lookups (request-level).
@@ -97,12 +99,12 @@ final class CRUD_Interceptor
     public function handle_insert_post(int $post_id, \WP_Post $post, bool $update): void
     {
         // Skip if post type doesn't use custom tables.
-        if (! Settings_Controller::is_enabled($post->post_type)) {
+        if (! SettingsController::is_enabled($post->post_type)) {
             return;
         }
 
         // Skip if tables don't exist.
-        if (! Table_Manager::verify_tables($post->post_type)) {
+        if (! TableManager::verify_tables($post->post_type)) {
             return;
         }
 
@@ -121,10 +123,10 @@ final class CRUD_Interceptor
 
         if ($update) {
             // Update in custom table.
-            CPT_Controller::update($post->post_type, $post_id, $post_data);
+            CptController::update($post->post_type, $post_id, $post_data);
         } else {
             // Insert into custom table.
-            CPT_Controller::insert($post->post_type, $post_data);
+            CptController::insert($post->post_type, $post_data);
         }
 
         Logger::debug("Intercepted post " . ($update ? 'update' : 'insert') . " for ID: {$post_id}");
@@ -148,12 +150,12 @@ final class CRUD_Interceptor
         }
 
         // Skip if post type doesn't use custom tables.
-        if (! Settings_Controller::is_enabled($post->post_type)) {
+        if (! SettingsController::is_enabled($post->post_type)) {
             return;
         }
 
         // Skip if tables don't exist.
-        if (! Table_Manager::verify_tables($post->post_type)) {
+        if (! TableManager::verify_tables($post->post_type)) {
             return;
         }
 
@@ -208,12 +210,12 @@ final class CRUD_Interceptor
         // Check if this post type uses custom tables.
         $post_type = $data['post_type'] ?? '';
 
-        if (! Settings_Controller::is_enabled($post_type)) {
+        if (! SettingsController::is_enabled($post_type)) {
             return $data;
         }
 
         // Skip if tables don't exist.
-        if (! Table_Manager::verify_tables($post_type)) {
+        if (! TableManager::verify_tables($post_type)) {
             return $data;
         }
 
@@ -244,18 +246,18 @@ final class CRUD_Interceptor
         }
 
         // Skip if post type doesn't use custom tables.
-        if (! Settings_Controller::is_enabled($post_type)) {
+        if (! SettingsController::is_enabled($post_type)) {
             return $check;
         }
 
         // Skip if tables don't exist.
-        if (! Table_Manager::verify_tables($post_type)) {
+        if (! TableManager::verify_tables($post_type)) {
             return $check;
         }
 
         // Check if unique and already exists.
         if ($unique) {
-            $existing = Meta_Controller::get_meta($post_type, $object_id, $meta_key, true);
+            $existing = MetaController::get_meta($post_type, $object_id, $meta_key, true);
             if ('' !== $existing) {
                 return false;
             }
@@ -269,7 +271,7 @@ final class CRUD_Interceptor
         }
 
         // Add meta in custom table.
-        $result = Meta_Controller::add_meta($post_type, $object_id, $meta_key, $meta_value, $unique);
+        $result = MetaController::add_meta($post_type, $object_id, $meta_key, $meta_value, $unique);
 
         // Return the meta ID or false to short-circuit WordPress's add_metadata.
         return false !== $result ? $result : false;
@@ -294,17 +296,17 @@ final class CRUD_Interceptor
         }
 
         // Skip if post type doesn't use custom tables.
-        if (! Settings_Controller::is_enabled($post_type)) {
+        if (! SettingsController::is_enabled($post_type)) {
             return $check;
         }
 
         // Skip if tables don't exist.
-        if (! Table_Manager::verify_tables($post_type)) {
+        if (! TableManager::verify_tables($post_type)) {
             return $check;
         }
 
         // Update in custom table.
-        $result = Meta_Controller::update_meta($post_type, $object_id, $meta_key, $meta_value, $prev_value);
+        $result = MetaController::update_meta($post_type, $object_id, $meta_key, $meta_value, $prev_value);
 
         Logger::debug("Intercepted update_post_meta for post ID: {$object_id}, key: {$meta_key}");
 
@@ -331,17 +333,17 @@ final class CRUD_Interceptor
         }
 
         // Skip if post type doesn't use custom tables.
-        if (! Settings_Controller::is_enabled($post_type)) {
+        if (! SettingsController::is_enabled($post_type)) {
             return $check;
         }
 
         // Skip if tables don't exist.
-        if (! Table_Manager::verify_tables($post_type)) {
+        if (! TableManager::verify_tables($post_type)) {
             return $check;
         }
 
         // Delete from custom table.
-        $result = Meta_Controller::delete_meta($post_type, $object_id, $meta_key, $meta_value);
+        $result = MetaController::delete_meta($post_type, $object_id, $meta_key, $meta_value);
 
         // Skip logging for frequently checked internal meta keys.
         $skip_logging = in_array($meta_key, ['_edit_lock', '_edit_last'], true);
@@ -373,17 +375,17 @@ final class CRUD_Interceptor
         }
 
         // Skip if post type doesn't use custom tables.
-        if (! Settings_Controller::is_enabled($post_type)) {
+        if (! SettingsController::is_enabled($post_type)) {
             return $check;
         }
 
         // Skip if tables don't exist.
-        if (! Table_Manager::verify_tables($post_type)) {
+        if (! TableManager::verify_tables($post_type)) {
             return $check;
         }
 
         // Get from custom table.
-        $result = Meta_Controller::get_meta($post_type, $object_id, $meta_key, $single);
+        $result = MetaController::get_meta($post_type, $object_id, $meta_key, $single);
 
         // Skip logging for frequently checked internal meta keys.
         $skip_logging = in_array($meta_key, ['_edit_lock', '_edit_last'], true);

@@ -2,16 +2,18 @@
 
 declare(strict_types=1);
 
-namespace SLK\Cpt_Table_Engine\Integration;
+namespace SLK\CptTableEngine\Services\Integration;
 
-use SLK\Cpt_Table_Engine\Controllers\Settings_Controller;
-use SLK\Cpt_Table_Engine\Database\Table_Manager;
-use SLK\Cpt_Table_Engine\Helpers\Logger;
+use SLK\CptTableEngine\Controllers\SettingsController;
+use SLK\CptTableEngine\Services\Database\TableManager;
+use SLK\CptTableEngine\Utilities\Logger;
 
 /**
  * Query Interceptor class.
+ *
+ * @package SLK\CptTableEngine
  */
-final class Query_Interceptor
+final class QueryInterceptor
 {
     /**
      * Constructor.
@@ -50,20 +52,20 @@ final class Query_Interceptor
         }
 
         // Skip if post type doesn't use custom tables.
-        if (! Settings_Controller::is_enabled($post_type)) {
+        if (! SettingsController::is_enabled($post_type)) {
             return $request;
         }
 
         // Skip if tables don't exist.
-        if (! Table_Manager::verify_tables($post_type)) {
+        if (! TableManager::verify_tables($post_type)) {
             return $request;
         }
 
         global $wpdb;
 
         // Get custom table names.
-        $custom_table = Table_Manager::get_table_name($post_type, 'main');
-        $custom_meta_table = Table_Manager::get_table_name($post_type, 'meta');
+        $custom_table = TableManager::get_table_name($post_type, 'main');
+        $custom_meta_table = TableManager::get_table_name($post_type, 'meta');
 
         // Replace wp_posts with custom table.
         $request = str_replace($wpdb->posts, $custom_table, $request);
@@ -94,7 +96,7 @@ final class Query_Interceptor
         }
 
         // Skip if post type doesn't use custom tables.
-        if (! Settings_Controller::is_enabled($post_type)) {
+        if (! SettingsController::is_enabled($post_type)) {
             return $posts;
         }
 

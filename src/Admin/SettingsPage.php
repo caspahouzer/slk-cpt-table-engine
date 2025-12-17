@@ -2,15 +2,17 @@
 
 declare(strict_types=1);
 
-namespace SLK\Cpt_Table_Engine\Admin;
+namespace SLK\CptTableEngine\Admin;
 
-use SLK\Cpt_Table_Engine\Controllers\Settings_Controller;
-use SLK\Cpt_Table_Engine\Database\Table_Manager;
+use SLK\CptTableEngine\Controllers\SettingsController;
+use SLK\CptTableEngine\Services\Database\TableManager;
 
 /**
  * Settings Page class.
+ *
+ * @package SLK\CptTableEngine
  */
-final class Settings_Page
+final class SettingsPage
 {
     /**
      * Page slug.
@@ -199,7 +201,7 @@ final class Settings_Page
         }
 
         // Get settings.
-        $settings = Settings_Controller::get_settings_for_display();
+        $settings = SettingsController::get_settings_for_display();
 
         // Generate tab URLs with nonces.
         $cpt_tab_url      = wp_nonce_url(admin_url('options-general.php?page=' . self::PAGE_SLUG . '&tab=cpt'), 'cpt_table_engine_tab_action');
@@ -341,7 +343,7 @@ final class Settings_Page
                     <div id="cpt-license-container" style="margin-top: 20px;">
                         <?php
                         // Render the license form
-                        \SLK\License_Checker\License_Checker::instance()->render_license_form();
+                        \SLK\LicenseChecker\LicenseChecker::instance()->render_license_form();
                         ?>
                     </div>
 
@@ -393,7 +395,7 @@ final class Settings_Page
 
                             <h2><?php esc_html_e('Existing CPT Tables', 'slk-cpt-table-engine'); ?></h2>
                             <?php
-                            $existing_tables = Table_Manager::detect_existing_tables();
+                            $existing_tables = TableManager::detect_existing_tables();
                             if (empty($existing_tables)) :
                             ?>
                                 <p><?php esc_html_e('No custom post type tables found.', 'slk-cpt-table-engine'); ?></p>
@@ -431,7 +433,7 @@ final class Settings_Page
 
                         <!-- Sidebar Column (Right) -->
                         <div style="flex: 0 0 34%; max-width: 34%;">
-                            <?php Table_Admin_Notices::render_mode_explanation_sidebar(); ?>
+                            <?php TableAdminNotices::render_mode_explanation_sidebar(); ?>
                         </div>
 
                     </div>

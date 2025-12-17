@@ -2,16 +2,18 @@
 
 declare(strict_types=1);
 
-namespace SLK\Cpt_Table_Engine\Migrations;
+namespace SLK\CptTableEngine\Services\Migration;
 
-use SLK\Cpt_Table_Engine\Database\Table_Manager;
-use SLK\Cpt_Table_Engine\Database\Table_Schema;
-use SLK\Cpt_Table_Engine\Helpers\Logger;
+use SLK\CptTableEngine\Services\Database\TableManager;
+use SLK\CptTableEngine\Services\Database\TableSchema;
+use SLK\CptTableEngine\Utilities\Logger;
 
 /**
  * Posts Migrator class.
+ *
+ * @package SLK\CptTableEngine
  */
-final class Posts_Migrator
+final class PostsMigrator
 {
     /**
      * Migrate posts from wp_posts to custom table.
@@ -21,12 +23,12 @@ final class Posts_Migrator
      */
     public static function migrate_to_custom_table(string $post_type)
     {
-        $custom_table = Table_Manager::get_table_name($post_type, 'main');
+        $custom_table = TableManager::get_table_name($post_type, 'main');
         if (! $custom_table) {
             /* translators: %s: post type */
             return new \WP_Error('invalid_table', __('Invalid custom table for post type.', 'slk-cpt-table-engine'));
         }
-        $batch_size = Migration_Manager::get_batch_size();
+        $batch_size = MigrationManager::get_batch_size();
 
         // Get total count.
         $total = self::count_wp_posts($post_type);
@@ -117,7 +119,7 @@ final class Posts_Migrator
      */
     public static function migrate_to_wp_posts(string $post_type)
     {
-        $custom_table = Table_Manager::get_table_name($post_type, 'main');
+        $custom_table = TableManager::get_table_name($post_type, 'main');
         if (! $custom_table) {
             return new \WP_Error('invalid_table', __('Invalid custom table for post type.', 'slk-cpt-table-engine'));
         }
@@ -136,7 +138,7 @@ final class Posts_Migrator
 
         $offset = 0;
         $migrated = 0;
-        $batch_size = Migration_Manager::get_batch_size();
+        $batch_size = MigrationManager::get_batch_size();
 
         while ($offset < $total) {
             $posts = self::get_posts_from_custom_table($custom_table, $batch_size, $offset);
@@ -238,10 +240,10 @@ final class Posts_Migrator
      */
     private static function build_insert_query(string $table_name, array $placeholders): string
     {
-        return "INSERT INTO `{$table_name}` 
-            (ID, post_title, post_content, post_excerpt, post_status, post_date, post_date_gmt, 
-            post_modified, post_modified_gmt, post_author, post_name, post_type, post_parent, 
-            menu_order, comment_status, ping_status, comment_count, guid) 
+        return "INSERT INTO `{$table_name}`
+            (ID, post_title, post_content, post_excerpt, post_status, post_date, post_date_gmt,
+            post_modified, post_modified_gmt, post_author, post_name, post_type, post_parent,
+            menu_order, comment_status, ping_status, comment_count, guid)
             VALUES " . implode(', ', $placeholders) . '
             ON DUPLICATE KEY UPDATE
             post_title = VALUES(post_title),
@@ -323,7 +325,7 @@ final class Posts_Migrator
             /* translators: %1$d: migrated posts, %2$d: total posts */
             sprintf(__('Migrated %1$d of %2$d posts...', 'slk-cpt-table-engine'), $migrated, $total);
 
-        Migration_Manager::update_migration_status(
+        MigrationManager::update_migration_status(
             $post_type,
             'in_progress',
             $message,
@@ -341,7 +343,7 @@ final class Posts_Migrator
     private static function count_posts_in_custom_table(string $table_name): int
     {
         global $wpdb;
-        // Table name is sanitized by Table_Manager and cannot use placeholders.
+        // Table name is sanitized by TableManager and cannot use placeholders.
         // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         $query = "SELECT COUNT(*) FROM `{$table_name}`";
         // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- No user input, table name validated.
@@ -359,8 +361,8 @@ final class Posts_Migrator
     private static function get_posts_from_custom_table(string $table_name, int $batch_size, int $offset): array
     {
         global $wpdb;
-        // Table name is sanitized by Table_Manager and cannot use placeholders.
-        // phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name validated by Table_Manager, not user input.
+        // Table name is sanitized by TableManager and cannot use placeholders.
+        // phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name validated by TableManager, not user input.
         $query = $wpdb->prepare(
             "SELECT * FROM `{$table_name}` ORDER BY ID ASC LIMIT %d OFFSET %d",
             $batch_size,

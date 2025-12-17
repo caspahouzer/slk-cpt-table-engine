@@ -15,9 +15,9 @@
 /bin
 /tests
 /*.dist
-/composer.*
 /.travis.yml
-/vendor
+/vendor/
+composer.lock
 
 # All plugins
 #

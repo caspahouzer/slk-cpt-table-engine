@@ -2,14 +2,16 @@
 
 declare(strict_types=1);
 
-namespace SLK\Cpt_Table_Engine\Migrations;
+namespace SLK\CptTableEngine\Services\Migration;
 
-use SLK\Cpt_Table_Engine\Helpers\Logger;
+use SLK\CptTableEngine\Utilities\Logger;
 
 /**
  * Relationship Updater class.
+ *
+ * @package SLK\CptTableEngine
  */
-final class Relationship_Updater
+final class RelationshipUpdater
 {
     /**
      * Update post relationships after re-IDing.

@@ -2,15 +2,17 @@
 
 declare(strict_types=1);
 
-namespace SLK\Cpt_Table_Engine\Migrations;
+namespace SLK\CptTableEngine\Services\Migration;
 
-use SLK\Cpt_Table_Engine\Database\Table_Manager;
-use SLK\Cpt_Table_Engine\Helpers\Logger;
+use SLK\CptTableEngine\Services\Database\TableManager;
+use SLK\CptTableEngine\Utilities\Logger;
 
 /**
  * Meta Migrator class.
+ *
+ * @package SLK\CptTableEngine
  */
-final class Meta_Migrator
+final class MetaMigrator
 {
     /**
      * Migrate post meta from wp_postmeta to custom meta table.
@@ -22,14 +24,14 @@ final class Meta_Migrator
     {
         global $wpdb;
 
-        $custom_table = Table_Manager::get_table_name($post_type, 'meta');
-        $main_table = Table_Manager::get_table_name($post_type, 'main');
+        $custom_table = TableManager::get_table_name($post_type, 'meta');
+        $main_table = TableManager::get_table_name($post_type, 'main');
 
         if (! $custom_table || ! $main_table) {
             return new \WP_Error('invalid_table', __('Invalid custom table for post type.', 'slk-cpt-table-engine'));
         }
 
-        $batch_size = Migration_Manager::get_batch_size();
+        $batch_size = MigrationManager::get_batch_size();
 
         // Get total count of meta entries for this post type.
         $total = (int) $wpdb->get_var(
@@ -83,8 +85,8 @@ final class Meta_Migrator
             }
 
             // Build insert query.
-            $sql = "INSERT INTO `{$custom_table}` 
-				(meta_id, post_id, meta_key, meta_value) 
+            $sql = "INSERT INTO `{$custom_table}`
+				(meta_id, post_id, meta_key, meta_value)
 				VALUES " . implode(', ', $placeholders) . '
 				ON DUPLICATE KEY UPDATE
 				meta_key = VALUES(meta_key),
@@ -110,7 +112,7 @@ final class Meta_Migrator
             $offset += $batch_size;
 
             // Update progress.
-            Migration_Manager::update_migration_status(
+            MigrationManager::update_migration_status(
                 $post_type,
                 'in_progress',
                 /* translators: %1$d: Number of migrated entries, %2$d: Total number of entries. */
@@ -138,11 +140,11 @@ final class Meta_Migrator
     {
         global $wpdb;
 
-        $custom_table = Table_Manager::get_table_name($post_type, 'meta');
+        $custom_table = TableManager::get_table_name($post_type, 'meta');
         if (! $custom_table) {
             return new \WP_Error('invalid_table', __('Invalid custom table for post type.', 'slk-cpt-table-engine'));
         }
-        $batch_size = Migration_Manager::get_batch_size();
+        $batch_size = MigrationManager::get_batch_size();
 
         // Get total count.
         $total = (int) $wpdb->get_var("SELECT COUNT(*) FROM `{$custom_table}`"); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -186,8 +188,8 @@ final class Meta_Migrator
             }
 
             // Build insert query.
-            $sql = "INSERT INTO `{$wpdb->postmeta}` 
-				(meta_id, post_id, meta_key, meta_value) 
+            $sql = "INSERT INTO `{$wpdb->postmeta}`
+				(meta_id, post_id, meta_key, meta_value)
 				VALUES " . implode(', ', $placeholders) . '
 				ON DUPLICATE KEY UPDATE
 				meta_key = VALUES(meta_key),
@@ -207,7 +209,7 @@ final class Meta_Migrator
             $offset += $batch_size;
 
             // Update progress.
-            Migration_Manager::update_migration_status(
+            MigrationManager::update_migration_status(
                 $post_type,
                 'in_progress',
                 /* translators: %1$d: Number of migrated entries, %2$d: Total number of entries. */

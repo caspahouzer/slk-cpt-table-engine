@@ -2,17 +2,19 @@
 
 declare(strict_types=1);
 
-namespace SLK\Cpt_Table_Engine\Migrations;
+namespace SLK\CptTableEngine\Services\Migration;
 
-use SLK\Cpt_Table_Engine\Database\Table_Manager;
-use SLK\Cpt_Table_Engine\Controllers\Settings_Controller;
-use SLK\Cpt_Table_Engine\Helpers\Logger;
-use SLK\Cpt_Table_Engine\Helpers\Cache;
+use SLK\CptTableEngine\Services\Database\TableManager;
+use SLK\CptTableEngine\Controllers\SettingsController;
+use SLK\CptTableEngine\Utilities\Logger;
+use SLK\CptTableEngine\Utilities\Cache;
 
 /**
  * Migration Manager class.
+ *
+ * @package SLK\CptTableEngine
  */
-final class Migration_Manager
+final class MigrationManager
 {
     /**
      * Batch size for migrations.
@@ -41,8 +43,8 @@ final class Migration_Manager
         }
 
         // Create tables if they don't exist.
-        if (! Table_Manager::verify_tables($post_type)) {
-            if (! Table_Manager::create_tables($post_type)) {
+        if (! TableManager::verify_tables($post_type)) {
+            if (! TableManager::create_tables($post_type)) {
                 return new \WP_Error('table_creation_failed', __('Failed to create custom tables.', 'slk-cpt-table-engine'));
             }
         }
@@ -51,28 +53,28 @@ final class Migration_Manager
         self::init_migration_status($post_type, 'to_custom');
 
         // Migrate posts.
-        $posts_result = Posts_Migrator::migrate_to_custom_table($post_type);
+        $posts_result = PostsMigrator::migrate_to_custom_table($post_type);
         if (is_wp_error($posts_result)) {
             self::update_migration_status($post_type, 'failed', $posts_result->get_error_message());
             return $posts_result;
         }
 
         // Migrate meta.
-        $meta_result = Meta_Migrator::migrate_to_custom_table($post_type);
+        $meta_result = MetaMigrator::migrate_to_custom_table($post_type);
         if (is_wp_error($meta_result)) {
             self::update_migration_status($post_type, 'failed', $meta_result->get_error_message());
             return $meta_result;
         }
 
         // Update settings to mark CPT as enabled.
-        Settings_Controller::enable_cpt($post_type);
+        SettingsController::enable_cpt($post_type);
 
         // Reinitialize interceptors to register hooks with new state.
-        \SLK\Cpt_Table_Engine\Bootstrap::instance()->reinit();
+        \SLK\CptTableEngine\Plugin::instance()->reinit();
 
         // Clear cache.
         Cache::flush_post_type($post_type);
-        Table_Manager::clear_verification_cache($post_type);
+        TableManager::clear_verification_cache($post_type);
 
         // Mark migration as complete.
         self::update_migration_status($post_type, 'completed');
@@ -93,7 +95,7 @@ final class Migration_Manager
         Logger::info("Starting migration to wp_posts for post type: {$post_type}");
 
         // Verify tables exist.
-        if (! Table_Manager::verify_tables($post_type)) {
+        if (! TableManager::verify_tables($post_type)) {
             return new \WP_Error('tables_not_found', __('Custom tables do not exist.', 'slk-cpt-table-engine'));
         }
 
@@ -102,18 +104,18 @@ final class Migration_Manager
 
         // IMPORTANT: Disable CPT and reinitialize interceptors BEFORE migration
         // to prevent interceptors from interfering with the reverse migration process.
-        Settings_Controller::disable_cpt($post_type);
-        \SLK\Cpt_Table_Engine\Bootstrap::instance()->reinit();
+        SettingsController::disable_cpt($post_type);
+        \SLK\CptTableEngine\Plugin::instance()->reinit();
         Cache::flush_post_type($post_type);
-        Table_Manager::clear_verification_cache($post_type);
+        TableManager::clear_verification_cache($post_type);
 
         // Migrate posts.
-        $posts_result = Posts_Migrator::migrate_to_wp_posts($post_type);
+        $posts_result = PostsMigrator::migrate_to_wp_posts($post_type);
         if (is_wp_error($posts_result)) {
             self::update_migration_status($post_type, 'failed', $posts_result->get_error_message());
             // Re-enable CPT since migration failed.
-            Settings_Controller::enable_cpt($post_type);
-            \SLK\Cpt_Table_Engine\Bootstrap::instance()->reinit();
+            SettingsController::enable_cpt($post_type);
+            \SLK\CptTableEngine\Plugin::instance()->reinit();
             return $posts_result;
         }
 
@@ -121,7 +123,7 @@ final class Migration_Manager
         $id_map = $posts_result['id_map'] ?? [];
 
         // Migrate meta.
-        $meta_result = Meta_Migrator::migrate_to_wp_posts($post_type);
+        $meta_result = MetaMigrator::migrate_to_wp_posts($post_type);
         if (is_wp_error($meta_result)) {
             self::update_migration_status($post_type, 'failed', $meta_result->get_error_message());
             return $meta_result;
@@ -129,7 +131,7 @@ final class Migration_Manager
 
         // Update relationships if any posts were re-IDed.
         if (! empty($id_map)) {
-            Relationship_Updater::update($id_map);
+            RelationshipUpdater::update($id_map);
         }
 
         // Clear any remaining caches.
@@ -139,7 +141,7 @@ final class Migration_Manager
         self::update_migration_status($post_type, 'completed');
 
         // Drop custom tables after successful migration back to wp_posts.
-        $drop_result = Table_Manager::drop_tables($post_type);
+        $drop_result = TableManager::drop_tables($post_type);
         if (! $drop_result) {
             Logger::warning("Migration completed but failed to drop tables for post type: {$post_type}. Tables can be dropped manually if needed.");
             // Don't fail the migration - data is already safely in wp_posts/wp_postmeta

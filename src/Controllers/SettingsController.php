@@ -2,18 +2,20 @@
 
 declare(strict_types=1);
 
-namespace SLK\Cpt_Table_Engine\Controllers;
+namespace SLK\CptTableEngine\Controllers;
 
-use SLK\Cpt_Table_Engine\Helpers\Logger;
-use SLK\Cpt_Table_Engine\Helpers\Validator;
-use SLK\Cpt_Table_Engine\Database\Table_Manager;
-use SLK\Cpt_Table_Engine\Helpers\Sanitizer;
-use SLK\License_Checker\License_Checker;
+use SLK\CptTableEngine\Utilities\Logger;
+use SLK\CptTableEngine\Utilities\Validator;
+use SLK\CptTableEngine\Services\Database\TableManager;
+use SLK\CptTableEngine\Utilities\Sanitizer;
+use SLK\LicenseChecker\LicenseChecker;
 
 /**
  * Settings Controller class.
+ *
+ * @package SLK\CptTableEngine
  */
-final class Settings_Controller
+final class SettingsController
 {
     /**
      * Option name for enabled CPTs.
@@ -53,7 +55,7 @@ final class Settings_Controller
 
         // Filter out CPTs where the table does not exist.
         $enabled = array_filter($enabled_from_db, function ($post_type) {
-            return Table_Manager::verify_tables($post_type);
+            return TableManager::verify_tables($post_type);
         });
 
         return array_values($enabled);
@@ -202,9 +204,9 @@ final class Settings_Controller
 
             if ($is_enabled) {
                 // Get count from custom table.
-                if (Table_Manager::verify_tables($slug)) {
+                if (TableManager::verify_tables($slug)) {
                     global $wpdb;
-                    $table = Table_Manager::get_table_name($slug, 'main');
+                    $table = TableManager::get_table_name($slug, 'main');
                     if ($table) {
                         $count = (int) $wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM %i', $table));
                     }
@@ -234,7 +236,7 @@ final class Settings_Controller
     public static function can_enable_another_cpt(): bool
     {
         // No limit if license is active.
-        if (License_Checker::is_active()) {
+        if (LicenseChecker::is_active()) {
             return true;
         }
 
@@ -251,7 +253,7 @@ final class Settings_Controller
     public static function get_remaining_cpt_slots(): int
     {
         // Unlimited if license is active.
-        if (License_Checker::is_active()) {
+        if (LicenseChecker::is_active()) {
             return -1;
         }
 

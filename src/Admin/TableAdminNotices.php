@@ -2,16 +2,18 @@
 
 declare(strict_types=1);
 
-namespace SLK\Cpt_Table_Engine\Admin;
+namespace SLK\CptTableEngine\Admin;
 
-use SLK\Cpt_Table_Engine\Helpers\Logger;
-use SLK\Cpt_Table_Engine\Controllers\Settings_Controller;
-use SLK\License_Checker\License_Checker;
+use SLK\CptTableEngine\Utilities\Logger;
+use SLK\CptTableEngine\Controllers\SettingsController;
+use SLK\LicenseChecker\LicenseChecker;
 
 /**
  * Table Admin Notices class.
+ *
+ * @package SLK\CptTableEngine
  */
-final class Table_Admin_Notices
+final class TableAdminNotices
 {
     /**
      * Transient key for activation results.
@@ -245,12 +247,12 @@ final class Table_Admin_Notices
         }
 
         // Only show if license is not active.
-        if (License_Checker::is_active()) {
+        if (LicenseChecker::is_active()) {
             return;
         }
 
         // Count enabled CPTs.
-        $enabled_cpts = Settings_Controller::get_enabled_cpts();
+        $enabled_cpts = SettingsController::get_enabled_cpts();
         $count = count($enabled_cpts);
 
         // Show different messages based on usage.

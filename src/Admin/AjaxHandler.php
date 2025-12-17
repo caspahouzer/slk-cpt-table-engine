@@ -2,19 +2,21 @@
 
 declare(strict_types=1);
 
-namespace SLK\Cpt_Table_Engine\Admin;
+namespace SLK\CptTableEngine\Admin;
 
-use SLK\Cpt_Table_Engine\Helpers\Logger;
-use SLK\Cpt_Table_Engine\Helpers\Sanitizer;
-use SLK\Cpt_Table_Engine\Helpers\Validator;
-use SLK\Cpt_Table_Engine\Migrations\Migration_Manager;
-use SLK\Cpt_Table_Engine\Controllers\Settings_Controller;
-use SLK\License_Checker\License_Checker;
+use SLK\CptTableEngine\Utilities\Logger;
+use SLK\CptTableEngine\Utilities\Sanitizer;
+use SLK\CptTableEngine\Utilities\Validator;
+use SLK\CptTableEngine\Services\Migration\MigrationManager;
+use SLK\CptTableEngine\Controllers\SettingsController;
+use SLK\LicenseChecker\LicenseChecker;
 
 /**
  * AJAX Handler class.
+ *
+ * @package SLK\CptTableEngine
  */
-final class Ajax_Handler
+final class AjaxHandler
 {
     /**
      * Constructor.
@@ -65,8 +67,8 @@ final class Ajax_Handler
 
         // Check license limit before enabling
         if ($enabled) {
-            if (! License_Checker::is_active()) {
-                $enabled_cpts = Settings_Controller::get_enabled_cpts();
+            if (! LicenseChecker::is_active()) {
+                $enabled_cpts = SettingsController::get_enabled_cpts();
                 $current_count = count($enabled_cpts);
 
                 if ($current_count >= 3) {
@@ -84,10 +86,10 @@ final class Ajax_Handler
         // Perform migration.
         if ($enabled) {
             // Enable custom table.
-            $result = Migration_Manager::migrate_to_custom_table($post_type);
+            $result = MigrationManager::migrate_to_custom_table($post_type);
         } else {
             // Disable custom table.
-            $result = Migration_Manager::migrate_to_wp_posts($post_type);
+            $result = MigrationManager::migrate_to_wp_posts($post_type);
         }
 
         // Check result.
@@ -132,7 +134,7 @@ final class Ajax_Handler
         }
 
         // Get migration status.
-        $status = Migration_Manager::get_migration_status($post_type);
+        $status = MigrationManager::get_migration_status($post_type);
 
         wp_send_json_success($status);
     }

@@ -2,22 +2,20 @@
 
 declare(strict_types=1);
 
-namespace SLK\Cpt_Table_Engine\Database;
+namespace SLK\CptTableEngine\Services\Database;
 
 /**
  * Table Schema for CPT Table Engine.
  *
  * Defines the schema for custom CPT tables.
  *
- * @package SLK\Cpt_Table_Engine
+ * @package SLK\CptTableEngine
  */
-
-namespace SLK\Cpt_Table_Engine\Database;
 
 /**
  * Table Schema class.
  */
-final class Table_Schema
+final class TableSchema
 {
     /**
      * Get the schema for the main CPT table.

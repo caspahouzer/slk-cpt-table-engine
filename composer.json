@@ -1,0 +1,25 @@
+{
+    "name": "slk/cpt-table-engine",
+    "description": "Optimizes database performance by storing Custom Post Types in dedicated custom tables",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Sebastian Klaus",
+            "email": "info@slk-communications.de"
+        }
+    ],
+    "require": {
+        "php": ">=8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "SLK\\CptTableEngine\\": "src/",
+            "SLK\\LicenseChecker\\": "modules/LicenseChecker/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    }
+}

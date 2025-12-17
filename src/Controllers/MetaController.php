@@ -2,18 +2,20 @@
 
 declare(strict_types=1);
 
-namespace SLK\Cpt_Table_Engine\Controllers;
+namespace SLK\CptTableEngine\Controllers;
 
-use SLK\Cpt_Table_Engine\Database\Table_Manager;
-use SLK\Cpt_Table_Engine\Helpers\Sanitizer;
-use SLK\Cpt_Table_Engine\Helpers\Validator;
-use SLK\Cpt_Table_Engine\Helpers\Cache;
-use SLK\Cpt_Table_Engine\Helpers\Logger;
+use SLK\CptTableEngine\Services\Database\TableManager;
+use SLK\CptTableEngine\Utilities\Sanitizer;
+use SLK\CptTableEngine\Utilities\Validator;
+use SLK\CptTableEngine\Utilities\Cache;
+use SLK\CptTableEngine\Utilities\Logger;
 
 /**
  * Meta Controller class.
+ *
+ * @package SLK\CptTableEngine
  */
-final class Meta_Controller
+final class MetaController
 {
     /**
      * Add post meta.
@@ -40,7 +42,7 @@ final class Meta_Controller
         $meta_value = maybe_serialize($meta_value);
 
         // Get table name.
-        $table_name = Table_Manager::get_table_name($post_type, 'meta');
+        $table_name = TableManager::get_table_name($post_type, 'meta');
 
         // Insert into database.
         $result = $wpdb->insert(
@@ -95,7 +97,7 @@ final class Meta_Controller
         $meta_value = maybe_serialize($meta_value);
 
         // Get table name.
-        $table_name = Table_Manager::get_table_name($post_type, 'meta');
+        $table_name = TableManager::get_table_name($post_type, 'meta');
         if (! $table_name) {
             return false;
         }
@@ -173,7 +175,7 @@ final class Meta_Controller
         $meta_key = Sanitizer::sanitize_meta_key($meta_key);
 
         // Get table name.
-        $table_name = Table_Manager::get_table_name($post_type, 'meta');
+        $table_name = TableManager::get_table_name($post_type, 'meta');
 
         // Build where clause.
         $where = [
@@ -231,7 +233,7 @@ final class Meta_Controller
         }
 
         // Get table name.
-        $table_name = Table_Manager::get_table_name($post_type, 'meta');
+        $table_name = TableManager::get_table_name($post_type, 'meta');
         if (! $table_name) {
             return $single ? '' : [];
         }
@@ -302,7 +304,7 @@ final class Meta_Controller
         }
 
         // Get table name.
-        $table_name = Table_Manager::get_table_name($post_type, 'meta');
+        $table_name = TableManager::get_table_name($post_type, 'meta');
 
         // Delete all meta.
         $result = $wpdb->delete(

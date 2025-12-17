@@ -2,14 +2,16 @@
 
 declare(strict_types=1);
 
-namespace SLK\Cpt_Table_Engine\Database;
+namespace SLK\CptTableEngine\Services\Database;
 
-use SLK\Cpt_Table_Engine\Helpers\Logger;
+use SLK\CptTableEngine\Utilities\Logger;
 
 /**
  * Table Manager class.
+ *
+ * @package SLK\CptTableEngine
  */
-final class Table_Manager
+final class TableManager
 {
     /**
      * Static cache for verified tables (request-level).
@@ -31,13 +33,13 @@ final class Table_Manager
 
         try {
             // Create main table.
-            if (! self::create_table($main_table, Table_Schema::get_main_table_schema($main_table))) {
+            if (! self::create_table($main_table, TableSchema::get_main_table_schema($main_table))) {
                 Logger::error("Failed to create main table for post type: {$post_type}");
                 return false;
             }
 
             // Create meta table.
-            if (! self::create_table($meta_table, Table_Schema::get_meta_table_schema($meta_table))) {
+            if (! self::create_table($meta_table, TableSchema::get_meta_table_schema($meta_table))) {
                 Logger::error("Failed to create meta table for post type: {$post_type}");
                 // Rollback: drop main table.
                 self::drop_table($main_table);

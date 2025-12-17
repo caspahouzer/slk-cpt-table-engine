@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
-namespace SLK\Cpt_Table_Engine\Helpers;
+namespace SLK\CptTableEngine\Utilities;
 
 /**
  * Sanitizer class.
+ *
+ * @package SLK\CptTableEngine
  */
 final class Sanitizer
 {

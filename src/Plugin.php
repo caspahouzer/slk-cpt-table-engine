@@ -2,71 +2,73 @@
 
 declare(strict_types=1);
 
-namespace SLK\Cpt_Table_Engine;
+namespace SLK\CptTableEngine;
 
-use SLK\Cpt_Table_Engine\Admin\Settings_Page;
-use SLK\Cpt_Table_Engine\Helpers\Logger;
-use SLK\Cpt_Table_Engine\Admin\Ajax_Handler;
-use SLK\Cpt_Table_Engine\Admin\Deactivation_Guard;
-use SLK\Cpt_Table_Engine\Admin\Table_Admin_Notices;
-use SLK\Cpt_Table_Engine\Integration\Query_Interceptor;
-use SLK\Cpt_Table_Engine\Integration\CRUD_Interceptor;
-use SLK\Cpt_Table_Engine\Database\Table_Manager;
-use SLK\Cpt_Table_Engine\Database\Table_Schema;
+use SLK\CptTableEngine\Admin\SettingsPage;
+use SLK\CptTableEngine\Utilities\Logger;
+use SLK\CptTableEngine\Admin\AjaxHandler;
+use SLK\CptTableEngine\Admin\DeactivationGuard;
+use SLK\CptTableEngine\Admin\TableAdminNotices;
+use SLK\CptTableEngine\Services\Integration\QueryInterceptor;
+use SLK\CptTableEngine\Services\Integration\CrudInterceptor;
+use SLK\CptTableEngine\Services\Database\TableManager;
+use SLK\CptTableEngine\Services\Database\TableSchema;
 
 /**
- * Bootstrap class.
+ * Plugin class.
+ *
+ * @package SLK\CptTableEngine
  */
-final class Bootstrap
+final class Plugin
 {
     /**
      * Singleton instance.
      *
-     * @var Bootstrap|null
+     * @var Plugin|null
      */
-    private static ?Bootstrap $instance = null;
+    private static ?Plugin $instance = null;
 
     /**
      * Settings page instance.
      *
-     * @var Settings_Page|null
+     * @var SettingsPage|null
      */
-    private ?Settings_Page $settings_page = null;
+    private ?SettingsPage $settings_page = null;
 
     /**
      * AJAX handler instance.
      *
-     * @var Ajax_Handler|null
+     * @var AjaxHandler|null
      */
-    private ?Ajax_Handler $ajax_handler = null;
+    private ?AjaxHandler $ajax_handler = null;
 
     /**
      * Query interceptor instance.
      *
-     * @var Query_Interceptor|null
+     * @var QueryInterceptor|null
      */
-    private ?Query_Interceptor $query_interceptor = null;
+    private ?QueryInterceptor $query_interceptor = null;
 
     /**
      * CRUD interceptor instance.
      *
-     * @var CRUD_Interceptor|null
+     * @var CrudInterceptor|null
      */
-    private ?CRUD_Interceptor $crud_interceptor = null;
+    private ?CrudInterceptor $crud_interceptor = null;
 
     /**
      * Deactivation guard instance.
      *
-     * @var Deactivation_Guard|null
+     * @var DeactivationGuard|null
      */
-    private ?Deactivation_Guard $deactivation_guard = null;
+    private ?DeactivationGuard $deactivation_guard = null;
 
     /**
      * Table admin notices instance.
      *
-     * @var Table_Admin_Notices|null
+     * @var TableAdminNotices|null
      */
-    private ?Table_Admin_Notices $table_admin_notices = null;
+    private ?TableAdminNotices $table_admin_notices = null;
 
     /**
      * Private constructor to prevent direct instantiation.
@@ -76,9 +78,9 @@ final class Bootstrap
     /**
      * Get singleton instance.
      *
-     * @return Bootstrap
+     * @return Plugin
      */
-    public static function instance(): Bootstrap
+    public static function instance(): Plugin
     {
         if (null === self::$instance) {
             self::$instance = new self();
@@ -110,14 +112,14 @@ final class Bootstrap
      */
     private function init_admin(): void
     {
-        $this->settings_page = new Settings_Page();
-        $this->ajax_handler  = new Ajax_Handler();
-        $this->deactivation_guard = new Deactivation_Guard();
-        $this->table_admin_notices = new Table_Admin_Notices();
+        $this->settings_page = new SettingsPage();
+        $this->ajax_handler  = new AjaxHandler();
+        $this->deactivation_guard = new DeactivationGuard();
+        $this->table_admin_notices = new TableAdminNotices();
 
         // Initialize License Manager.
-        if (class_exists('\SLK\License_Checker\License_Checker')) {
-            \SLK\License_Checker\License_Checker::instance();
+        if (class_exists('\SLK\LicenseChecker\LicenseChecker')) {
+            \SLK\LicenseChecker\LicenseChecker::instance();
             add_action('admin_notices', [$this, 'show_license_inactive_notice']);
         }
     }
@@ -129,8 +131,8 @@ final class Bootstrap
      */
     private function init_frontend(): void
     {
-        $this->query_interceptor = new Query_Interceptor();
-        $this->crud_interceptor  = new CRUD_Interceptor();
+        $this->query_interceptor = new QueryInterceptor();
+        $this->crud_interceptor  = new CrudInterceptor();
     }
 
     /**
@@ -159,7 +161,7 @@ final class Bootstrap
             return;
         }
 
-        if (!\SLK\License_Checker\License_Checker::is_active()) {
+        if (!\SLK\LicenseChecker\LicenseChecker::is_active()) {
             $settings_url = admin_url('options-general.php?page=slk-cpt-table-engine&tab=license');
 ?>
             <div class="notice notice-warning is-dismissible">
@@ -213,7 +215,7 @@ final class Bootstrap
     public function deactivate(): void
     {
         // Prevent deactivation if CPTs are still enabled.
-        Deactivation_Guard::prevent_deactivation();
+        DeactivationGuard::prevent_deactivation();
 
         // Flush rewrite rules.
         flush_rewrite_rules();
@@ -232,11 +234,11 @@ final class Bootstrap
         Logger::info('Checking for existing CPT tables during activation...');
 
         // Detect all existing CPT tables.
-        $existing_tables = Table_Manager::detect_existing_tables();
+        $existing_tables = TableManager::detect_existing_tables();
 
         if (empty($existing_tables)) {
             Logger::info('No existing CPT tables detected.');
-            Table_Admin_Notices::store_activation_results([
+            TableAdminNotices::store_activation_results([
                 'existing_tables'   => [],
                 'tables_with_data'  => [],
                 'validated_tables'  => [],
@@ -258,7 +260,7 @@ final class Bootstrap
 
             // Validate schema if mode is 'validate' or 'backup'.
             if (in_array($handling_mode, ['validate', 'backup'], true)) {
-                $validation = Table_Schema::validate_table_schema(
+                $validation = TableSchema::validate_table_schema(
                     $table_name,
                     $table_info['type']
                 );
@@ -271,7 +273,7 @@ final class Bootstrap
                     );
 
                     // Add warning notice for invalid schema.
-                    Table_Admin_Notices::add_schema_warning(
+                    TableAdminNotices::add_schema_warning(
                         $table_name,
                         $validation['message']
                     );
@@ -280,7 +282,7 @@ final class Bootstrap
 
             // Create backup if mode is 'backup' and table has data.
             if ('backup' === $handling_mode && $table_info['has_data']) {
-                $backup_name = Table_Manager::backup_table($table_name);
+                $backup_name = TableManager::backup_table($table_name);
                 if ($backup_name) {
                     Logger::info("Created backup: {$backup_name}");
                 } else {
@@ -290,7 +292,7 @@ final class Bootstrap
         }
 
         // Store results for admin notice display.
-        Table_Admin_Notices::store_activation_results([
+        TableAdminNotices::store_activation_results([
             'existing_tables'   => array_keys($existing_tables),
             'tables_with_data'  => $tables_with_data,
             'validated_tables'  => $validated_tables,

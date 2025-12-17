@@ -5,7 +5,7 @@
  *
  * Fired when the plugin is uninstalled.
  *
- * @package SLK\Cpt_Table_Engine
+ * @package SLK\CptTableEngine
  */
 
 declare(strict_types=1);

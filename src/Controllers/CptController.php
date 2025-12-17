@@ -2,18 +2,20 @@
 
 declare(strict_types=1);
 
-namespace SLK\Cpt_Table_Engine\Controllers;
+namespace SLK\CptTableEngine\Controllers;
 
-use SLK\Cpt_Table_Engine\Database\Table_Manager;
-use SLK\Cpt_Table_Engine\Helpers\Sanitizer;
-use SLK\Cpt_Table_Engine\Helpers\Validator;
-use SLK\Cpt_Table_Engine\Helpers\Cache;
-use SLK\Cpt_Table_Engine\Helpers\Logger;
+use SLK\CptTableEngine\Services\Database\TableManager;
+use SLK\CptTableEngine\Utilities\Sanitizer;
+use SLK\CptTableEngine\Utilities\Validator;
+use SLK\CptTableEngine\Utilities\Cache;
+use SLK\CptTableEngine\Utilities\Logger;
 
 /**
  * CPT Controller class.
+ *
+ * @package SLK\CptTableEngine
  */
-final class CPT_Controller
+final class CptController
 {
     /**
      * Insert a new CPT entry.
@@ -63,7 +65,7 @@ final class CPT_Controller
         }
 
         // Get table name.
-        $table_name = Table_Manager::get_table_name($post_type, 'main');
+        $table_name = TableManager::get_table_name($post_type, 'main');
 
         // Prepare insert data with explicit column order.
         $insert_data = [];
@@ -164,7 +166,7 @@ final class CPT_Controller
         $data['post_modified_gmt'] = current_time('mysql', true);
 
         // Get table name.
-        $table_name = Table_Manager::get_table_name($post_type, 'main');
+        $table_name = TableManager::get_table_name($post_type, 'main');
 
         // Build format array dynamically.
         $formats = [];
@@ -216,8 +218,8 @@ final class CPT_Controller
         }
 
         // Get table names.
-        $main_table = Table_Manager::get_table_name($post_type, 'main');
-        $meta_table = Table_Manager::get_table_name($post_type, 'meta');
+        $main_table = TableManager::get_table_name($post_type, 'main');
+        $meta_table = TableManager::get_table_name($post_type, 'meta');
 
         // Delete meta first.
         $wpdb->delete(
@@ -265,7 +267,7 @@ final class CPT_Controller
         }
 
         // Get table name.
-        $table_name = Table_Manager::get_table_name($post_type, 'main');
+        $table_name = TableManager::get_table_name($post_type, 'main');
         if (! $table_name) {
             return null;
         }
@@ -300,7 +302,7 @@ final class CPT_Controller
         global $wpdb;
 
         // Get table name.
-        $table_name = Table_Manager::get_table_name($post_type, 'main');
+        $table_name = TableManager::get_table_name($post_type, 'main');
         if (! $table_name) {
             return [];
         }
@@ -366,7 +368,7 @@ final class CPT_Controller
         global $wpdb;
 
         // Get table name.
-        $table_name = Table_Manager::get_table_name($post_type, 'main');
+        $table_name = TableManager::get_table_name($post_type, 'main');
         if (! $table_name) {
             return 0;
         }
