@@ -37,14 +37,25 @@ define('CPT_TABLE_ENGINE_URL', plugin_dir_url(__FILE__));
 define('CPT_TABLE_ENGINE_BASENAME', plugin_basename(__FILE__));
 define('CPT_TABLE_ENGINE_TEXT_DOMAIN', 'slk-cpt-table-engine');
 
-if (file_exists(__DIR__ . '/modules/UpdateChecker/check.php')) {
-    require_once __DIR__ . '/modules/UpdateChecker/check.php';
-}
+/**
+ * Setup the plugin.
+ *
+ * Loads the autoloader and the update checker.
+ *
+ * @return void
+ */
+function setup(): void
+{
+    // Load UpdateChecker module if it exists.
+    if (file_exists(__DIR__ . '/modules/UpdateChecker/check.php')) {
+        require_once __DIR__ . '/modules/UpdateChecker/check.php';
+    }
 
-// Composer autoloader.
-if (file_exists(__DIR__ . '/vendor/autoload.php')) {
-    require_once __DIR__ . '/vendor/autoload.php';
+    if (file_exists(__DIR__ . '/vendor/autoload.php')) {
+        require_once __DIR__ . '/vendor/autoload.php';
+    }
 }
+add_action('plugins_loaded', __NAMESPACE__ . '\\setup');
 
 /**
  * Initialize the plugin.
