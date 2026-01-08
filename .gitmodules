@@ -1,0 +1,6 @@
+[submodule "modules/LicenseChecker"]
+	path = modules/LicenseChecker
+	url = https://github.com/caspahouzer/license-checker.git
+[submodule "modules/UpdateChecker"]
+	path = modules/UpdateChecker
+	url = https://github.com/caspahouzer/update-checker.git
