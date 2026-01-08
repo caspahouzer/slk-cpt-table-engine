@@ -18,6 +18,7 @@
 /.travis.yml
 /vendor/
 composer.lock
+.claude
 
 # All plugins
 #
@@ -30,5 +31,3 @@ composer.lock
 # Note: If you wish to whitelist themes,
 # uncomment the next line
 #/wp-content/themes
-
-modules/
